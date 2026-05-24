@@ -164,6 +164,12 @@ const textFields = {
   trendHomeBar: document.getElementById("trendHomeBar"),
   trendExportBar: document.getElementById("trendExportBar"),
   trendGridBar: document.getElementById("trendGridBar"),
+  operationalHeatmapGrid: document.getElementById("operationalHeatmapGrid"),
+  operationalHeatmapMeta: document.getElementById("operationalHeatmapMeta"),
+  solarCalendarGrid: document.getElementById("solarCalendarGrid"),
+  solarCalendarMeta: document.getElementById("solarCalendarMeta"),
+  weekdayProfileGrid: document.getElementById("weekdayProfileGrid"),
+  weekdayProfileMeta: document.getElementById("weekdayProfileMeta"),
   gaugeSolarArc: document.getElementById("gaugeSolarArc"),
   gaugeBatteryArc: document.getElementById("gaugeBatteryArc"),
   gaugeHomeArc: document.getElementById("gaugeHomeArc"),
@@ -463,6 +469,22 @@ const translations = {
     todayVsRecent: "Today vs recent days",
     trendSnapshot: "Energy trend snapshot",
     todayVsRecentHelp: "Compares today with the recent 7-day average, excluding today.",
+    operatingPattern: "Operating pattern",
+    last24Heatmap: "Last 24-hour power heatmap",
+    last24HeatmapHelp: "Color intensity shows when each part of the system was working hardest.",
+    last24HeatmapMeta: "{points} samples across the last 24 hours. Darker cells mean higher power.",
+    monthlyPattern: "Monthly pattern",
+    solarCalendar: "Solar production calendar",
+    solarCalendarHelp: "Daily color intensity shows stronger solar production, with self-sufficiency shown inside each day.",
+    solarCalendarMeta: "{days} days shown. Best solar day: {bestDay} with {bestSolar}.",
+    solarCalendarSelf: "{percent}% self",
+    weeklyRhythm: "Weekly rhythm",
+    weekdayProfile: "Weekday energy profile",
+    weekdayProfileHelp: "Average daily solar, home use, and grid import grouped by weekday.",
+    weekdayProfileMeta: "{days} days grouped. Best average solar: {bestDay}.",
+    avgSolar: "Avg solar",
+    avgHome: "Avg home",
+    avgGrid: "Avg grid",
     trendMeta: "Recent avg {average} • {percent}% of average",
     exportedToGrid: "Exported to grid",
     ofYesterday: "{percent}% of yesterday",
@@ -841,6 +863,22 @@ const translations = {
     todayVsRecent: "今日 vs 最近几天",
     trendSnapshot: "能源趋势快照",
     todayVsRecentHelp: "将今天和最近 7 天平均值对比，不包含今天。",
+    operatingPattern: "运行模式",
+    last24Heatmap: "过去 24 小时功率热力图",
+    last24HeatmapHelp: "颜色越深，表示该部分系统工作越强。",
+    last24HeatmapMeta: "过去 24 小时共 {points} 个采样点。颜色越深表示功率越高。",
+    monthlyPattern: "月度模式",
+    solarCalendar: "太阳能发电日历",
+    solarCalendarHelp: "每天颜色越深表示发电越强，格子里同时显示当天自给率。",
+    solarCalendarMeta: "显示 {days} 天。最佳发电日：{bestDay}，{bestSolar}。",
+    solarCalendarSelf: "自给 {percent}%",
+    weeklyRhythm: "每周节奏",
+    weekdayProfile: "星期能源画像",
+    weekdayProfileHelp: "按星期汇总每日平均太阳能、家庭用电和电网取电。",
+    weekdayProfileMeta: "已汇总 {days} 天。平均发电最好的星期：{bestDay}。",
+    avgSolar: "平均发电",
+    avgHome: "平均用电",
+    avgGrid: "平均电网",
     trendMeta: "最近平均 {average} • 相当于平均值 {percent}%",
     exportedToGrid: "已回馈电网",
     ofYesterday: "相当于昨天 {percent}%",
@@ -1219,6 +1257,22 @@ const translations = {
     todayVsRecent: "วันนี้เทียบช่วงล่าสุด",
     trendSnapshot: "ภาพรวมแนวโน้มพลังงาน",
     todayVsRecentHelp: "เปรียบเทียบวันนี้กับค่าเฉลี่ย 7 วันล่าสุด โดยไม่รวมวันนี้",
+    operatingPattern: "รูปแบบการทำงาน",
+    last24Heatmap: "ฮีตแมปกำลังไฟ 24 ชั่วโมงล่าสุด",
+    last24HeatmapHelp: "สีเข้มแสดงช่วงที่แต่ละส่วนทำงานหนักกว่า",
+    last24HeatmapMeta: "{points} จุดข้อมูลใน 24 ชั่วโมงล่าสุด สีเข้มหมายถึงกำลังไฟสูงกว่า",
+    monthlyPattern: "รูปแบบรายเดือน",
+    solarCalendar: "ปฏิทินการผลิตโซลาร์",
+    solarCalendarHelp: "สีเข้มแสดงวันที่ผลิตโซลาร์มากกว่า พร้อมเปอร์เซ็นต์พึ่งพาตัวเองในแต่ละวัน",
+    solarCalendarMeta: "แสดง {days} วัน วันที่โซลาร์ดีที่สุด: {bestDay} ด้วย {bestSolar}",
+    solarCalendarSelf: "พึ่งตัวเอง {percent}%",
+    weeklyRhythm: "จังหวะรายสัปดาห์",
+    weekdayProfile: "โปรไฟล์พลังงานตามวัน",
+    weekdayProfileHelp: "ค่าเฉลี่ยโซลาร์ การใช้ไฟในบ้าน และการนำเข้ากริด แยกตามวันในสัปดาห์",
+    weekdayProfileMeta: "จัดกลุ่ม {days} วัน วันที่โซลาร์เฉลี่ยดีที่สุด: {bestDay}",
+    avgSolar: "โซลาร์เฉลี่ย",
+    avgHome: "บ้านเฉลี่ย",
+    avgGrid: "กริดเฉลี่ย",
     trendMeta: "ค่าเฉลี่ยล่าสุด {average} • {percent}% ของค่าเฉลี่ย",
     exportedToGrid: "ส่งออกเข้ากริด",
     ofYesterday: "{percent}% ของเมื่อวาน",
@@ -1721,6 +1775,263 @@ function renderTrendSnapshot(payload) {
     barElement: textFields.trendGridBar,
     todayValue: Number(today.gridConsumptionKwh ?? 0),
     averageValue: getRecentAverage(rows, "grid_consumption"),
+  });
+}
+
+function createHeatmapCell({ label, value, maxValue, tone }) {
+  const cell = document.createElement("span");
+  const numericValue = Number(value ?? 0);
+  const intensity = maxValue > 0 ? Math.max(0.08, Math.min(1, numericValue / maxValue)) : 0;
+
+  cell.className = `operational-heatmap-cell heat-${tone}`;
+  cell.style.setProperty("--heat-intensity", intensity.toFixed(3));
+  cell.title = `${label}: ${formatKw(numericValue)}`;
+  cell.setAttribute("aria-label", cell.title);
+
+  return cell;
+}
+
+function renderOperationalHeatmap(payload) {
+  const heatmap = payload?.last24Hours ?? {};
+  const labels = heatmap.labels ?? [];
+  const rows = [
+    { label: t("solar"), tone: "solar", values: heatmap.solarGeneratedKw ?? [] },
+    { label: t("home"), tone: "home", values: heatmap.homeUsageKw ?? [] },
+    { label: t("battery"), tone: "battery", values: heatmap.batteryDischargeKw ?? [] },
+    { label: t("grid"), tone: "grid", values: heatmap.gridImportKw ?? [] },
+  ];
+  const pointCount = labels.length;
+
+  textFields.operationalHeatmapGrid.replaceChildren();
+  textFields.operationalHeatmapGrid.style.setProperty("--heatmap-columns", String(Math.max(pointCount, 1)));
+  textFields.operationalHeatmapMeta.textContent = interpolate(t("last24HeatmapMeta"), {
+    points: pointCount,
+  });
+
+  if (pointCount === 0) {
+    const empty = document.createElement("p");
+    empty.className = "muted-copy";
+    empty.textContent = t("dataAgeUnknown");
+    textFields.operationalHeatmapGrid.append(empty);
+    return;
+  }
+
+  const axis = document.createElement("div");
+  axis.className = "operational-heatmap-axis";
+  const startLabel = document.createElement("span");
+  startLabel.textContent = labels[0] ?? "";
+  const midLabel = document.createElement("span");
+  midLabel.textContent = labels[Math.floor((pointCount - 1) / 2)] ?? "";
+  const endLabel = document.createElement("span");
+  endLabel.textContent = labels[pointCount - 1] ?? "";
+  axis.append(startLabel, midLabel, endLabel);
+
+  for (const row of rows) {
+    const rowElement = document.createElement("div");
+    rowElement.className = "operational-heatmap-row";
+
+    const rowLabel = document.createElement("strong");
+    rowLabel.className = "operational-heatmap-row-label";
+    rowLabel.textContent = row.label;
+
+    const cells = document.createElement("div");
+    cells.className = "operational-heatmap-cells";
+    const maxValue = Math.max(...row.values.map((value) => Number(value ?? 0)).filter(Number.isFinite), 0);
+
+    labels.forEach((label, index) => {
+      cells.append(createHeatmapCell({
+        label,
+        value: row.values[index],
+        maxValue,
+        tone: row.tone,
+      }));
+    });
+
+    rowElement.append(rowLabel, cells);
+    textFields.operationalHeatmapGrid.append(rowElement);
+  }
+
+  textFields.operationalHeatmapGrid.append(axis);
+}
+
+function getLocalWeekdayIndex(dateString) {
+  const day = new Date(`${dateString}T00:00:00`).getDay();
+  return (day + 6) % 7;
+}
+
+function getSelfSufficiencyPercentFromRow(row) {
+  const homeUsage = Number(row?.home_usage ?? 0);
+  const gridConsumption = Number(row?.grid_consumption ?? 0);
+
+  if (!Number.isFinite(homeUsage) || homeUsage <= 0) {
+    return null;
+  }
+
+  return Math.max(0, Math.min(100, ((homeUsage - gridConsumption) / homeUsage) * 100));
+}
+
+function createSolarCalendarDay(row, maxSolar) {
+  const solar = Number(row?.pv_production ?? row?.generation ?? 0);
+  const selfPercent = getSelfSufficiencyPercentFromRow(row);
+  const intensity = maxSolar > 0 ? Math.max(0.08, Math.min(1, solar / maxSolar)) : 0;
+  const day = document.createElement("article");
+  const dayNumber = document.createElement("strong");
+  const solarValue = document.createElement("span");
+  const selfValue = document.createElement("small");
+
+  day.className = "solar-calendar-day";
+  day.style.setProperty("--solar-day-intensity", intensity.toFixed(3));
+  day.title = `${row.date}: ${formatKwh(solar)} · ${selfPercent === null ? t("unavailable") : formatPercent(selfPercent)}`;
+  dayNumber.textContent = String(row.day);
+  solarValue.textContent = formatKwh(solar).replace(" kWh", "");
+  selfValue.textContent = interpolate(t("solarCalendarSelf"), {
+    percent: selfPercent === null ? "--" : Math.round(selfPercent),
+  });
+
+  day.append(dayNumber, solarValue, selfValue);
+  return day;
+}
+
+function renderSolarCalendar(payload) {
+  const rows = getLatestDailyRows(payload?.dailyTable ?? []);
+  const visibleRows = rows.filter((row) => Number(row?.day ?? 0) > 0);
+
+  textFields.solarCalendarGrid.replaceChildren();
+
+  if (visibleRows.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "muted-copy";
+    empty.textContent = t("noPeriodData");
+    textFields.solarCalendarGrid.append(empty);
+    textFields.solarCalendarMeta.textContent = t("solarCalendarHelp");
+    return;
+  }
+
+  const locale = currentLanguage === "zh" ? "zh-CN" : currentLanguage === "th" ? "th-TH" : "en-AU";
+  const weekdays = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(Date.UTC(2026, 0, 5 + index));
+    return new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date);
+  });
+  const maxSolar = Math.max(...visibleRows.map((row) => Number(row.pv_production ?? row.generation ?? 0)), 0);
+  const bestRow = visibleRows.reduce((best, row) => {
+    const current = Number(row.pv_production ?? row.generation ?? 0);
+    const bestValue = Number(best?.pv_production ?? best?.generation ?? -1);
+    return current > bestValue ? row : best;
+  }, visibleRows[0]);
+  const firstOffset = getLocalWeekdayIndex(visibleRows[0].date);
+
+  weekdays.forEach((weekday) => {
+    const label = document.createElement("span");
+    label.className = "solar-calendar-weekday";
+    label.textContent = weekday;
+    textFields.solarCalendarGrid.append(label);
+  });
+
+  for (let index = 0; index < firstOffset; index += 1) {
+    const spacer = document.createElement("span");
+    spacer.className = "solar-calendar-spacer";
+    textFields.solarCalendarGrid.append(spacer);
+  }
+
+  visibleRows.forEach((row) => {
+    textFields.solarCalendarGrid.append(createSolarCalendarDay(row, maxSolar));
+  });
+
+  textFields.solarCalendarMeta.textContent = interpolate(t("solarCalendarMeta"), {
+    days: visibleRows.length,
+    bestDay: bestRow?.date ?? "--",
+    bestSolar: formatKwh(bestRow?.pv_production ?? bestRow?.generation),
+  });
+}
+
+function getWeekdayLabels() {
+  const locale = currentLanguage === "zh" ? "zh-CN" : currentLanguage === "th" ? "th-TH" : "en-AU";
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(Date.UTC(2026, 0, 5 + index));
+    return new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date);
+  });
+}
+
+function renderWeekdayProfile(payload) {
+  const rows = getLatestDailyRows(payload?.dailyTable ?? []).filter((row) => row?.date);
+  const groups = Array.from({ length: 7 }, (_, index) => ({
+    index,
+    solar: 0,
+    home: 0,
+    grid: 0,
+    count: 0,
+  }));
+
+  textFields.weekdayProfileGrid.replaceChildren();
+
+  if (rows.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "muted-copy";
+    empty.textContent = t("noPeriodData");
+    textFields.weekdayProfileGrid.append(empty);
+    textFields.weekdayProfileMeta.textContent = t("weekdayProfileHelp");
+    return;
+  }
+
+  rows.forEach((row) => {
+    const group = groups[getLocalWeekdayIndex(row.date)];
+    group.solar += Number(row.pv_production ?? row.generation ?? 0);
+    group.home += Number(row.home_usage ?? 0);
+    group.grid += Number(row.grid_consumption ?? 0);
+    group.count += 1;
+  });
+
+  const averagedGroups = groups.map((group) => ({
+    ...group,
+    solarAverage: group.count > 0 ? group.solar / group.count : 0,
+    homeAverage: group.count > 0 ? group.home / group.count : 0,
+    gridAverage: group.count > 0 ? group.grid / group.count : 0,
+  }));
+  const maxValue = Math.max(
+    ...averagedGroups.flatMap((group) => [group.solarAverage, group.homeAverage, group.gridAverage]),
+    1,
+  );
+  const labels = getWeekdayLabels();
+  const bestSolarGroup = averagedGroups.reduce((best, group) =>
+    group.solarAverage > best.solarAverage ? group : best,
+  );
+
+  averagedGroups.forEach((group) => {
+    const card = document.createElement("article");
+    const label = document.createElement("strong");
+    const bars = document.createElement("div");
+    const details = document.createElement("div");
+
+    card.className = "weekday-profile-card";
+    label.textContent = labels[group.index];
+    bars.className = "weekday-profile-bars";
+    details.className = "weekday-profile-details";
+
+    [
+      { key: "avgSolar", className: "weekday-solar", value: group.solarAverage },
+      { key: "avgHome", className: "weekday-home", value: group.homeAverage },
+      { key: "avgGrid", className: "weekday-grid", value: group.gridAverage },
+    ].forEach((item) => {
+      const bar = document.createElement("span");
+      const detail = document.createElement("small");
+      const height = Math.max(6, (item.value / maxValue) * 100);
+
+      bar.className = item.className;
+      bar.style.height = `${height.toFixed(1)}%`;
+      bar.title = `${t(item.key)}: ${formatKwh(item.value)}`;
+      detail.textContent = `${t(item.key)} ${formatKwh(item.value).replace(" kWh", "")}`;
+      bars.append(bar);
+      details.append(detail);
+    });
+
+    card.append(label, bars, details);
+    textFields.weekdayProfileGrid.append(card);
+  });
+
+  textFields.weekdayProfileMeta.textContent = interpolate(t("weekdayProfileMeta"), {
+    days: rows.length,
+    bestDay: labels[bestSolarGroup.index],
   });
 }
 
@@ -3772,6 +4083,9 @@ function renderMetrics(payload) {
   renderEnergyScore(payload);
   renderTariffTimeline(payload.todaySavings);
   renderTrendSnapshot(payload);
+  renderOperationalHeatmap(payload);
+  renderSolarCalendar(payload);
+  renderWeekdayProfile(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);

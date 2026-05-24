@@ -15,7 +15,7 @@ import {
 } from "./services/dashboardService.js";
 import { listModbusProfileIds, resolveModbusProfile } from "./services/modbus/profiles.js";
 import { startModbusSampler } from "./services/modbusSampler.js";
-import { startSqliteBackupScheduler } from "./services/sqliteBackup.js";
+import { getSqliteBackupStatus, startSqliteBackupScheduler } from "./services/sqliteBackup.js";
 import {
   getElectricityTariff,
   saveElectricityTariff,
@@ -106,6 +106,7 @@ app.get("/api/health", (_req, res) => {
     activeModbusProfile: modbusProfile.activeProfile.id,
     modbusProfileMatched: modbusProfile.matched,
     availableModbusProfiles: listModbusProfileIds(),
+    sqliteBackup: getSqliteBackupStatus(),
     dashboardAuthEnabled: env.dashboardAuth.enabled,
     dashboardAuthUserCount: env.dashboardAuth.users.length,
   });
@@ -268,7 +269,7 @@ app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-app.listen(env.port, env.host, () => {
+const server = app.listen(env.port, env.host, () => {
   console.log(`FoxCloud dashboard running locally at http://localhost:${env.port}`);
 
   if (env.host === "0.0.0.0" || env.host === "::") {
@@ -294,4 +295,8 @@ app.listen(env.port, env.host, () => {
 
   startSqliteBackupScheduler();
   startModbusSampler();
+});
+
+server.on("error", (error) => {
+  console.error("FoxCloud dashboard server failed:", error);
 });

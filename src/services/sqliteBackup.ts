@@ -5,8 +5,37 @@ import { env } from "../config/env.js";
 import { backupDatabase, getDatabasePath } from "./sqliteStore.js";
 
 let isBackingUp = false;
+let backupInterval: ReturnType<typeof setInterval> | null = null;
+let nextRunAt: string | null = null;
 
 const backupFilePrefix = "foxcloud-dashboard-backup-";
+
+export interface SqliteBackupStatus {
+  enabled: boolean;
+  databasePath: string;
+  backupDir: string;
+  intervalMs: number;
+  retentionCount: number;
+  schedulerStarted: boolean;
+  nextRunAt: string | null;
+  isRunning: boolean;
+  lastAttemptAt: string | null;
+  lastSuccessAt: string | null;
+  lastSuccessPath: string | null;
+  lastFailureAt: string | null;
+  lastFailureMessage: string | null;
+}
+
+const backupStatus: Pick<
+  SqliteBackupStatus,
+  "lastAttemptAt" | "lastSuccessAt" | "lastSuccessPath" | "lastFailureAt" | "lastFailureMessage"
+> = {
+  lastAttemptAt: null,
+  lastSuccessAt: null,
+  lastSuccessPath: null,
+  lastFailureAt: null,
+  lastFailureMessage: null,
+};
 
 const toTimestamp = (date: Date): string =>
   date.toISOString().replace(/[:.]/g, "-");
@@ -39,6 +68,7 @@ const runBackup = async (reason: string): Promise<void> => {
   }
 
   isBackingUp = true;
+  backupStatus.lastAttemptAt = new Date().toISOString();
 
   try {
     const backupDir = getBackupDir();
@@ -48,18 +78,46 @@ const runBackup = async (reason: string): Promise<void> => {
     await backupDatabase(backupPath);
     await pruneOldBackups(backupDir);
 
+    backupStatus.lastSuccessAt = new Date().toISOString();
+    backupStatus.lastSuccessPath = backupPath;
+    backupStatus.lastFailureMessage = null;
     console.log(`SQLite backup saved (${reason}): ${backupPath}`);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown SQLite backup error";
+    backupStatus.lastFailureAt = new Date().toISOString();
+    backupStatus.lastFailureMessage = message;
     console.warn(`SQLite backup failed (${reason}): ${message}`);
   } finally {
     isBackingUp = false;
   }
 };
 
+export function getSqliteBackupStatus(): SqliteBackupStatus {
+  return {
+    enabled: env.sqliteBackup.enabled,
+    databasePath: getDatabasePath(),
+    backupDir: getBackupDir(),
+    intervalMs: env.sqliteBackup.intervalMs,
+    retentionCount: env.sqliteBackup.retentionCount,
+    schedulerStarted: backupInterval !== null,
+    nextRunAt,
+    isRunning: isBackingUp,
+    ...backupStatus,
+  };
+}
+
+const setNextRunAt = (): void => {
+  nextRunAt = new Date(Date.now() + env.sqliteBackup.intervalMs).toISOString();
+};
+
 export function startSqliteBackupScheduler(): void {
   if (!env.sqliteBackup.enabled) {
     console.log("SQLite backup scheduler is disabled.");
+    return;
+  }
+
+  if (backupInterval) {
+    console.log("SQLite backup scheduler is already running.");
     return;
   }
 
@@ -70,7 +128,10 @@ export function startSqliteBackupScheduler(): void {
   );
 
   void runBackup("startup");
-  setInterval(() => {
+  setNextRunAt();
+  backupInterval = setInterval(() => {
+    setNextRunAt();
     void runBackup("interval");
   }, env.sqliteBackup.intervalMs);
+  backupInterval.unref();
 }

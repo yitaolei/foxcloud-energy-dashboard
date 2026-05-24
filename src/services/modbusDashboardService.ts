@@ -523,7 +523,9 @@ const buildLast24Hours = (deviceSn: string): DashboardPayload["last24Hours"] => 
       }),
     ),
     batteryLevelPercent: samples.map((sample) => sample.battery_soc_percent),
+    solarGeneratedKw: samples.map((sample) => round(sample.solar_generated_kw)),
     homeUsageKw: samples.map((sample) => round(sample.home_usage_kw)),
+    gridImportKw: samples.map((sample) => round(sample.grid_import_kw)),
     batteryDischargeKw: samples.map((sample) => round(sample.battery_discharge_kw)),
   };
 };

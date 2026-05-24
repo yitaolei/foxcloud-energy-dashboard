@@ -418,11 +418,13 @@ const buildRowFromAnalysisHistory = (
 const buildLast24Hours = (historyResults: FoxCloudHistoryDeviceResult[]): DashboardPayload["last24Hours"] => {
   const series = historyResults[0]?.datas ?? [];
   const batteryLevel = findHistorySeries(series, ["SoC_1", "SoC"]);
+  const solarGenerated = findHistorySeries(series, ["pvPower"]);
   const homeUsage = findHistorySeries(series, ["loadsPower"]);
+  const gridImport = findHistorySeries(series, ["gridConsumptionPower"]);
   const batteryDischarge = findHistorySeries(series, ["batDischargePower"]);
   const labels = Array.from(
     new Set(
-      [batteryLevel, homeUsage, batteryDischarge]
+      [batteryLevel, solarGenerated, homeUsage, gridImport, batteryDischarge]
         .filter((item): item is FoxCloudHistorySeries => Boolean(item))
         .flatMap((item) => item.data.map((point) => point.time)),
     ),
@@ -430,13 +432,17 @@ const buildLast24Hours = (historyResults: FoxCloudHistoryDeviceResult[]): Dashbo
   const valueMap = (item: FoxCloudHistorySeries | null): Map<string, number> =>
     new Map((item?.data ?? []).map((point) => [point.time, round(point.value)]));
   const batteryLevelMap = valueMap(batteryLevel);
+  const solarGeneratedMap = valueMap(solarGenerated);
   const homeUsageMap = valueMap(homeUsage);
+  const gridImportMap = valueMap(gridImport);
   const batteryDischargeMap = valueMap(batteryDischarge);
 
   return {
     labels: labels.map(toTimeLabel),
     batteryLevelPercent: labels.map((label) => batteryLevelMap.get(label) ?? null),
+    solarGeneratedKw: labels.map((label) => solarGeneratedMap.get(label) ?? null),
     homeUsageKw: labels.map((label) => homeUsageMap.get(label) ?? null),
+    gridImportKw: labels.map((label) => gridImportMap.get(label) ?? null),
     batteryDischargeKw: labels.map((label) => batteryDischargeMap.get(label) ?? null),
   };
 };
@@ -930,7 +936,9 @@ const buildDemoHistory = (): DashboardPayload["last24Hours"] => {
     return {
       label: pointDate.toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit" }),
       battery,
+      solar: round(solarWindow * 3.6),
       home,
+      gridImport: round(Math.max(home - discharge - solarWindow * 2.2, 0)),
       discharge,
     };
   });
@@ -938,7 +946,9 @@ const buildDemoHistory = (): DashboardPayload["last24Hours"] => {
   return {
     labels: points.map((point) => point.label),
     batteryLevelPercent: points.map((point) => point.battery),
+    solarGeneratedKw: points.map((point) => point.solar),
     homeUsageKw: points.map((point) => point.home),
+    gridImportKw: points.map((point) => point.gridImport),
     batteryDischargeKw: points.map((point) => point.discharge),
   };
 };

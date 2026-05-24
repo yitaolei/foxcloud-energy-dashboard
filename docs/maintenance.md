@@ -183,3 +183,8 @@ The browser must never call FoxCloud directly. The backend signs FoxCloud reques
   backward compatible but are visible in `/api/health` and dashboard warnings.
 - Added a rebuild-cache preview endpoint and frontend confirmation text showing the
   estimated rebuild day count and FoxCloud history API calls before work starts.
+- Added SQLite backup configuration, scheduler state, next run time, and last-run status
+  to the protected `/api/health` response so Docker and NAS deployments can verify
+  backups without reading logs.
+- Made SQLite backup scheduler startup idempotent so duplicate calls do not create
+  duplicate interval timers in one process.

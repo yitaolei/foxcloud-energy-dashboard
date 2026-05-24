@@ -150,7 +150,9 @@ export interface DashboardPayload {
   last24Hours: {
     labels: string[];
     batteryLevelPercent: Array<number | null>;
+    solarGeneratedKw: Array<number | null>;
     homeUsageKw: Array<number | null>;
+    gridImportKw: Array<number | null>;
     batteryDischargeKw: Array<number | null>;
   };
   dailyTable: DashboardDailyRow[];

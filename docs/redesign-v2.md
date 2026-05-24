@@ -186,6 +186,8 @@ not by simply adding solar production plus battery discharge.
 - Export/import net card: whether the home is currently a net exporter or importer.
   - First pass implemented: the top KPI row now includes today's net grid position using return-to-grid minus grid consumption.
 - Energy health score: combine self-sufficiency, battery state, grid flow, temperature, and weather into one visual score.
+- Last-24-hours operational heatmap: visualize solar generation, home usage, battery discharge, and grid import intensity as horizontal time bands so the dashboard communicates patterns instead of only showing numeric totals.
+- Monthly solar calendar and weekday profile: show daily solar strength, daily self-sufficiency, and weekday averages as visual cards/bars so recurring production and usage patterns are easier to scan.
   - First pass implemented: the top dashboard now includes a 0-100 home energy score with factor chips.
 - Daily comparison: today vs yesterday, and today vs same weekday last week.
   - First pass implemented: visual trend snapshot compares today's key metrics against the recent 7-day average.

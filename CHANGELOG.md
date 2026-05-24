@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-05-24
+
+### Added
+
+- Added a last-24-hours operational heatmap to the dashboard, showing solar generation, home load, battery discharge, and grid import intensity as visual bands.
+- Added solar generation and grid import series to the `last24Hours` dashboard payload for FoxCloud, Modbus, and demo data.
+- Added a monthly solar production calendar and weekday energy profile so daily and weekly patterns can be read visually instead of only through table values.
+- Added SQLite backup status metadata to the protected `/api/health` response, including backup path, interval, retention count, scheduler state, next run time, running state, last successful backup path, and last success/failure timestamps.
+- Added regression coverage for the SQLite backup health status shape.
+
+### Fixed
+
+- Prevented duplicate SQLite backup scheduler intervals if the scheduler startup hook is called more than once in the same process.
+- Kept an explicit server reference so newer Node runtimes do not allow the app process to exit immediately after startup.
+
 ## 2026-05-06
 
 ### Added

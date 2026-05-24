@@ -175,7 +175,7 @@ data/backups/
 /api/livez
 ```
 
-它只返回 `ok` 和时间戳。更完整的 `/api/health` 仍然需要仪表盘登录，并会显示版本号、可选 git SHA、启动时间和运行时长。使用 Modbus 模式时，它也会显示当前配置的 profile、实际生效的 profile，以及可用的 Modbus profile id 列表。
+它只返回 `ok` 和时间戳。更完整的 `/api/health` 仍然需要仪表盘登录，并会显示版本号、可选 git SHA、启动时间和运行时长。它也会显示 SQLite 备份配置、调度器状态、下次预计运行时间和最近一次运行状态，方便 Docker 或 NAS 部署排查。使用 Modbus 模式时，它还会显示当前配置的 profile、实际生效的 profile，以及可用的 Modbus profile id 列表。
 
 ## Docker / Synology 简要说明
 

@@ -348,6 +348,51 @@
           </div>
         </section>
 
+        <section class="panel operational-heatmap-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="operatingPattern">Operating pattern</p>
+              <h2 data-i18n="last24Heatmap">Last 24-hour power heatmap</h2>
+              <p id="operationalHeatmapMeta" class="muted-copy" data-i18n="last24HeatmapHelp">
+                Color intensity shows when each part of the system was working hardest.
+              </p>
+            </div>
+          </div>
+          <div id="operationalHeatmapGrid" class="operational-heatmap-grid"></div>
+          <div class="operational-heatmap-legend">
+            <span><i class="legend-dot heat-solar"></i><b data-i18n="solar">Solar</b></span>
+            <span><i class="legend-dot heat-home"></i><b data-i18n="home">Home</b></span>
+            <span><i class="legend-dot heat-battery"></i><b data-i18n="battery">Battery</b></span>
+            <span><i class="legend-dot heat-grid"></i><b data-i18n="grid">Grid</b></span>
+          </div>
+        </section>
+
+        <section class="panel solar-calendar-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="monthlyPattern">Monthly pattern</p>
+              <h2 data-i18n="solarCalendar">Solar production calendar</h2>
+              <p id="solarCalendarMeta" class="muted-copy" data-i18n="solarCalendarHelp">
+                Daily color intensity shows stronger solar production, with self-sufficiency shown inside each day.
+              </p>
+            </div>
+          </div>
+          <div id="solarCalendarGrid" class="solar-calendar-grid"></div>
+        </section>
+
+        <section class="panel weekday-profile-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="weeklyRhythm">Weekly rhythm</p>
+              <h2 data-i18n="weekdayProfile">Weekday energy profile</h2>
+              <p id="weekdayProfileMeta" class="muted-copy" data-i18n="weekdayProfileHelp">
+                Average daily solar, home use, and grid import grouped by weekday.
+              </p>
+            </div>
+          </div>
+          <div id="weekdayProfileGrid" class="weekday-profile-grid"></div>
+        </section>
+
         <section class="gauge-panel" aria-live="polite">
           <article class="gauge-card gauge-solar">
             <div class="gauge-card-head">
