@@ -723,6 +723,85 @@ select {
   line-height: 1.15;
 }
 
+.daily-map-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.78)),
+    var(--surface-strong);
+}
+
+.daily-map-wrap {
+  overflow-x: auto;
+}
+
+.daily-map-svg {
+  display: block;
+  width: 100%;
+  min-width: 620px;
+  height: auto;
+}
+
+.daily-map-plot-bg {
+  fill: rgba(248, 250, 252, 0.84);
+  stroke: rgba(37, 99, 235, 0.12);
+}
+
+.daily-map-grid-line {
+  stroke: rgba(84, 101, 93, 0.14);
+  stroke-width: 1;
+}
+
+.daily-map-axis {
+  stroke: rgba(23, 35, 30, 0.42);
+  stroke-width: 2;
+}
+
+.daily-map-axis-label {
+  fill: var(--muted);
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.daily-map-x-label {
+  text-anchor: end;
+}
+
+.daily-map-point {
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 2;
+  opacity: 0.9;
+}
+
+.daily-map-point:hover {
+  opacity: 1;
+  stroke: #17231e;
+}
+
+.daily-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.daily-map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.map-low-grid {
+  background: #f59e0b;
+}
+
+.map-high-grid {
+  background: #2563eb;
+}
+
 .visual-status-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

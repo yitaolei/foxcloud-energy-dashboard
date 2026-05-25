@@ -393,6 +393,26 @@
           <div id="weekdayProfileGrid" class="weekday-profile-grid"></div>
         </section>
 
+        <section class="panel daily-map-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="dailyMapKicker">Daily map</p>
+              <h2 data-i18n="solarLoadMap">Solar vs load map</h2>
+              <p id="dailyMapMeta" class="muted-copy" data-i18n="solarLoadMapHelp">
+                Each point is one day. Higher is more solar, further right is more home usage, and stronger blue means more grid import.
+              </p>
+            </div>
+          </div>
+          <div class="daily-map-wrap">
+            <svg id="dailyMapSvg" class="daily-map-svg" viewBox="0 0 720 360" role="img" aria-label="Solar versus home usage daily map"></svg>
+          </div>
+          <div class="daily-map-legend">
+            <span><i class="legend-dot map-low-grid"></i><b data-i18n="lowGridImport">Low grid import</b></span>
+            <span><i class="legend-dot map-high-grid"></i><b data-i18n="highGridImport">High grid import</b></span>
+            <span data-i18n="dailyMapSizeHint">Larger points exported more to grid</span>
+          </div>
+        </section>
+
         <section class="gauge-panel" aria-live="polite">
           <article class="gauge-card gauge-solar">
             <div class="gauge-card-head">

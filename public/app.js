@@ -170,6 +170,8 @@ const textFields = {
   solarCalendarMeta: document.getElementById("solarCalendarMeta"),
   weekdayProfileGrid: document.getElementById("weekdayProfileGrid"),
   weekdayProfileMeta: document.getElementById("weekdayProfileMeta"),
+  dailyMapSvg: document.getElementById("dailyMapSvg"),
+  dailyMapMeta: document.getElementById("dailyMapMeta"),
   gaugeSolarArc: document.getElementById("gaugeSolarArc"),
   gaugeBatteryArc: document.getElementById("gaugeBatteryArc"),
   gaugeHomeArc: document.getElementById("gaugeHomeArc"),
@@ -485,6 +487,15 @@ const translations = {
     avgSolar: "Avg solar",
     avgHome: "Avg home",
     avgGrid: "Avg grid",
+    dailyMapKicker: "Daily map",
+    solarLoadMap: "Solar vs load map",
+    solarLoadMapHelp: "Each point is one day. Higher is more solar, further right is more home usage, and stronger blue means more grid import.",
+    dailyMapMeta: "{days} days plotted. Best balanced day: {bestDay}.",
+    lowGridImport: "Low grid import",
+    highGridImport: "High grid import",
+    dailyMapSizeHint: "Larger points exported more to grid",
+    solarAxis: "Solar",
+    homeAxis: "Home usage",
     trendMeta: "Recent avg {average} • {percent}% of average",
     exportedToGrid: "Exported to grid",
     ofYesterday: "{percent}% of yesterday",
@@ -879,6 +890,15 @@ const translations = {
     avgSolar: "平均发电",
     avgHome: "平均用电",
     avgGrid: "平均电网",
+    dailyMapKicker: "每日地图",
+    solarLoadMap: "太阳能 vs 家庭负载地图",
+    solarLoadMapHelp: "每个点代表一天。越高表示太阳能越多，越靠右表示家庭用电越多，蓝色越强表示电网取电越多。",
+    dailyMapMeta: "已绘制 {days} 天。最佳平衡日：{bestDay}。",
+    lowGridImport: "低电网取电",
+    highGridImport: "高电网取电",
+    dailyMapSizeHint: "点越大表示回馈电网越多",
+    solarAxis: "太阳能",
+    homeAxis: "家庭用电",
     trendMeta: "最近平均 {average} • 相当于平均值 {percent}%",
     exportedToGrid: "已回馈电网",
     ofYesterday: "相当于昨天 {percent}%",
@@ -1273,6 +1293,15 @@ const translations = {
     avgSolar: "โซลาร์เฉลี่ย",
     avgHome: "บ้านเฉลี่ย",
     avgGrid: "กริดเฉลี่ย",
+    dailyMapKicker: "แผนที่รายวัน",
+    solarLoadMap: "โซลาร์เทียบกับโหลดบ้าน",
+    solarLoadMapHelp: "แต่ละจุดคือหนึ่งวัน จุดสูงคือโซลาร์มาก ขวาคือใช้ไฟบ้านมาก และสีน้ำเงินเข้มคือใช้กริดมาก",
+    dailyMapMeta: "แสดง {days} วัน วันที่สมดุลดีที่สุด: {bestDay}",
+    lowGridImport: "นำเข้ากริดต่ำ",
+    highGridImport: "นำเข้ากริดสูง",
+    dailyMapSizeHint: "จุดใหญ่ขึ้นหมายถึงส่งออกกริดมากขึ้น",
+    solarAxis: "โซลาร์",
+    homeAxis: "ใช้ไฟบ้าน",
     trendMeta: "ค่าเฉลี่ยล่าสุด {average} • {percent}% ของค่าเฉลี่ย",
     exportedToGrid: "ส่งออกเข้ากริด",
     ofYesterday: "{percent}% ของเมื่อวาน",
@@ -2032,6 +2061,146 @@ function renderWeekdayProfile(payload) {
   textFields.weekdayProfileMeta.textContent = interpolate(t("weekdayProfileMeta"), {
     days: rows.length,
     bestDay: labels[bestSolarGroup.index],
+  });
+}
+
+function createSvgElement(tagName, attributes = {}) {
+  const element = document.createElementNS("http://www.w3.org/2000/svg", tagName);
+
+  Object.entries(attributes).forEach(([key, value]) => {
+    element.setAttribute(key, String(value));
+  });
+
+  return element;
+}
+
+function renderDailyMap(payload) {
+  const rows = getLatestDailyRows(payload?.dailyTable ?? [])
+    .filter((row) => row?.date)
+    .map((row) => ({
+      date: row.date,
+      day: row.day,
+      solar: Number(row.pv_production ?? row.generation ?? 0),
+      home: Number(row.home_usage ?? 0),
+      grid: Number(row.grid_consumption ?? 0),
+      export: Number(row.daily_feedin ?? 0),
+    }));
+  const svg = textFields.dailyMapSvg;
+  const width = 720;
+  const height = 360;
+  const padding = { top: 28, right: 28, bottom: 54, left: 68 };
+
+  svg.replaceChildren();
+
+  if (rows.length === 0) {
+    textFields.dailyMapMeta.textContent = t("noPeriodData");
+    return;
+  }
+
+  const plotWidth = width - padding.left - padding.right;
+  const plotHeight = height - padding.top - padding.bottom;
+  const maxSolar = Math.max(...rows.map((row) => row.solar), 1);
+  const maxHome = Math.max(...rows.map((row) => row.home), 1);
+  const maxGrid = Math.max(...rows.map((row) => row.grid), 1);
+  const maxExport = Math.max(...rows.map((row) => row.export), 1);
+  const xScale = (value) => padding.left + (value / maxHome) * plotWidth;
+  const yScale = (value) => padding.top + plotHeight - (value / maxSolar) * plotHeight;
+  const gridLineValues = [0.25, 0.5, 0.75, 1];
+  const bestBalancedRow = rows.reduce((best, row) => {
+    const rowSelf = getSelfSufficiencyPercentFromRow({
+      home_usage: row.home,
+      grid_consumption: row.grid,
+    }) ?? 0;
+    const bestSelf = getSelfSufficiencyPercentFromRow({
+      home_usage: best.home,
+      grid_consumption: best.grid,
+    }) ?? 0;
+    return rowSelf > bestSelf ? row : best;
+  }, rows[0]);
+
+  svg.append(createSvgElement("rect", {
+    x: padding.left,
+    y: padding.top,
+    width: plotWidth,
+    height: plotHeight,
+    rx: 8,
+    class: "daily-map-plot-bg",
+  }));
+
+  gridLineValues.forEach((ratio) => {
+    const x = padding.left + plotWidth * ratio;
+    const y = padding.top + plotHeight * (1 - ratio);
+
+    svg.append(createSvgElement("line", {
+      x1: x,
+      y1: padding.top,
+      x2: x,
+      y2: padding.top + plotHeight,
+      class: "daily-map-grid-line",
+    }));
+    svg.append(createSvgElement("line", {
+      x1: padding.left,
+      y1: y,
+      x2: padding.left + plotWidth,
+      y2: y,
+      class: "daily-map-grid-line",
+    }));
+  });
+
+  svg.append(createSvgElement("line", {
+    x1: padding.left,
+    y1: padding.top + plotHeight,
+    x2: padding.left + plotWidth,
+    y2: padding.top + plotHeight,
+    class: "daily-map-axis",
+  }));
+  svg.append(createSvgElement("line", {
+    x1: padding.left,
+    y1: padding.top,
+    x2: padding.left,
+    y2: padding.top + plotHeight,
+    class: "daily-map-axis",
+  }));
+
+  const yLabel = createSvgElement("text", {
+    x: 22,
+    y: padding.top + 12,
+    class: "daily-map-axis-label",
+  });
+  yLabel.textContent = t("solarAxis");
+  svg.append(yLabel);
+
+  const xLabel = createSvgElement("text", {
+    x: padding.left + plotWidth,
+    y: height - 16,
+    class: "daily-map-axis-label daily-map-x-label",
+  });
+  xLabel.textContent = t("homeAxis");
+  svg.append(xLabel);
+
+  rows.forEach((row) => {
+    const gridRatio = Math.max(0, Math.min(1, row.grid / maxGrid));
+    const exportRatio = Math.max(0, Math.min(1, row.export / maxExport));
+    const red = Math.round(245 + (37 - 245) * gridRatio);
+    const green = Math.round(158 + (99 - 158) * gridRatio);
+    const blue = Math.round(11 + (235 - 11) * gridRatio);
+    const point = createSvgElement("circle", {
+      cx: xScale(row.home),
+      cy: yScale(row.solar),
+      r: 5 + exportRatio * 9,
+      class: "daily-map-point",
+      fill: `rgb(${red}, ${green}, ${blue})`,
+    });
+    const title = createSvgElement("title");
+
+    title.textContent = `${row.date}: ${t("solarAxis")} ${formatKwh(row.solar)}, ${t("homeAxis")} ${formatKwh(row.home)}, ${t("avgGrid")} ${formatKwh(row.grid)}`;
+    point.append(title);
+    svg.append(point);
+  });
+
+  textFields.dailyMapMeta.textContent = interpolate(t("dailyMapMeta"), {
+    days: rows.length,
+    bestDay: bestBalancedRow?.date ?? "--",
   });
 }
 
@@ -4086,6 +4255,7 @@ function renderMetrics(payload) {
   renderOperationalHeatmap(payload);
   renderSolarCalendar(payload);
   renderWeekdayProfile(payload);
+  renderDailyMap(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);
