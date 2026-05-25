@@ -428,6 +428,44 @@
           </div>
         </section>
 
+        <section class="panel battery-reserve-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="batteryReserveKicker">Battery reserve</p>
+              <h2 data-i18n="batteryReserveTitle">Battery reserve plan</h2>
+              <p id="batteryReserveDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="batteryReserveMode" class="battery-reserve-mode">--</strong>
+          </div>
+          <div class="battery-reserve-layout">
+            <div class="battery-reserve-stack" aria-hidden="true">
+              <span id="batteryReserveFill" class="battery-reserve-fill" style="height: 0%"></span>
+              <b id="batteryReserveSoc">--</b>
+            </div>
+            <div class="battery-reserve-copy">
+              <div class="battery-reserve-meter">
+                <span data-i18n="batteryReserveAboveFloor">Reserve above 20%</span>
+                <strong id="batteryReserveUsable">--</strong>
+                <div class="battery-reserve-bar"><span id="batteryReserveBar" style="width: 0%"></span></div>
+              </div>
+              <div class="battery-reserve-grid">
+                <article>
+                  <span data-i18n="batteryPowerNow">Battery power now</span>
+                  <strong id="batteryReservePower">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="homeLoadCoveredNow">Home load covered now</span>
+                  <strong id="batteryReserveCoverage">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="reserveAction">Recommended action</span>
+                  <strong id="batteryReserveAction">--</strong>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="gauge-panel" aria-live="polite">
           <article class="gauge-card gauge-solar">
             <div class="gauge-card-head">

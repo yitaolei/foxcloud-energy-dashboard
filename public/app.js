@@ -179,6 +179,15 @@ const textFields = {
   peakReadinessTariff: document.getElementById("peakReadinessTariff"),
   peakReadinessGrid: document.getElementById("peakReadinessGrid"),
   peakReadinessSavings: document.getElementById("peakReadinessSavings"),
+  batteryReserveDetail: document.getElementById("batteryReserveDetail"),
+  batteryReserveMode: document.getElementById("batteryReserveMode"),
+  batteryReserveFill: document.getElementById("batteryReserveFill"),
+  batteryReserveSoc: document.getElementById("batteryReserveSoc"),
+  batteryReserveUsable: document.getElementById("batteryReserveUsable"),
+  batteryReserveBar: document.getElementById("batteryReserveBar"),
+  batteryReservePower: document.getElementById("batteryReservePower"),
+  batteryReserveCoverage: document.getElementById("batteryReserveCoverage"),
+  batteryReserveAction: document.getElementById("batteryReserveAction"),
   gaugeSolarArc: document.getElementById("gaugeSolarArc"),
   gaugeBatteryArc: document.getElementById("gaugeBatteryArc"),
   gaugeHomeArc: document.getElementById("gaugeHomeArc"),
@@ -502,6 +511,18 @@ const translations = {
     peakReadinessLow: "Low cover",
     peakReadinessDetail: "Battery {soc}, peak window {window}, current grid flow {grid}.",
     peakReadinessScore: "{score}/100",
+    batteryReserveKicker: "Battery reserve",
+    batteryReserveTitle: "Battery reserve plan",
+    batteryReserveDetail: "Reserve is {reserve} above the 20% floor. Current battery mode is {mode}.",
+    batteryReserveAboveFloor: "Reserve above 20%",
+    batteryPowerNow: "Battery power now",
+    homeLoadCoveredNow: "Home load covered now",
+    reserveAction: "Recommended action",
+    reserveActionSave: "Save battery for peak",
+    reserveActionUseSurplus: "Use surplus or keep charging",
+    reserveActionReduce: "Reduce flexible loads",
+    reserveActionSteady: "Reserve looks steady",
+    reserveActionUnavailable: "Wait for battery data",
     trendMeta: "Recent avg {average} • {percent}% of average",
     exportedToGrid: "Exported to grid",
     ofYesterday: "{percent}% of yesterday",
@@ -904,6 +925,18 @@ const translations = {
     peakReadinessLow: "储能偏低",
     peakReadinessDetail: "电池 {soc}，高峰时段 {window}，当前电网流向 {grid}。",
     peakReadinessScore: "{score}/100",
+    batteryReserveKicker: "电池余量",
+    batteryReserveTitle: "电池余量计划",
+    batteryReserveDetail: "高于 20% 保留线的余量为 {reserve}。当前电池状态：{mode}。",
+    batteryReserveAboveFloor: "高于 20% 的余量",
+    batteryPowerNow: "当前电池功率",
+    homeLoadCoveredNow: "当前家庭负载覆盖",
+    reserveAction: "建议操作",
+    reserveActionSave: "给晚高峰留电",
+    reserveActionUseSurplus: "利用富余电或继续充电",
+    reserveActionReduce: "减少可推迟负载",
+    reserveActionSteady: "余量状态稳定",
+    reserveActionUnavailable: "等待电池数据",
     trendMeta: "最近平均 {average} • 相当于平均值 {percent}%",
     exportedToGrid: "已回馈电网",
     ofYesterday: "相当于昨天 {percent}%",
@@ -1306,6 +1339,18 @@ const translations = {
     peakReadinessLow: "พลังงานสำรองต่ำ",
     peakReadinessDetail: "แบตเตอรี่ {soc}, ช่วงพีค {window}, การไหลกริดตอนนี้ {grid}",
     peakReadinessScore: "{score}/100",
+    batteryReserveKicker: "สำรองแบตเตอรี่",
+    batteryReserveTitle: "แผนสำรองแบตเตอรี่",
+    batteryReserveDetail: "สำรองเหนือระดับ 20% คือ {reserve} โหมดแบตเตอรี่ตอนนี้คือ {mode}",
+    batteryReserveAboveFloor: "สำรองเหนือ 20%",
+    batteryPowerNow: "กำลังแบตเตอรี่ตอนนี้",
+    homeLoadCoveredNow: "โหลดบ้านที่ครอบคลุมตอนนี้",
+    reserveAction: "คำแนะนำ",
+    reserveActionSave: "เก็บแบตไว้ช่วงพีค",
+    reserveActionUseSurplus: "ใช้ไฟส่วนเกินหรือชาร์จต่อ",
+    reserveActionReduce: "ลดโหลดที่เลื่อนได้",
+    reserveActionSteady: "สำรองดูคงที่",
+    reserveActionUnavailable: "รอข้อมูลแบตเตอรี่",
     trendMeta: "ค่าเฉลี่ยล่าสุด {average} • {percent}% ของค่าเฉลี่ย",
     exportedToGrid: "ส่งออกเข้ากริด",
     ofYesterday: "{percent}% ของเมื่อวาน",
@@ -2377,6 +2422,65 @@ function renderPeakReadiness(payload) {
     readiness.savings.totalSavings,
     readiness.savings.currency,
   );
+}
+
+function getBatteryReservePlan(payload) {
+  const live = payload?.live ?? {};
+  const tariff = getTariffStatus(payload?.todaySavings ?? {});
+  const soc = Number(live.batterySocPercent);
+  const homeKw = Number(live.homeUsageKw ?? 0);
+  const chargeKw = Number(live.batteryChargeKw ?? 0);
+  const dischargeKw = Number(live.batteryDischargeKw ?? 0);
+  const reservePercent = Number.isFinite(soc) ? Math.max(0, soc - 20) : null;
+  const modeKey = chargeKw > dischargeKw + 0.05
+    ? "charging"
+    : dischargeKw > chargeKw + 0.05
+      ? "discharging"
+      : "idle";
+  const batteryPower = Math.max(chargeKw, dischargeKw);
+  const loadCoveragePercent = homeKw > 0 && modeKey === "discharging"
+    ? Math.max(0, Math.min(100, (dischargeKw / homeKw) * 100))
+    : 0;
+  const actionKey = !Number.isFinite(soc)
+    ? "reserveActionUnavailable"
+    : soc < 45 && !tariff.isPeak
+      ? "reserveActionSave"
+      : modeKey === "charging" && chargeKw > 0.4
+        ? "reserveActionUseSurplus"
+        : modeKey === "discharging" && !tariff.isPeak && dischargeKw > 0.7
+          ? "reserveActionReduce"
+          : "reserveActionSteady";
+
+  return {
+    soc: Number.isFinite(soc) ? soc : null,
+    reservePercent,
+    modeKey,
+    batteryPower,
+    loadCoveragePercent,
+    actionKey,
+  };
+}
+
+function renderBatteryReservePlan(payload) {
+  if (!payload?.live) {
+    return;
+  }
+
+  const plan = getBatteryReservePlan(payload);
+  const reserveBarPercent = plan.reservePercent === null ? 0 : Math.max(0, Math.min(100, (plan.reservePercent / 80) * 100));
+
+  textFields.batteryReserveFill.style.height = plan.soc === null ? "0%" : `${Math.max(0, Math.min(100, plan.soc)).toFixed(1)}%`;
+  textFields.batteryReserveSoc.textContent = plan.soc === null ? "--" : formatPercent(plan.soc);
+  textFields.batteryReserveMode.textContent = t(plan.modeKey);
+  textFields.batteryReserveDetail.textContent = interpolate(t("batteryReserveDetail"), {
+    reserve: plan.reservePercent === null ? "--" : formatPercent(plan.reservePercent),
+    mode: t(plan.modeKey),
+  });
+  textFields.batteryReserveUsable.textContent = plan.reservePercent === null ? "--" : formatPercent(plan.reservePercent);
+  textFields.batteryReserveBar.style.width = `${reserveBarPercent.toFixed(1)}%`;
+  textFields.batteryReservePower.textContent = formatKw(plan.batteryPower);
+  textFields.batteryReserveCoverage.textContent = formatOptionalPercent(plan.loadCoveragePercent);
+  textFields.batteryReserveAction.textContent = t(plan.actionKey);
 }
 
 function setCoachCard(card, tone, statusKey, detail) {
@@ -4182,6 +4286,7 @@ function renderMetrics(payload) {
   renderSolarCalendar(payload);
   renderWeekdayProfile(payload);
   renderPeakReadiness(payload);
+  renderBatteryReservePlan(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);

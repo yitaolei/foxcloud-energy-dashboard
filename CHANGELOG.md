@@ -8,6 +8,7 @@
 - Added solar generation and grid import series to the `last24Hours` dashboard payload for FoxCloud, Modbus, and demo data.
 - Added a monthly solar production calendar and weekday energy profile so daily and weekly patterns can be read visually instead of only through table values.
 - Replaced the solar-vs-load daily map with an evening peak readiness panel that scores battery readiness, tariff state, grid flow, and estimated savings.
+- Added a battery reserve plan panel that shows usable reserve above the safety floor, current battery mode, battery power, home-load coverage, and a direct action hint.
 - Added SQLite backup status metadata to the protected `/api/health` response, including backup path, interval, retention count, scheduler state, next run time, running state, last successful backup path, and last success/failure timestamps.
 - Added regression coverage for the SQLite backup health status shape.
 
