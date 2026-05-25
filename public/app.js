@@ -188,6 +188,14 @@ const textFields = {
   batteryReservePower: document.getElementById("batteryReservePower"),
   batteryReserveCoverage: document.getElementById("batteryReserveCoverage"),
   batteryReserveAction: document.getElementById("batteryReserveAction"),
+  flexibleLoadDetail: document.getElementById("flexibleLoadDetail"),
+  flexibleLoadStatus: document.getElementById("flexibleLoadStatus"),
+  flexibleLoadCapacity: document.getElementById("flexibleLoadCapacity"),
+  flexibleLoadBar: document.getElementById("flexibleLoadBar"),
+  flexibleLoadExamples: document.getElementById("flexibleLoadExamples"),
+  flexibleLoadWindow: document.getElementById("flexibleLoadWindow"),
+  flexibleLoadAvoid: document.getElementById("flexibleLoadAvoid"),
+  flexibleLoadBatteryGuard: document.getElementById("flexibleLoadBatteryGuard"),
   gaugeSolarArc: document.getElementById("gaugeSolarArc"),
   gaugeBatteryArc: document.getElementById("gaugeBatteryArc"),
   gaugeHomeArc: document.getElementById("gaugeHomeArc"),
@@ -523,6 +531,33 @@ const translations = {
     reserveActionReduce: "Reduce flexible loads",
     reserveActionSteady: "Reserve looks steady",
     reserveActionUnavailable: "Wait for battery data",
+    flexibleLoadKicker: "Flexible loads",
+    flexibleLoadTitle: "Flexible load planner",
+    flexibleLoadDetail: "Surplus headroom {headroom}. Battery {soc}. Grid flow {grid}.",
+    usableSurplusNow: "Usable surplus now",
+    bestLoadWindow: "Best window",
+    avoidLoadNow: "Avoid now",
+    batteryGuard: "Battery guard",
+    loadPlanRunHeavy: "Run larger loads",
+    loadPlanRunLight: "Run small loads",
+    loadPlanChargeFirst: "Let battery charge first",
+    loadPlanWait: "Wait",
+    loadPlanAvoidPeak: "Avoid extra load",
+    loadBestNow: "Now",
+    loadBestAfterPeak: "After peak",
+    loadBestSolarOrOffPeak: "Next solar or off-peak window",
+    loadBestOffPeak: "Off-peak is acceptable",
+    loadAvoidPeakImport: "Peak grid import",
+    loadAvoidLowBattery: "Low battery reserve",
+    loadAvoidHighImport: "High grid import",
+    loadAvoidNone: "No major warning",
+    loadGuardStrong: "Battery reserve is strong",
+    loadGuardMedium: "Keep some reserve",
+    loadGuardLow: "Protect battery reserve",
+    loadExampleHeavy: "About one large appliance",
+    loadExampleMedium: "About one medium appliance",
+    loadExampleLight: "Small flexible loads only",
+    loadExampleNone: "No spare solar headroom",
     trendMeta: "Recent avg {average} • {percent}% of average",
     exportedToGrid: "Exported to grid",
     ofYesterday: "{percent}% of yesterday",
@@ -937,6 +972,33 @@ const translations = {
     reserveActionReduce: "减少可推迟负载",
     reserveActionSteady: "余量状态稳定",
     reserveActionUnavailable: "等待电池数据",
+    flexibleLoadKicker: "可推迟负载",
+    flexibleLoadTitle: "可推迟负载计划",
+    flexibleLoadDetail: "当前可用余量 {headroom}。电池 {soc}。电网流向 {grid}。",
+    usableSurplusNow: "当前可用富余功率",
+    bestLoadWindow: "最佳窗口",
+    avoidLoadNow: "现在避免",
+    batteryGuard: "电池保护",
+    loadPlanRunHeavy: "可以运行较大负载",
+    loadPlanRunLight: "可以运行小负载",
+    loadPlanChargeFirst: "先让电池充电",
+    loadPlanWait: "先等待",
+    loadPlanAvoidPeak: "避免增加负载",
+    loadBestNow: "现在",
+    loadBestAfterPeak: "高峰结束后",
+    loadBestSolarOrOffPeak: "下一个太阳能或离峰窗口",
+    loadBestOffPeak: "离峰时段可用",
+    loadAvoidPeakImport: "高峰电价取电",
+    loadAvoidLowBattery: "电池余量偏低",
+    loadAvoidHighImport: "电网取电偏高",
+    loadAvoidNone: "暂无明显风险",
+    loadGuardStrong: "电池余量充足",
+    loadGuardMedium: "保留一部分电量",
+    loadGuardLow: "优先保护电池余量",
+    loadExampleHeavy: "约可带一个大电器",
+    loadExampleMedium: "约可带一个中等电器",
+    loadExampleLight: "仅适合小型可推迟负载",
+    loadExampleNone: "暂无富余太阳能空间",
     trendMeta: "最近平均 {average} • 相当于平均值 {percent}%",
     exportedToGrid: "已回馈电网",
     ofYesterday: "相当于昨天 {percent}%",
@@ -1351,6 +1413,33 @@ const translations = {
     reserveActionReduce: "ลดโหลดที่เลื่อนได้",
     reserveActionSteady: "สำรองดูคงที่",
     reserveActionUnavailable: "รอข้อมูลแบตเตอรี่",
+    flexibleLoadKicker: "โหลดที่เลื่อนได้",
+    flexibleLoadTitle: "แผนโหลดที่เลื่อนได้",
+    flexibleLoadDetail: "กำลังเหลือ {headroom} แบตเตอรี่ {soc} การไหลกริด {grid}",
+    usableSurplusNow: "ไฟส่วนเกินใช้ได้ตอนนี้",
+    bestLoadWindow: "ช่วงที่ดีที่สุด",
+    avoidLoadNow: "ควรหลีกเลี่ยงตอนนี้",
+    batteryGuard: "ป้องกันแบตเตอรี่",
+    loadPlanRunHeavy: "เปิดโหลดใหญ่ได้",
+    loadPlanRunLight: "เปิดโหลดเล็กได้",
+    loadPlanChargeFirst: "ให้แบตชาร์จก่อน",
+    loadPlanWait: "รอก่อน",
+    loadPlanAvoidPeak: "เลี่ยงเพิ่มโหลด",
+    loadBestNow: "ตอนนี้",
+    loadBestAfterPeak: "หลังช่วงพีค",
+    loadBestSolarOrOffPeak: "ช่วงโซลาร์หรือออฟพีคถัดไป",
+    loadBestOffPeak: "ออฟพีคใช้ได้",
+    loadAvoidPeakImport: "นำเข้ากริดช่วงพีค",
+    loadAvoidLowBattery: "สำรองแบตต่ำ",
+    loadAvoidHighImport: "นำเข้ากริดสูง",
+    loadAvoidNone: "ไม่มีคำเตือนหลัก",
+    loadGuardStrong: "สำรองแบตแข็งแรง",
+    loadGuardMedium: "เก็บสำรองไว้บางส่วน",
+    loadGuardLow: "ปกป้องสำรองแบต",
+    loadExampleHeavy: "ประมาณเครื่องใช้ไฟฟ้าขนาดใหญ่หนึ่งเครื่อง",
+    loadExampleMedium: "ประมาณเครื่องใช้ไฟฟ้าขนาดกลางหนึ่งเครื่อง",
+    loadExampleLight: "เฉพาะโหลดเล็กที่เลื่อนได้",
+    loadExampleNone: "ไม่มีไฟโซลาร์เหลือ",
     trendMeta: "ค่าเฉลี่ยล่าสุด {average} • {percent}% ของค่าเฉลี่ย",
     exportedToGrid: "ส่งออกเข้ากริด",
     ofYesterday: "{percent}% ของเมื่อวาน",
@@ -2481,6 +2570,89 @@ function renderBatteryReservePlan(payload) {
   textFields.batteryReservePower.textContent = formatKw(plan.batteryPower);
   textFields.batteryReserveCoverage.textContent = formatOptionalPercent(plan.loadCoveragePercent);
   textFields.batteryReserveAction.textContent = t(plan.actionKey);
+}
+
+function getFlexibleLoadPlan(payload) {
+  const live = payload?.live ?? {};
+  const tariff = getTariffStatus(payload?.todaySavings ?? {});
+  const soc = Number(live.batterySocPercent);
+  const gridImportKw = Number(live.gridImportKw ?? 0);
+  const gridExportKw = Number(live.gridExportKw ?? 0);
+  const exportHeadroomKw = Math.max(0, gridExportKw);
+  const protectedHeadroomKw = Number.isFinite(soc) && soc < 45
+    ? Math.max(0, exportHeadroomKw - 0.5)
+    : exportHeadroomKw;
+  const statusKey = tariff.isPeak && gridImportKw > 0.1
+    ? "loadPlanAvoidPeak"
+    : protectedHeadroomKw >= 1.5 && (!Number.isFinite(soc) || soc >= 45)
+      ? "loadPlanRunHeavy"
+      : protectedHeadroomKw >= 0.5
+        ? "loadPlanRunLight"
+        : Number.isFinite(soc) && soc < 45 && !tariff.isPeak
+          ? "loadPlanChargeFirst"
+          : "loadPlanWait";
+  const windowKey = protectedHeadroomKw >= 0.5
+    ? "loadBestNow"
+    : tariff.isPeak
+      ? "loadBestAfterPeak"
+      : Number.isFinite(soc) && soc < 55
+        ? "loadBestSolarOrOffPeak"
+        : "loadBestOffPeak";
+  const avoidKey = tariff.isPeak && gridImportKw > 0.1
+    ? "loadAvoidPeakImport"
+    : Number.isFinite(soc) && soc < 35
+      ? "loadAvoidLowBattery"
+      : gridImportKw > 1
+        ? "loadAvoidHighImport"
+        : "loadAvoidNone";
+  const guardKey = Number.isFinite(soc) && soc >= 70
+    ? "loadGuardStrong"
+    : Number.isFinite(soc) && soc >= 45
+      ? "loadGuardMedium"
+      : "loadGuardLow";
+  const exampleKey = protectedHeadroomKw >= 2
+    ? "loadExampleHeavy"
+    : protectedHeadroomKw >= 1
+      ? "loadExampleMedium"
+      : protectedHeadroomKw >= 0.5
+        ? "loadExampleLight"
+        : "loadExampleNone";
+  const gridFlow = gridExportKw >= gridImportKw
+    ? `${t("exporting")} ${formatKw(gridExportKw)}`
+    : `${t("importing")} ${formatKw(gridImportKw)}`;
+
+  return {
+    headroomKw: protectedHeadroomKw,
+    soc: Number.isFinite(soc) ? soc : null,
+    gridFlow,
+    statusKey,
+    windowKey,
+    avoidKey,
+    guardKey,
+    exampleKey,
+  };
+}
+
+function renderFlexibleLoadPlan(payload) {
+  if (!payload?.live) {
+    return;
+  }
+
+  const plan = getFlexibleLoadPlan(payload);
+  const capacityPercent = Math.max(0, Math.min(100, (plan.headroomKw / 3) * 100));
+
+  textFields.flexibleLoadStatus.textContent = t(plan.statusKey);
+  textFields.flexibleLoadDetail.textContent = interpolate(t("flexibleLoadDetail"), {
+    headroom: formatKw(plan.headroomKw),
+    soc: plan.soc === null ? "--" : formatPercent(plan.soc),
+    grid: plan.gridFlow,
+  });
+  textFields.flexibleLoadCapacity.textContent = formatKw(plan.headroomKw);
+  textFields.flexibleLoadBar.style.width = `${capacityPercent.toFixed(1)}%`;
+  textFields.flexibleLoadExamples.textContent = t(plan.exampleKey);
+  textFields.flexibleLoadWindow.textContent = t(plan.windowKey);
+  textFields.flexibleLoadAvoid.textContent = t(plan.avoidKey);
+  textFields.flexibleLoadBatteryGuard.textContent = t(plan.guardKey);
 }
 
 function setCoachCard(card, tone, statusKey, detail) {
@@ -4287,6 +4459,7 @@ function renderMetrics(payload) {
   renderWeekdayProfile(payload);
   renderPeakReadiness(payload);
   renderBatteryReservePlan(payload);
+  renderFlexibleLoadPlan(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);

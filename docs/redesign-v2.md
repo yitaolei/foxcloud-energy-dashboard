@@ -179,6 +179,8 @@ not by simply adding solar production plus battery discharge.
 - Battery readiness card: whether the battery is likely to cover evening peak.
 - Battery reserve plan: show how much battery remains above a practical safety floor, whether the battery is charging/discharging/idle, how much of the current home load is covered, and what action makes sense now.
   - First pass implemented: the top dashboard now includes a reserve plan with a SOC fill bar, usable-reserve meter, battery power, live coverage, and direct action hint.
+- Flexible load planner: recommend when to run optional appliances by combining export headroom, battery reserve, current tariff window, and grid import/export state.
+  - First pass implemented: the top dashboard now shows usable surplus power, a best-load window, avoid-now warning, and battery guard hint.
 - Energy coach panel: combine today's energy verdict, peak plan, and tomorrow's solar outlook into simple action hints.
   - First pass implemented: the dashboard now shows a three-card energy coach using existing dashboard and weather data.
 - Peak window countdown: show time until peak tariff starts/ends.

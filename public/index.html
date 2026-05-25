@@ -466,6 +466,39 @@
           </div>
         </section>
 
+        <section class="panel flexible-load-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="flexibleLoadKicker">Flexible loads</p>
+              <h2 data-i18n="flexibleLoadTitle">Flexible load planner</h2>
+              <p id="flexibleLoadDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="flexibleLoadStatus" class="flexible-load-status">--</strong>
+          </div>
+          <div class="flexible-load-layout">
+            <div class="flexible-load-meter">
+              <span data-i18n="usableSurplusNow">Usable surplus now</span>
+              <strong id="flexibleLoadCapacity">--</strong>
+              <div class="flexible-load-bar"><span id="flexibleLoadBar" style="width: 0%"></span></div>
+              <small id="flexibleLoadExamples">--</small>
+            </div>
+            <div class="flexible-load-grid">
+              <article>
+                <span data-i18n="bestLoadWindow">Best window</span>
+                <strong id="flexibleLoadWindow">--</strong>
+              </article>
+              <article>
+                <span data-i18n="avoidLoadNow">Avoid now</span>
+                <strong id="flexibleLoadAvoid">--</strong>
+              </article>
+              <article>
+                <span data-i18n="batteryGuard">Battery guard</span>
+                <strong id="flexibleLoadBatteryGuard">--</strong>
+              </article>
+            </div>
+          </div>
+        </section>
+
         <section class="gauge-panel" aria-live="polite">
           <article class="gauge-card gauge-solar">
             <div class="gauge-card-head">
