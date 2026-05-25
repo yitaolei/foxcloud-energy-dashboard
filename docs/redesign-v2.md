@@ -188,7 +188,7 @@ not by simply adding solar production plus battery discharge.
 - Energy health score: combine self-sufficiency, battery state, grid flow, temperature, and weather into one visual score.
 - Last-24-hours operational heatmap: visualize solar generation, home usage, battery discharge, and grid import intensity as horizontal time bands so the dashboard communicates patterns instead of only showing numeric totals.
 - Monthly solar calendar and weekday profile: show daily solar strength, daily self-sufficiency, and weekday averages as visual cards/bars so recurring production and usage patterns are easier to scan.
-- Solar-vs-load daily map: plot every day by solar production and home usage, using color for grid import and point size for grid export so balanced days and grid-heavy days stand out visually.
+- Evening peak readiness panel: score battery state, tariff timing, grid flow, and savings context so the dashboard gives a direct operational answer instead of another exploratory chart.
   - First pass implemented: the top dashboard now includes a 0-100 home energy score with factor chips.
 - Daily comparison: today vs yesterday, and today vs same weekday last week.
   - First pass implemented: visual trend snapshot compares today's key metrics against the recent 7-day average.
