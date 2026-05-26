@@ -181,6 +181,8 @@ not by simply adding solar production plus battery discharge.
   - First pass implemented: the top dashboard now includes a reserve plan with a SOC fill bar, usable-reserve meter, battery power, live coverage, and direct action hint.
 - Flexible load planner: recommend when to run optional appliances by combining export headroom, battery reserve, current tariff window, and grid import/export state.
   - First pass implemented: the top dashboard now shows usable surplus power, a best-load window, avoid-now warning, and battery guard hint.
+- Battery runway forecast: estimate how long the battery can stay above a 20% reserve floor using recent SOC trend and live battery state.
+  - First pass implemented: the top dashboard now shows estimated time to 20%, recent SOC drain, reserve above floor, recent battery support, and overnight risk.
 - Energy coach panel: combine today's energy verdict, peak plan, and tomorrow's solar outlook into simple action hints.
   - First pass implemented: the dashboard now shows a three-card energy coach using existing dashboard and weather data.
 - Peak window countdown: show time until peak tariff starts/ends.

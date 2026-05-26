@@ -196,6 +196,14 @@ const textFields = {
   flexibleLoadWindow: document.getElementById("flexibleLoadWindow"),
   flexibleLoadAvoid: document.getElementById("flexibleLoadAvoid"),
   flexibleLoadBatteryGuard: document.getElementById("flexibleLoadBatteryGuard"),
+  batteryRunwayDetail: document.getElementById("batteryRunwayDetail"),
+  batteryRunwayStatus: document.getElementById("batteryRunwayStatus"),
+  batteryRunwayTime: document.getElementById("batteryRunwayTime"),
+  batteryRunwayBar: document.getElementById("batteryRunwayBar"),
+  batteryRunwayMeta: document.getElementById("batteryRunwayMeta"),
+  batteryRunwayDrain: document.getElementById("batteryRunwayDrain"),
+  batteryRunwayReserve: document.getElementById("batteryRunwayReserve"),
+  batteryRunwayRisk: document.getElementById("batteryRunwayRisk"),
   gaugeSolarArc: document.getElementById("gaugeSolarArc"),
   gaugeBatteryArc: document.getElementById("gaugeBatteryArc"),
   gaugeHomeArc: document.getElementById("gaugeHomeArc"),
@@ -558,6 +566,26 @@ const translations = {
     loadExampleMedium: "About one medium appliance",
     loadExampleLight: "Small flexible loads only",
     loadExampleNone: "No spare solar headroom",
+    batteryRunwayKicker: "Battery runway",
+    batteryRunwayTitle: "Battery cover forecast",
+    batteryRunwayDetail: "Recent SOC trend {trend}. Current reserve above 20% is {reserve}.",
+    estimatedRunway: "Estimated time to 20%",
+    recentBatteryDrain: "Recent battery drain",
+    batteryReserveFloor: "Reserve floor",
+    overnightRisk: "Overnight risk",
+    runwayHealthy: "Comfortable",
+    runwayWatch: "Watch tonight",
+    runwayLow: "Low runway",
+    runwayCharging: "Charging or stable",
+    runwayUnavailable: "Waiting for trend",
+    runwayMoreThanDay: ">24h",
+    runwayTrendStable: "stable",
+    runwayTrendCharging: "charging",
+    runwayTrendDraining: "down {rate}/h",
+    runwayRiskLow: "Low",
+    runwayRiskMedium: "Medium",
+    runwayRiskHigh: "High",
+    runwayMeta: "Recent home load {load}; battery support {coverage}.",
     trendMeta: "Recent avg {average} • {percent}% of average",
     exportedToGrid: "Exported to grid",
     ofYesterday: "{percent}% of yesterday",
@@ -999,6 +1027,26 @@ const translations = {
     loadExampleMedium: "约可带一个中等电器",
     loadExampleLight: "仅适合小型可推迟负载",
     loadExampleNone: "暂无富余太阳能空间",
+    batteryRunwayKicker: "电池续航",
+    batteryRunwayTitle: "电池覆盖预测",
+    batteryRunwayDetail: "最近 SOC 趋势：{trend}。当前高于 20% 保留线的余量为 {reserve}。",
+    estimatedRunway: "预计到 20% 的时间",
+    recentBatteryDrain: "最近电池消耗",
+    batteryReserveFloor: "保留线",
+    overnightRisk: "夜间风险",
+    runwayHealthy: "比较安心",
+    runwayWatch: "今晚留意",
+    runwayLow: "续航偏低",
+    runwayCharging: "充电或稳定",
+    runwayUnavailable: "等待趋势数据",
+    runwayMoreThanDay: ">24小时",
+    runwayTrendStable: "稳定",
+    runwayTrendCharging: "正在充电",
+    runwayTrendDraining: "每小时下降 {rate}",
+    runwayRiskLow: "低",
+    runwayRiskMedium: "中",
+    runwayRiskHigh: "高",
+    runwayMeta: "最近家庭负载 {load}；电池支撑 {coverage}。",
     trendMeta: "最近平均 {average} • 相当于平均值 {percent}%",
     exportedToGrid: "已回馈电网",
     ofYesterday: "相当于昨天 {percent}%",
@@ -1440,6 +1488,26 @@ const translations = {
     loadExampleMedium: "ประมาณเครื่องใช้ไฟฟ้าขนาดกลางหนึ่งเครื่อง",
     loadExampleLight: "เฉพาะโหลดเล็กที่เลื่อนได้",
     loadExampleNone: "ไม่มีไฟโซลาร์เหลือ",
+    batteryRunwayKicker: "ระยะเวลาแบตเตอรี่",
+    batteryRunwayTitle: "คาดการณ์แบตครอบคลุมโหลด",
+    batteryRunwayDetail: "แนวโน้ม SOC ล่าสุด {trend} สำรองเหนือ 20% ตอนนี้ {reserve}",
+    estimatedRunway: "เวลาประมาณถึง 20%",
+    recentBatteryDrain: "การใช้แบตล่าสุด",
+    batteryReserveFloor: "ระดับสำรอง",
+    overnightRisk: "ความเสี่ยงกลางคืน",
+    runwayHealthy: "สบายใจได้",
+    runwayWatch: "เฝ้าดูคืนนี้",
+    runwayLow: "เวลาเหลือน้อย",
+    runwayCharging: "กำลังชาร์จหรือคงที่",
+    runwayUnavailable: "รอข้อมูลแนวโน้ม",
+    runwayMoreThanDay: ">24 ชม.",
+    runwayTrendStable: "คงที่",
+    runwayTrendCharging: "กำลังชาร์จ",
+    runwayTrendDraining: "ลดลง {rate}/ชม.",
+    runwayRiskLow: "ต่ำ",
+    runwayRiskMedium: "ปานกลาง",
+    runwayRiskHigh: "สูง",
+    runwayMeta: "โหลดบ้านล่าสุด {load}; แบตช่วยรองรับ {coverage}",
     trendMeta: "ค่าเฉลี่ยล่าสุด {average} • {percent}% ของค่าเฉลี่ย",
     exportedToGrid: "ส่งออกเข้ากริด",
     ofYesterday: "{percent}% ของเมื่อวาน",
@@ -2224,6 +2292,18 @@ function formatDurationMinutes(minutes) {
   return `${hours}h ${String(mins).padStart(2, "0")}m`;
 }
 
+function averageFinite(values) {
+  const finiteValues = values
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value));
+
+  if (finiteValues.length === 0) {
+    return null;
+  }
+
+  return finiteValues.reduce((total, value) => total + value, 0) / finiteValues.length;
+}
+
 function getTariffStatus(savings) {
   const [peakStart = "15:00", peakEnd = "20:59"] = String(savings?.peakWindow ?? "15:00-20:59").split("-");
   const start = parseClockMinutes(peakStart);
@@ -2653,6 +2733,111 @@ function renderFlexibleLoadPlan(payload) {
   textFields.flexibleLoadWindow.textContent = t(plan.windowKey);
   textFields.flexibleLoadAvoid.textContent = t(plan.avoidKey);
   textFields.flexibleLoadBatteryGuard.textContent = t(plan.guardKey);
+}
+
+function getBatteryRunwayPlan(payload) {
+  const live = payload?.live ?? {};
+  const history = payload?.last24Hours ?? {};
+  const socSeries = (history.batteryLevelPercent ?? [])
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value));
+  const recentSoc = socSeries.slice(-8);
+  const liveSoc = Number(live.batterySocPercent);
+  const soc = Number.isFinite(liveSoc) ? liveSoc : recentSoc.at(-1);
+  const reservePercent = Number.isFinite(soc) ? Math.max(0, soc - 20) : null;
+  const minutesPerSample = history.labels?.length > 1
+    ? Math.max(1, Math.min(60, 1440 / (history.labels.length - 1)))
+    : 30;
+  const recentHours = Math.max((recentSoc.length - 1) * minutesPerSample / 60, 0);
+  const socDelta = recentSoc.length >= 2 ? recentSoc.at(-1) - recentSoc[0] : 0;
+  const dropPerHour = recentHours > 0 ? Math.max(0, -socDelta / recentHours) : 0;
+  const chargeKw = Number(live.batteryChargeKw ?? 0);
+  const dischargeKw = Number(live.batteryDischargeKw ?? 0);
+  const isCharging = chargeKw > dischargeKw + 0.05 || socDelta > 0.3;
+  const minutesToFloor = reservePercent !== null && dropPerHour > 0.1
+    ? (reservePercent / dropPerHour) * 60
+    : null;
+  const recentHomeLoad = averageFinite((history.homeUsageKw ?? []).slice(-8));
+  const recentBatteryDischarge = averageFinite((history.batteryDischargeKw ?? []).slice(-8));
+  const batteryCoverage = recentHomeLoad && recentHomeLoad > 0 && recentBatteryDischarge !== null
+    ? Math.max(0, Math.min(100, (recentBatteryDischarge / recentHomeLoad) * 100))
+    : null;
+  const riskKey = reservePercent === null
+    ? "runwayRiskMedium"
+    : reservePercent < 15 || (minutesToFloor !== null && minutesToFloor < 180)
+      ? "runwayRiskHigh"
+      : reservePercent < 35 || (minutesToFloor !== null && minutesToFloor < 420)
+        ? "runwayRiskMedium"
+        : "runwayRiskLow";
+  const statusKey = reservePercent === null || recentSoc.length < 3
+    ? "runwayUnavailable"
+    : isCharging || dropPerHour <= 0.1
+      ? "runwayCharging"
+      : minutesToFloor !== null && minutesToFloor < 180
+        ? "runwayLow"
+        : minutesToFloor !== null && minutesToFloor < 420
+          ? "runwayWatch"
+          : "runwayHealthy";
+  const trendKey = isCharging
+    ? "runwayTrendCharging"
+    : dropPerHour > 0.1
+      ? "runwayTrendDraining"
+      : "runwayTrendStable";
+
+  return {
+    soc,
+    reservePercent,
+    dropPerHour,
+    minutesToFloor,
+    recentHomeLoad,
+    batteryCoverage,
+    riskKey,
+    statusKey,
+    trendKey,
+  };
+}
+
+function formatRunwayTime(minutes) {
+  if (minutes === null || minutes === undefined) {
+    return "--";
+  }
+
+  if (minutes > 24 * 60) {
+    return t("runwayMoreThanDay");
+  }
+
+  return formatDurationMinutes(minutes);
+}
+
+function renderBatteryRunwayPlan(payload) {
+  if (!payload?.live) {
+    return;
+  }
+
+  const plan = getBatteryRunwayPlan(payload);
+  const reserveBarPercent = plan.reservePercent === null ? 0 : Math.max(0, Math.min(100, (plan.reservePercent / 80) * 100));
+  const trend = plan.trendKey === "runwayTrendDraining"
+    ? interpolate(t(plan.trendKey), { rate: formatPercent(plan.dropPerHour) })
+    : t(plan.trendKey);
+
+  textFields.batteryRunwayStatus.textContent = t(plan.statusKey);
+  textFields.batteryRunwayDetail.textContent = interpolate(t("batteryRunwayDetail"), {
+    trend,
+    reserve: plan.reservePercent === null ? "--" : formatPercent(plan.reservePercent),
+  });
+  textFields.batteryRunwayTime.textContent = plan.minutesToFloor === null && plan.statusKey !== "runwayUnavailable"
+    ? t(plan.trendKey)
+    : formatRunwayTime(plan.minutesToFloor);
+  textFields.batteryRunwayBar.style.width = `${reserveBarPercent.toFixed(1)}%`;
+  textFields.batteryRunwayMeta.textContent = interpolate(t("runwayMeta"), {
+    load: plan.recentHomeLoad === null ? "--" : formatKw(plan.recentHomeLoad),
+    coverage: formatOptionalPercent(plan.batteryCoverage),
+  });
+  textFields.batteryRunwayDrain.textContent = plan.dropPerHour > 0.1
+    ? `${formatPercent(plan.dropPerHour)}/h`
+    : t(plan.trendKey);
+  textFields.batteryRunwayReserve.textContent = plan.reservePercent === null ? "--" : formatPercent(plan.reservePercent);
+  textFields.batteryRunwayRisk.textContent = t(plan.riskKey);
 }
 
 function setCoachCard(card, tone, statusKey, detail) {
@@ -4460,6 +4645,7 @@ function renderMetrics(payload) {
   renderPeakReadiness(payload);
   renderBatteryReservePlan(payload);
   renderFlexibleLoadPlan(payload);
+  renderBatteryRunwayPlan(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);

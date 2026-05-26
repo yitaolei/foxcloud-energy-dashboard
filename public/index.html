@@ -499,6 +499,39 @@
           </div>
         </section>
 
+        <section class="panel battery-runway-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="batteryRunwayKicker">Battery runway</p>
+              <h2 data-i18n="batteryRunwayTitle">Battery cover forecast</h2>
+              <p id="batteryRunwayDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="batteryRunwayStatus" class="battery-runway-status">--</strong>
+          </div>
+          <div class="battery-runway-layout">
+            <div class="battery-runway-main">
+              <span data-i18n="estimatedRunway">Estimated time to 20%</span>
+              <strong id="batteryRunwayTime">--</strong>
+              <div class="battery-runway-track"><span id="batteryRunwayBar" style="width: 0%"></span></div>
+              <small id="batteryRunwayMeta">--</small>
+            </div>
+            <div class="battery-runway-grid">
+              <article>
+                <span data-i18n="recentBatteryDrain">Recent battery drain</span>
+                <strong id="batteryRunwayDrain">--</strong>
+              </article>
+              <article>
+                <span data-i18n="batteryReserveFloor">Reserve floor</span>
+                <strong id="batteryRunwayReserve">--</strong>
+              </article>
+              <article>
+                <span data-i18n="overnightRisk">Overnight risk</span>
+                <strong id="batteryRunwayRisk">--</strong>
+              </article>
+            </div>
+          </div>
+        </section>
+
         <section class="gauge-panel" aria-live="polite">
           <article class="gauge-card gauge-solar">
             <div class="gauge-card-head">
