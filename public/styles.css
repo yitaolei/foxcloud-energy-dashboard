@@ -631,6 +631,30 @@ select {
   background: linear-gradient(180deg, #cbd5e1, #94a3b8);
 }
 
+.energy-timeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.energy-timeline-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.timeline-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
 .energy-timeline-summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
