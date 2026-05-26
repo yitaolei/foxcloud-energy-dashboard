@@ -532,6 +532,39 @@
           </div>
         </section>
 
+        <section class="panel grid-forecast-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="gridForecastKicker">Grid forecast</p>
+              <h2 data-i18n="gridForecastTitle">Grid import forecast</h2>
+              <p id="gridForecastDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="gridForecastStatus" class="grid-forecast-status">--</strong>
+          </div>
+          <div class="grid-forecast-layout">
+            <div class="grid-forecast-main">
+              <span data-i18n="gridImportPressure">Import pressure</span>
+              <strong id="gridForecastPressure">--</strong>
+              <div class="grid-forecast-track"><span id="gridForecastBar" style="width: 0%"></span></div>
+              <small id="gridForecastMeta">--</small>
+            </div>
+            <div class="grid-forecast-grid">
+              <article>
+                <span data-i18n="recentGridImport">Recent grid import</span>
+                <strong id="gridForecastImport">--</strong>
+              </article>
+              <article>
+                <span data-i18n="solarTrend">Solar trend</span>
+                <strong id="gridForecastSolar">--</strong>
+              </article>
+              <article>
+                <span data-i18n="gridForecastAction">Suggested action</span>
+                <strong id="gridForecastAction">--</strong>
+              </article>
+            </div>
+          </div>
+        </section>
+
         <section class="gauge-panel" aria-live="polite">
           <article class="gauge-card gauge-solar">
             <div class="gauge-card-head">

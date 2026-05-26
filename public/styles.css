@@ -1080,6 +1080,93 @@ select {
   line-height: 1.15;
 }
 
+.grid-forecast-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.78)),
+    var(--surface-strong);
+}
+
+.grid-forecast-status {
+  color: #1d4ed8;
+  font-size: 1.25rem;
+  text-align: right;
+}
+
+.grid-forecast-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) 1.6fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.grid-forecast-main {
+  display: grid;
+  align-content: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 1rem;
+}
+
+.grid-forecast-main span,
+.grid-forecast-grid span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.grid-forecast-main strong {
+  color: #1e3a8a;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.grid-forecast-main small {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.grid-forecast-track {
+  height: 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.grid-forecast-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22c55e, #f59e0b 48%, #dc2626);
+  transition: width 260ms ease;
+}
+
+.grid-forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.grid-forecast-grid article {
+  display: grid;
+  align-content: center;
+  min-height: 120px;
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 1rem;
+}
+
+.grid-forecast-grid strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--ink);
+  font-size: 1.2rem;
+  line-height: 1.15;
+}
+
 .visual-status-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2653,6 +2740,7 @@ tbody tr:hover {
   .trend-grid,
   .flexible-load-layout,
   .battery-runway-layout,
+  .grid-forecast-layout,
   .visual-kpi-grid,
   .savings-overview-grid,
   .visual-status-strip,
@@ -2707,6 +2795,10 @@ tbody tr:hover {
   }
 
   .battery-runway-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid-forecast-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
@@ -2995,6 +3087,8 @@ tbody tr:hover {
   .flexible-load-grid,
   .battery-runway-layout,
   .battery-runway-grid,
+  .grid-forecast-layout,
+  .grid-forecast-grid,
   .visual-kpi-grid,
   .savings-overview-grid,
   .visual-status-strip {

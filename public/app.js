@@ -204,6 +204,14 @@ const textFields = {
   batteryRunwayDrain: document.getElementById("batteryRunwayDrain"),
   batteryRunwayReserve: document.getElementById("batteryRunwayReserve"),
   batteryRunwayRisk: document.getElementById("batteryRunwayRisk"),
+  gridForecastDetail: document.getElementById("gridForecastDetail"),
+  gridForecastStatus: document.getElementById("gridForecastStatus"),
+  gridForecastPressure: document.getElementById("gridForecastPressure"),
+  gridForecastBar: document.getElementById("gridForecastBar"),
+  gridForecastMeta: document.getElementById("gridForecastMeta"),
+  gridForecastImport: document.getElementById("gridForecastImport"),
+  gridForecastSolar: document.getElementById("gridForecastSolar"),
+  gridForecastAction: document.getElementById("gridForecastAction"),
   gaugeSolarArc: document.getElementById("gaugeSolarArc"),
   gaugeBatteryArc: document.getElementById("gaugeBatteryArc"),
   gaugeHomeArc: document.getElementById("gaugeHomeArc"),
@@ -586,6 +594,25 @@ const translations = {
     runwayRiskMedium: "Medium",
     runwayRiskHigh: "High",
     runwayMeta: "Recent home load {load}; battery support {coverage}.",
+    gridForecastKicker: "Grid forecast",
+    gridForecastTitle: "Grid import forecast",
+    gridForecastDetail: "Recent import {importKw}. Battery reserve {reserve}. Tariff is {tariff}.",
+    gridImportPressure: "Import pressure",
+    recentGridImport: "Recent grid import",
+    solarTrend: "Solar trend",
+    gridForecastAction: "Suggested action",
+    gridForecastLow: "Low",
+    gridForecastWatch: "Watch",
+    gridForecastHigh: "High import risk",
+    gridForecastExporting: "Exporting",
+    gridActionNormal: "Normal use",
+    gridActionShiftLoads: "Shift flexible loads",
+    gridActionReducePeak: "Reduce peak loads",
+    gridActionUseSolar: "Use solar surplus",
+    gridSolarRising: "Rising",
+    gridSolarFalling: "Falling",
+    gridSolarFlat: "Flat",
+    gridForecastMeta: "Home load {load}; live grid flow {grid}.",
     trendMeta: "Recent avg {average} • {percent}% of average",
     exportedToGrid: "Exported to grid",
     ofYesterday: "{percent}% of yesterday",
@@ -1047,6 +1074,25 @@ const translations = {
     runwayRiskMedium: "中",
     runwayRiskHigh: "高",
     runwayMeta: "最近家庭负载 {load}；电池支撑 {coverage}。",
+    gridForecastKicker: "电网预测",
+    gridForecastTitle: "电网取电预测",
+    gridForecastDetail: "最近取电 {importKw}。电池余量 {reserve}。当前电价：{tariff}。",
+    gridImportPressure: "取电压力",
+    recentGridImport: "最近电网取电",
+    solarTrend: "太阳能趋势",
+    gridForecastAction: "建议操作",
+    gridForecastLow: "低",
+    gridForecastWatch: "需留意",
+    gridForecastHigh: "取电风险高",
+    gridForecastExporting: "正在回馈",
+    gridActionNormal: "正常使用",
+    gridActionShiftLoads: "推迟可移动负载",
+    gridActionReducePeak: "减少高峰负载",
+    gridActionUseSolar: "利用太阳能富余",
+    gridSolarRising: "上升",
+    gridSolarFalling: "下降",
+    gridSolarFlat: "平稳",
+    gridForecastMeta: "家庭负载 {load}；实时电网流向 {grid}。",
     trendMeta: "最近平均 {average} • 相当于平均值 {percent}%",
     exportedToGrid: "已回馈电网",
     ofYesterday: "相当于昨天 {percent}%",
@@ -1508,6 +1554,25 @@ const translations = {
     runwayRiskMedium: "ปานกลาง",
     runwayRiskHigh: "สูง",
     runwayMeta: "โหลดบ้านล่าสุด {load}; แบตช่วยรองรับ {coverage}",
+    gridForecastKicker: "คาดการณ์กริด",
+    gridForecastTitle: "คาดการณ์นำเข้ากริด",
+    gridForecastDetail: "นำเข้าล่าสุด {importKw} สำรองแบต {reserve} ค่าไฟตอนนี้ {tariff}",
+    gridImportPressure: "แรงกดดันนำเข้า",
+    recentGridImport: "นำเข้ากริดล่าสุด",
+    solarTrend: "แนวโน้มโซลาร์",
+    gridForecastAction: "คำแนะนำ",
+    gridForecastLow: "ต่ำ",
+    gridForecastWatch: "เฝ้าดู",
+    gridForecastHigh: "เสี่ยงนำเข้าสูง",
+    gridForecastExporting: "กำลังส่งออก",
+    gridActionNormal: "ใช้งานปกติ",
+    gridActionShiftLoads: "เลื่อนโหลดที่ยืดหยุ่นได้",
+    gridActionReducePeak: "ลดโหลดช่วงพีค",
+    gridActionUseSolar: "ใช้ไฟโซลาร์ส่วนเกิน",
+    gridSolarRising: "เพิ่มขึ้น",
+    gridSolarFalling: "ลดลง",
+    gridSolarFlat: "คงที่",
+    gridForecastMeta: "โหลดบ้าน {load}; การไหลกริดสด {grid}",
     trendMeta: "ค่าเฉลี่ยล่าสุด {average} • {percent}% ของค่าเฉลี่ย",
     exportedToGrid: "ส่งออกเข้ากริด",
     ofYesterday: "{percent}% ของเมื่อวาน",
@@ -2838,6 +2903,100 @@ function renderBatteryRunwayPlan(payload) {
     : t(plan.trendKey);
   textFields.batteryRunwayReserve.textContent = plan.reservePercent === null ? "--" : formatPercent(plan.reservePercent);
   textFields.batteryRunwayRisk.textContent = t(plan.riskKey);
+}
+
+function getSeriesDelta(values) {
+  const finiteValues = values
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value));
+
+  if (finiteValues.length < 2) {
+    return 0;
+  }
+
+  const recentValues = finiteValues.slice(-6);
+
+  return recentValues.at(-1) - recentValues[0];
+}
+
+function getGridImportForecast(payload) {
+  const live = payload?.live ?? {};
+  const history = payload?.last24Hours ?? {};
+  const tariff = getTariffStatus(payload?.todaySavings ?? {});
+  const gridImportKw = Number(live.gridImportKw ?? 0);
+  const gridExportKw = Number(live.gridExportKw ?? 0);
+  const homeKw = Number(live.homeUsageKw ?? 0);
+  const batterySoc = Number(live.batterySocPercent);
+  const reservePercent = Number.isFinite(batterySoc) ? Math.max(0, batterySoc - 20) : null;
+  const recentImportKw = averageFinite((history.gridImportKw ?? []).slice(-8)) ?? gridImportKw;
+  const recentHomeKw = averageFinite((history.homeUsageKw ?? []).slice(-8)) ?? homeKw;
+  const solarDelta = getSeriesDelta(history.solarGeneratedKw ?? []);
+  const solarTrendKey = solarDelta > 0.25
+    ? "gridSolarRising"
+    : solarDelta < -0.25
+      ? "gridSolarFalling"
+      : "gridSolarFlat";
+  const importPressure = Math.max(0, Math.min(100,
+    (recentImportKw * 28)
+      + (gridImportKw * 20)
+      + (tariff.isPeak ? 18 : 0)
+      + (reservePercent !== null && reservePercent < 25 ? 16 : 0)
+      + (solarTrendKey === "gridSolarFalling" ? 10 : 0)
+      - (gridExportKw * 22),
+  ));
+  const statusKey = gridExportKw > gridImportKw + 0.2
+    ? "gridForecastExporting"
+    : importPressure >= 65
+      ? "gridForecastHigh"
+      : importPressure >= 35
+        ? "gridForecastWatch"
+        : "gridForecastLow";
+  const actionKey = gridExportKw > 0.5
+    ? "gridActionUseSolar"
+    : tariff.isPeak && importPressure >= 35
+      ? "gridActionReducePeak"
+      : importPressure >= 45
+        ? "gridActionShiftLoads"
+        : "gridActionNormal";
+  const gridFlow = gridExportKw >= gridImportKw
+    ? `${t("exporting")} ${formatKw(gridExportKw)}`
+    : `${t("importing")} ${formatKw(gridImportKw)}`;
+
+  return {
+    importPressure,
+    recentImportKw,
+    recentHomeKw,
+    reservePercent,
+    solarTrendKey,
+    statusKey,
+    actionKey,
+    tariff,
+    gridFlow,
+  };
+}
+
+function renderGridImportForecast(payload) {
+  if (!payload?.live) {
+    return;
+  }
+
+  const forecast = getGridImportForecast(payload);
+
+  textFields.gridForecastStatus.textContent = t(forecast.statusKey);
+  textFields.gridForecastDetail.textContent = interpolate(t("gridForecastDetail"), {
+    importKw: formatKw(forecast.recentImportKw),
+    reserve: forecast.reservePercent === null ? "--" : formatPercent(forecast.reservePercent),
+    tariff: forecast.tariff.isPeak ? t("peakNow") : t("offPeakNow"),
+  });
+  textFields.gridForecastPressure.textContent = formatPercent(forecast.importPressure);
+  textFields.gridForecastBar.style.width = `${forecast.importPressure.toFixed(1)}%`;
+  textFields.gridForecastMeta.textContent = interpolate(t("gridForecastMeta"), {
+    load: formatKw(forecast.recentHomeKw),
+    grid: forecast.gridFlow,
+  });
+  textFields.gridForecastImport.textContent = formatKw(forecast.recentImportKw);
+  textFields.gridForecastSolar.textContent = t(forecast.solarTrendKey);
+  textFields.gridForecastAction.textContent = t(forecast.actionKey);
 }
 
 function setCoachCard(card, tone, statusKey, detail) {
@@ -4646,6 +4805,7 @@ function renderMetrics(payload) {
   renderBatteryReservePlan(payload);
   renderFlexibleLoadPlan(payload);
   renderBatteryRunwayPlan(payload);
+  renderGridImportForecast(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);
