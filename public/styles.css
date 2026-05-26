@@ -586,6 +586,81 @@ select {
   gap: 0.4rem;
 }
 
+.energy-timeline-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(236, 253, 245, 0.68)),
+    var(--surface-strong);
+}
+
+.energy-timeline-track {
+  display: flex;
+  min-height: 64px;
+  overflow: hidden;
+  border: 1px solid rgba(42, 55, 48, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.energy-timeline-segment {
+  min-width: 8px;
+  transition: filter 160ms ease, transform 160ms ease;
+}
+
+.energy-timeline-segment:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.timeline-solar {
+  background: linear-gradient(180deg, #facc15, #f59e0b);
+}
+
+.timeline-battery {
+  background: linear-gradient(180deg, #34d399, #0f766e);
+}
+
+.timeline-grid {
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+}
+
+.timeline-mixed {
+  background: linear-gradient(180deg, #a78bfa, #7c3aed);
+}
+
+.timeline-idle {
+  background: linear-gradient(180deg, #cbd5e1, #94a3b8);
+}
+
+.energy-timeline-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.energy-timeline-summary article {
+  border: 1px solid rgba(42, 55, 48, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 0.9rem;
+}
+
+.energy-timeline-summary span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.energy-timeline-summary strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--ink);
+  font-size: 1.25rem;
+  line-height: 1.15;
+}
+
 .solar-calendar-panel {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 237, 0.74)),
@@ -2802,6 +2877,10 @@ tbody tr:hover {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .energy-timeline-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .solar-utilization-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -3089,6 +3168,7 @@ tbody tr:hover {
   .battery-runway-grid,
   .grid-forecast-layout,
   .grid-forecast-grid,
+  .energy-timeline-summary,
   .visual-kpi-grid,
   .savings-overview-grid,
   .visual-status-strip {

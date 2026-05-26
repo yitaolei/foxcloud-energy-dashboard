@@ -12,6 +12,7 @@
 - Added a flexible load planner that estimates usable solar surplus, recommends whether to run deferrable loads now, and warns about peak import or low battery reserve.
 - Added a battery runway forecast that estimates time to the 20% reserve floor from recent SOC trends and highlights overnight risk.
 - Added a grid import forecast that combines recent import, live grid flow, tariff state, battery reserve, and solar trend into an import-pressure score with a suggested action.
+- Added a today energy timeline that groups recent 24-hour samples into solar-led, battery-led, grid-import, mixed, and quiet operating segments.
 - Added SQLite backup status metadata to the protected `/api/health` response, including backup path, interval, retention count, scheduler state, next run time, running state, last successful backup path, and last success/failure timestamps.
 - Added regression coverage for the SQLite backup health status shape.
 

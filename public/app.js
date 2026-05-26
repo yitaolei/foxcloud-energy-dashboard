@@ -166,6 +166,12 @@ const textFields = {
   trendGridBar: document.getElementById("trendGridBar"),
   operationalHeatmapGrid: document.getElementById("operationalHeatmapGrid"),
   operationalHeatmapMeta: document.getElementById("operationalHeatmapMeta"),
+  energyTimelineTrack: document.getElementById("energyTimelineTrack"),
+  energyTimelineMeta: document.getElementById("energyTimelineMeta"),
+  energyTimelineSolar: document.getElementById("energyTimelineSolar"),
+  energyTimelineBattery: document.getElementById("energyTimelineBattery"),
+  energyTimelineGrid: document.getElementById("energyTimelineGrid"),
+  energyTimelineDominant: document.getElementById("energyTimelineDominant"),
   solarCalendarGrid: document.getElementById("solarCalendarGrid"),
   solarCalendarMeta: document.getElementById("solarCalendarMeta"),
   weekdayProfileGrid: document.getElementById("weekdayProfileGrid"),
@@ -515,6 +521,19 @@ const translations = {
     last24Heatmap: "Last 24-hour power heatmap",
     last24HeatmapHelp: "Color intensity shows when each part of the system was working hardest.",
     last24HeatmapMeta: "{points} samples across the last 24 hours. Darker cells mean higher power.",
+    energyTimelineKicker: "Energy timeline",
+    energyTimelineTitle: "Today energy timeline",
+    energyTimelineMeta: "{segments} operating segments from {points} recent samples.",
+    timelineSolarLed: "Solar-led time",
+    timelineBatteryLed: "Battery-led time",
+    timelineGridLed: "Grid import time",
+    timelineDominantMode: "Dominant mode",
+    timelineModeSolar: "Solar-led",
+    timelineModeBattery: "Battery-led",
+    timelineModeGrid: "Grid import",
+    timelineModeMixed: "Mixed",
+    timelineModeIdle: "Quiet",
+    timelineEmpty: "Waiting for recent power samples.",
     monthlyPattern: "Monthly pattern",
     solarCalendar: "Solar production calendar",
     solarCalendarHelp: "Daily color intensity shows stronger solar production, with self-sufficiency shown inside each day.",
@@ -995,6 +1014,19 @@ const translations = {
     last24Heatmap: "过去 24 小时功率热力图",
     last24HeatmapHelp: "颜色越深，表示该部分系统工作越强。",
     last24HeatmapMeta: "过去 24 小时共 {points} 个采样点。颜色越深表示功率越高。",
+    energyTimelineKicker: "能源时间线",
+    energyTimelineTitle: "今日能源时间线",
+    energyTimelineMeta: "基于最近 {points} 个采样点，合并为 {segments} 个运行时段。",
+    timelineSolarLed: "太阳能主导时间",
+    timelineBatteryLed: "电池主导时间",
+    timelineGridLed: "电网取电时间",
+    timelineDominantMode: "主要模式",
+    timelineModeSolar: "太阳能主导",
+    timelineModeBattery: "电池主导",
+    timelineModeGrid: "电网取电",
+    timelineModeMixed: "混合",
+    timelineModeIdle: "低活动",
+    timelineEmpty: "等待最近功率采样。",
     monthlyPattern: "月度模式",
     solarCalendar: "太阳能发电日历",
     solarCalendarHelp: "每天颜色越深表示发电越强，格子里同时显示当天自给率。",
@@ -1475,6 +1507,19 @@ const translations = {
     last24Heatmap: "ฮีตแมปกำลังไฟ 24 ชั่วโมงล่าสุด",
     last24HeatmapHelp: "สีเข้มแสดงช่วงที่แต่ละส่วนทำงานหนักกว่า",
     last24HeatmapMeta: "{points} จุดข้อมูลใน 24 ชั่วโมงล่าสุด สีเข้มหมายถึงกำลังไฟสูงกว่า",
+    energyTimelineKicker: "ไทม์ไลน์พลังงาน",
+    energyTimelineTitle: "ไทม์ไลน์พลังงานวันนี้",
+    energyTimelineMeta: "{segments} ช่วงการทำงานจาก {points} จุดข้อมูลล่าสุด",
+    timelineSolarLed: "ช่วงนำด้วยโซลาร์",
+    timelineBatteryLed: "ช่วงนำด้วยแบต",
+    timelineGridLed: "ช่วงนำเข้ากริด",
+    timelineDominantMode: "โหมดหลัก",
+    timelineModeSolar: "โซลาร์นำ",
+    timelineModeBattery: "แบตนำ",
+    timelineModeGrid: "นำเข้ากริด",
+    timelineModeMixed: "ผสม",
+    timelineModeIdle: "เงียบ",
+    timelineEmpty: "รอข้อมูลกำลังไฟล่าสุด",
     monthlyPattern: "รูปแบบรายเดือน",
     solarCalendar: "ปฏิทินการผลิตโซลาร์",
     solarCalendarHelp: "สีเข้มแสดงวันที่ผลิตโซลาร์มากกว่า พร้อมเปอร์เซ็นต์พึ่งพาตัวเองในแต่ละวัน",
@@ -2152,6 +2197,121 @@ function renderOperationalHeatmap(payload) {
   }
 
   textFields.operationalHeatmapGrid.append(axis);
+}
+
+function getTimelineMode(point) {
+  const solarKw = Number(point.solarKw ?? 0);
+  const gridKw = Number(point.gridKw ?? 0);
+  const batteryKw = Number(point.batteryKw ?? 0);
+  const maxKw = Math.max(solarKw, gridKw, batteryKw);
+
+  if (maxKw < 0.08) {
+    return "idle";
+  }
+
+  if (gridKw >= 0.25 && gridKw >= solarKw * 0.75 && gridKw >= batteryKw * 0.75) {
+    return "grid";
+  }
+
+  if (solarKw >= 0.25 && solarKw >= gridKw && solarKw >= batteryKw) {
+    return "solar";
+  }
+
+  if (batteryKw >= 0.25 && batteryKw >= gridKw && batteryKw >= solarKw * 0.7) {
+    return "battery";
+  }
+
+  return "mixed";
+}
+
+function getTimelineModeLabel(mode) {
+  return t(`timelineMode${mode.charAt(0).toUpperCase()}${mode.slice(1)}`);
+}
+
+function buildEnergyTimelineSegments(payload) {
+  const history = payload?.last24Hours ?? {};
+  const labels = history.labels ?? [];
+  const points = labels.map((label, index) => {
+    const point = {
+      label,
+      solarKw: Number(history.solarGeneratedKw?.[index] ?? 0),
+      gridKw: Number(history.gridImportKw?.[index] ?? 0),
+      batteryKw: Number(history.batteryDischargeKw?.[index] ?? 0),
+    };
+
+    return {
+      ...point,
+      mode: getTimelineMode(point),
+    };
+  });
+
+  const segments = [];
+
+  for (const point of points) {
+    const lastSegment = segments.at(-1);
+
+    if (lastSegment?.mode === point.mode) {
+      lastSegment.endLabel = point.label;
+      lastSegment.points += 1;
+    } else {
+      segments.push({
+        mode: point.mode,
+        startLabel: point.label,
+        endLabel: point.label,
+        points: 1,
+      });
+    }
+  }
+
+  return {
+    pointCount: labels.length,
+    segments,
+  };
+}
+
+function formatTimelineShare(count, total) {
+  if (!total) {
+    return "--";
+  }
+
+  return formatPercent((count / total) * 100);
+}
+
+function renderEnergyTimeline(payload) {
+  const timeline = buildEnergyTimelineSegments(payload);
+  const totalPoints = timeline.segments.reduce((total, segment) => total + segment.points, 0);
+  const modeCounts = timeline.segments.reduce((counts, segment) => {
+    counts[segment.mode] = (counts[segment.mode] ?? 0) + segment.points;
+    return counts;
+  }, {});
+  const dominantMode = Object.entries(modeCounts).sort((left, right) => right[1] - left[1])[0]?.[0] ?? "idle";
+
+  textFields.energyTimelineTrack.replaceChildren();
+
+  if (timeline.pointCount === 0) {
+    const empty = document.createElement("p");
+    empty.className = "muted-copy";
+    empty.textContent = t("timelineEmpty");
+    textFields.energyTimelineTrack.append(empty);
+  } else {
+    for (const segment of timeline.segments) {
+      const segmentElement = document.createElement("span");
+      segmentElement.className = `energy-timeline-segment timeline-${segment.mode}`;
+      segmentElement.style.flexGrow = String(segment.points);
+      segmentElement.title = `${getTimelineModeLabel(segment.mode)}: ${segment.startLabel} - ${segment.endLabel}`;
+      segmentElement.setAttribute("aria-label", segmentElement.title);
+      textFields.energyTimelineTrack.append(segmentElement);
+    }
+  }
+
+  textFields.energyTimelineMeta.textContent = interpolate(t("energyTimelineMeta"), {
+    points: timeline.pointCount,
+    segments: timeline.segments.length,
+  });
+  textFields.energyTimelineSolar.textContent = formatTimelineShare(modeCounts.solar ?? 0, totalPoints);
+  textFields.energyTimelineBattery.textContent = formatTimelineShare(modeCounts.battery ?? 0, totalPoints);
+  textFields.energyTimelineGrid.textContent = formatTimelineShare(modeCounts.grid ?? 0, totalPoints);
+  textFields.energyTimelineDominant.textContent = getTimelineModeLabel(dominantMode);
 }
 
 function getLocalWeekdayIndex(dateString) {
@@ -4799,6 +4959,7 @@ function renderMetrics(payload) {
   renderTariffTimeline(payload.todaySavings);
   renderTrendSnapshot(payload);
   renderOperationalHeatmap(payload);
+  renderEnergyTimeline(payload);
   renderSolarCalendar(payload);
   renderWeekdayProfile(payload);
   renderPeakReadiness(payload);
