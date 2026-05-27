@@ -182,6 +182,35 @@
           </div>
         </section>
 
+        <section class="panel operating-summary-panel" aria-live="polite">
+          <div class="operating-summary-head">
+            <div>
+              <p class="panel-kicker" data-i18n="operatingSummaryKicker">Operating summary</p>
+              <h2 data-i18n="operatingSummaryTitle">Today at a glance</h2>
+              <p id="operatingSummaryDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="operatingSummaryVerdict" class="operating-summary-verdict">--</strong>
+          </div>
+          <div class="operating-summary-grid">
+            <article>
+              <span data-i18n="timelineSolarLed">Solar-led time</span>
+              <strong id="operatingSummarySolar">--</strong>
+            </article>
+            <article>
+              <span data-i18n="timelineGridLed">Grid import time</span>
+              <strong id="operatingSummaryGrid">--</strong>
+            </article>
+            <article>
+              <span data-i18n="operatingSummaryReserve">Battery reserve</span>
+              <strong id="operatingSummaryReserve">--</strong>
+            </article>
+            <article>
+              <span data-i18n="operatingSummaryAction">Next action</span>
+              <strong id="operatingSummaryAction">--</strong>
+            </article>
+          </div>
+        </section>
+
         <section class="panel energy-score-panel" aria-live="polite">
           <div id="energyScoreRing" class="energy-score-ring" style="--score-percent: 0%">
             <strong id="energyScoreValue">--</strong>

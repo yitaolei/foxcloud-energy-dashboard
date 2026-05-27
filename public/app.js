@@ -126,6 +126,12 @@ const textFields = {
   kpiInverterStatus: document.getElementById("kpiInverterStatus"),
   kpiLastUpdate: document.getElementById("kpiLastUpdate"),
   kpiDataSource: document.getElementById("kpiDataSource"),
+  operatingSummaryVerdict: document.getElementById("operatingSummaryVerdict"),
+  operatingSummaryDetail: document.getElementById("operatingSummaryDetail"),
+  operatingSummarySolar: document.getElementById("operatingSummarySolar"),
+  operatingSummaryGrid: document.getElementById("operatingSummaryGrid"),
+  operatingSummaryReserve: document.getElementById("operatingSummaryReserve"),
+  operatingSummaryAction: document.getElementById("operatingSummaryAction"),
   energyScoreRing: document.getElementById("energyScoreRing"),
   energyScoreStatus: document.getElementById("energyScoreStatus"),
   energyScoreDetail: document.getElementById("energyScoreDetail"),
@@ -481,6 +487,21 @@ const translations = {
     kpiEstimatedSavings: "Est. savings",
     netGridExporting: "Net exporter today",
     netGridImporting: "Net importer today",
+    operatingSummaryKicker: "Operating summary",
+    operatingSummaryTitle: "Today at a glance",
+    operatingSummaryDetail: "Self-sufficiency {self}. {grid}. Dominant recent mode: {mode}.",
+    operatingNetExport: "Net export {value}",
+    operatingNetImport: "Net import {value}",
+    operatingSummaryReserve: "Battery reserve",
+    operatingSummaryAction: "Next action",
+    operatingSolarDay: "Solar-led day",
+    operatingBalancedDay: "Balanced day",
+    operatingGridDay: "Grid-heavy day",
+    operatingBatterySupport: "Battery support day",
+    operatingActionUseSurplus: "Use solar surplus",
+    operatingActionSaveBattery: "Save battery",
+    operatingActionReduceGrid: "Reduce grid use",
+    operatingActionNormal: "Keep steady",
     energyScoreKicker: "Home energy score",
     energyScoreTitle: "Energy health score",
     energyScoreExcellent: "Excellent",
@@ -979,6 +1000,21 @@ const translations = {
     kpiEstimatedSavings: "预估节省",
     netGridExporting: "今天净回馈电网",
     netGridImporting: "今天净从电网取电",
+    operatingSummaryKicker: "运行摘要",
+    operatingSummaryTitle: "今日一眼总览",
+    operatingSummaryDetail: "自给率 {self}。{grid}。最近主要模式：{mode}。",
+    operatingNetExport: "净回馈 {value}",
+    operatingNetImport: "净取电 {value}",
+    operatingSummaryReserve: "电池余量",
+    operatingSummaryAction: "下一步建议",
+    operatingSolarDay: "太阳能主导日",
+    operatingBalancedDay: "运行均衡",
+    operatingGridDay: "电网依赖偏高",
+    operatingBatterySupport: "电池支撑日",
+    operatingActionUseSurplus: "利用太阳能富余",
+    operatingActionSaveBattery: "给电池留电",
+    operatingActionReduceGrid: "减少电网取电",
+    operatingActionNormal: "保持当前节奏",
     energyScoreKicker: "家庭能源评分",
     energyScoreTitle: "能源健康评分",
     energyScoreExcellent: "优秀",
@@ -1477,6 +1513,21 @@ const translations = {
     kpiEstimatedSavings: "ประหยัดโดยประมาณ",
     netGridExporting: "วันนี้ส่งออกสุทธิ",
     netGridImporting: "วันนี้นำเข้าสุทธิ",
+    operatingSummaryKicker: "สรุปการทำงาน",
+    operatingSummaryTitle: "ภาพรวมวันนี้",
+    operatingSummaryDetail: "พึ่งตนเอง {self} {grid} โหมดหลักล่าสุด: {mode}",
+    operatingNetExport: "ส่งออกสุทธิ {value}",
+    operatingNetImport: "นำเข้าสุทธิ {value}",
+    operatingSummaryReserve: "สำรองแบต",
+    operatingSummaryAction: "ขั้นต่อไป",
+    operatingSolarDay: "วันที่โซลาร์นำ",
+    operatingBalancedDay: "สมดุล",
+    operatingGridDay: "พึ่งกริดมาก",
+    operatingBatterySupport: "แบตช่วยรองรับ",
+    operatingActionUseSurplus: "ใช้ไฟโซลาร์ส่วนเกิน",
+    operatingActionSaveBattery: "เก็บแบตไว้",
+    operatingActionReduceGrid: "ลดการใช้กริด",
+    operatingActionNormal: "คงจังหวะเดิม",
     energyScoreKicker: "คะแนนพลังงานบ้าน",
     energyScoreTitle: "คะแนนสุขภาพพลังงาน",
     energyScoreExcellent: "ยอดเยี่ยม",
@@ -2327,6 +2378,87 @@ function renderEnergyTimeline(payload) {
   textFields.energyTimelineBattery.textContent = formatTimelineShare(modeCounts.battery ?? 0, totalPoints);
   textFields.energyTimelineGrid.textContent = formatTimelineShare(modeCounts.grid ?? 0, totalPoints);
   textFields.energyTimelineDominant.textContent = getTimelineModeLabel(dominantMode);
+}
+
+function getTimelineModeCounts(payload) {
+  const timeline = buildEnergyTimelineSegments(payload);
+  const totalPoints = timeline.segments.reduce((total, segment) => total + segment.points, 0);
+  const modeCounts = timeline.segments.reduce((counts, segment) => {
+    counts[segment.mode] = (counts[segment.mode] ?? 0) + segment.points;
+    return counts;
+  }, {});
+  const dominantMode = Object.entries(modeCounts).sort((left, right) => right[1] - left[1])[0]?.[0] ?? "idle";
+
+  return {
+    totalPoints,
+    modeCounts,
+    dominantMode,
+  };
+}
+
+function getOperatingSummary(payload) {
+  const today = payload?.today ?? {};
+  const live = payload?.live ?? {};
+  const timeline = getTimelineModeCounts(payload);
+  const selfSufficiency = calculateSelfSufficiency(today) ?? 0;
+  const netGridKwh = Number(today.returnToGridKwh ?? 0) - Number(today.gridConsumptionKwh ?? 0);
+  const solarShare = timeline.totalPoints ? ((timeline.modeCounts.solar ?? 0) / timeline.totalPoints) * 100 : 0;
+  const gridShare = timeline.totalPoints ? ((timeline.modeCounts.grid ?? 0) / timeline.totalPoints) * 100 : 0;
+  const batteryReserve = Number.isFinite(Number(live.batterySocPercent))
+    ? Math.max(0, Number(live.batterySocPercent) - 20)
+    : null;
+  const gridForecast = getGridImportForecast(payload);
+  const verdictKey = selfSufficiency >= 70 && netGridKwh >= 0
+    ? "operatingSolarDay"
+    : gridShare >= 45 || gridForecast.importPressure >= 65
+      ? "operatingGridDay"
+      : solarShare >= 45 && netGridKwh >= 0
+      ? "operatingSolarDay"
+      : timeline.dominantMode === "battery" || (batteryReserve !== null && batteryReserve < 30)
+        ? "operatingBatterySupport"
+        : "operatingBalancedDay";
+  const actionKey = gridForecast.actionKey === "gridActionUseSolar"
+    ? "operatingActionUseSurplus"
+    : gridForecast.actionKey === "gridActionReducePeak" || gridForecast.actionKey === "gridActionShiftLoads"
+      ? "operatingActionReduceGrid"
+      : batteryReserve !== null && batteryReserve < 30
+        ? "operatingActionSaveBattery"
+        : "operatingActionNormal";
+
+  return {
+    verdictKey,
+    actionKey,
+    selfSufficiency,
+    netGridKwh,
+    batteryReserve,
+    solarShare,
+    gridShare,
+    dominantMode: timeline.dominantMode,
+  };
+}
+
+function renderOperatingSummary(payload) {
+  if (!payload?.today || !payload?.live) {
+    return;
+  }
+
+  const summary = getOperatingSummary(payload);
+  const netGridText = interpolate(t(summary.netGridKwh >= 0 ? "operatingNetExport" : "operatingNetImport"), {
+    value: formatKwh(Math.abs(summary.netGridKwh)),
+  });
+
+  textFields.operatingSummaryVerdict.textContent = t(summary.verdictKey);
+  textFields.operatingSummaryDetail.textContent = interpolate(t("operatingSummaryDetail"), {
+    self: formatOptionalPercent(summary.selfSufficiency),
+    grid: netGridText,
+    mode: getTimelineModeLabel(summary.dominantMode),
+  });
+  textFields.operatingSummarySolar.textContent = formatOptionalPercent(summary.solarShare);
+  textFields.operatingSummaryGrid.textContent = formatOptionalPercent(summary.gridShare);
+  textFields.operatingSummaryReserve.textContent = summary.batteryReserve === null
+    ? "--"
+    : formatPercent(summary.batteryReserve);
+  textFields.operatingSummaryAction.textContent = t(summary.actionKey);
 }
 
 function getLocalWeekdayIndex(dateString) {
@@ -4970,6 +5102,7 @@ function renderMetrics(payload) {
   renderWarnings(payload.warnings);
   renderDataQuality(payload);
   renderVisualKpis(payload);
+  renderOperatingSummary(payload);
   renderEnergyScore(payload);
   renderTariffTimeline(payload.todaySavings);
   renderTrendSnapshot(payload);

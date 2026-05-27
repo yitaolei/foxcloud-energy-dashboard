@@ -1282,6 +1282,56 @@ select {
   color: #86efac;
 }
 
+.operating-summary-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(240, 253, 250, 0.8)),
+    var(--surface-strong);
+}
+
+.operating-summary-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: start;
+}
+
+.operating-summary-verdict {
+  color: #0f766e;
+  font-size: 1.45rem;
+  line-height: 1.1;
+  text-align: right;
+}
+
+.operating-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.operating-summary-grid article {
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 0.9rem;
+}
+
+.operating-summary-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.operating-summary-grid strong {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--ink);
+  font-size: 1.18rem;
+  line-height: 1.15;
+}
+
 .energy-score-panel {
   display: grid;
   grid-template-columns: minmax(180px, 240px) 1fr;
@@ -2829,6 +2879,7 @@ tbody tr:hover {
   .energy-score-panel,
   .balance-panel,
   .energy-coach-grid,
+  .operating-summary-head,
   .location-grid,
   .tariff-grid,
   .chart-grid,
@@ -2862,6 +2913,10 @@ tbody tr:hover {
   }
 
   .data-quality-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .operating-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3179,6 +3234,8 @@ tbody tr:hover {
   .energy-score-panel,
   .balance-panel,
   .energy-coach-grid,
+  .operating-summary-head,
+  .operating-summary-grid,
   .location-grid,
   .tariff-grid,
   .totals-grid,
@@ -3201,6 +3258,10 @@ tbody tr:hover {
 
   .data-quality-grid {
     grid-template-columns: 1fr;
+  }
+
+  .operating-summary-verdict {
+    text-align: left;
   }
 
   .balance-panel {
