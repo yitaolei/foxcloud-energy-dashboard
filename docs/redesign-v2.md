@@ -189,6 +189,8 @@ not by simply adding solar production plus battery discharge.
   - First pass implemented: the dashboard now shows a mode timeline plus solar-led, battery-led, grid-import, and dominant-mode summary cards.
 - Operating summary: provide a top-level daily verdict that combines self-sufficiency, net grid position, recent mode, battery reserve, and next recommended action.
   - First pass implemented: the top dashboard now shows an at-a-glance operating summary directly below the KPI row.
+- Top-level bill impact: explain today's money story near the top, not only inside the period totals area.
+  - First pass implemented: the dashboard now compares estimated no-solar/no-battery cost, actual grid cost, export credit, and net bill benefit for today.
 - Energy coach panel: combine today's energy verdict, peak plan, and tomorrow's solar outlook into simple action hints.
   - First pass implemented: the dashboard now shows a three-card energy coach using existing dashboard and weather data.
 - Peak window countdown: show time until peak tariff starts/ends.

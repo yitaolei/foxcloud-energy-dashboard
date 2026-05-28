@@ -211,6 +211,35 @@
           </div>
         </section>
 
+        <section class="panel top-bill-impact-panel" aria-live="polite">
+          <div class="panel-heading compact-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="todayBillImpactKicker">Bill impact</p>
+              <h2 data-i18n="todayBillImpactTitle">Today's bill impact</h2>
+              <p id="todayBillImpactDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="todayBillImpactBenefit" class="top-bill-impact-benefit">--</strong>
+          </div>
+          <div class="top-bill-impact-grid">
+            <article>
+              <span data-i18n="withoutSolarBattery">Without solar/battery</span>
+              <strong id="todayBillWithoutSolar">--</strong>
+            </article>
+            <article>
+              <span data-i18n="gridEnergyCost">Grid energy cost</span>
+              <strong id="todayBillGridCost">--</strong>
+            </article>
+            <article>
+              <span data-i18n="exportCredit">Export credit</span>
+              <strong id="todayBillExportCredit">--</strong>
+            </article>
+            <article>
+              <span data-i18n="netCostAfterExport">Net after export credit</span>
+              <strong id="todayBillNetCost">--</strong>
+            </article>
+          </div>
+        </section>
+
         <section class="panel energy-score-panel" aria-live="polite">
           <div id="energyScoreRing" class="energy-score-ring" style="--score-percent: 0%">
             <strong id="energyScoreValue">--</strong>

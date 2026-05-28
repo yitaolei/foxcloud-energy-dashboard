@@ -81,6 +81,11 @@ const metricFields = {
   kpiSelfSufficiency: document.getElementById("kpiSelfSufficiency"),
   kpiEstimatedSavings: document.getElementById("kpiEstimatedSavings"),
   energyScoreValue: document.getElementById("energyScoreValue"),
+  todayBillImpactBenefit: document.getElementById("todayBillImpactBenefit"),
+  todayBillWithoutSolar: document.getElementById("todayBillWithoutSolar"),
+  todayBillGridCost: document.getElementById("todayBillGridCost"),
+  todayBillExportCredit: document.getElementById("todayBillExportCredit"),
+  todayBillNetCost: document.getElementById("todayBillNetCost"),
   savingsOverviewToday: document.getElementById("savingsOverviewToday"),
   savingsOverviewWeek: document.getElementById("savingsOverviewWeek"),
   savingsOverviewMonth: document.getElementById("savingsOverviewMonth"),
@@ -132,6 +137,7 @@ const textFields = {
   operatingSummaryGrid: document.getElementById("operatingSummaryGrid"),
   operatingSummaryReserve: document.getElementById("operatingSummaryReserve"),
   operatingSummaryAction: document.getElementById("operatingSummaryAction"),
+  todayBillImpactDetail: document.getElementById("todayBillImpactDetail"),
   energyScoreRing: document.getElementById("energyScoreRing"),
   energyScoreStatus: document.getElementById("energyScoreStatus"),
   energyScoreDetail: document.getElementById("energyScoreDetail"),
@@ -502,6 +508,9 @@ const translations = {
     operatingActionSaveBattery: "Save battery",
     operatingActionReduceGrid: "Reduce grid use",
     operatingActionNormal: "Keep steady",
+    todayBillImpactKicker: "Bill impact",
+    todayBillImpactTitle: "Today's bill impact",
+    todayBillImpactDetail: "Avoided {avoided} of grid import and exported {exported} today.",
     energyScoreKicker: "Home energy score",
     energyScoreTitle: "Energy health score",
     energyScoreExcellent: "Excellent",
@@ -1015,6 +1024,9 @@ const translations = {
     operatingActionSaveBattery: "给电池留电",
     operatingActionReduceGrid: "减少电网取电",
     operatingActionNormal: "保持当前节奏",
+    todayBillImpactKicker: "账单影响",
+    todayBillImpactTitle: "今日账单影响",
+    todayBillImpactDetail: "今天少买了 {avoided} 电网电，并回馈 {exported}。",
     energyScoreKicker: "家庭能源评分",
     energyScoreTitle: "能源健康评分",
     energyScoreExcellent: "优秀",
@@ -1528,6 +1540,9 @@ const translations = {
     operatingActionSaveBattery: "เก็บแบตไว้",
     operatingActionReduceGrid: "ลดการใช้กริด",
     operatingActionNormal: "คงจังหวะเดิม",
+    todayBillImpactKicker: "ผลต่อบิล",
+    todayBillImpactTitle: "ผลต่อบิลวันนี้",
+    todayBillImpactDetail: "หลีกเลี่ยงการนำเข้ากริด {avoided} และส่งออก {exported} วันนี้",
     energyScoreKicker: "คะแนนพลังงานบ้าน",
     energyScoreTitle: "คะแนนสุขภาพพลังงาน",
     energyScoreExcellent: "ยอดเยี่ยม",
@@ -2459,6 +2474,48 @@ function renderOperatingSummary(payload) {
     ? "--"
     : formatPercent(summary.batteryReserve);
   textFields.operatingSummaryAction.textContent = t(summary.actionKey);
+}
+
+function getTodayBillImpact(payload) {
+  const today = payload?.today ?? {};
+  const savings = payload?.todaySavings ?? {};
+  const homeUsageKwh = Number(today.homeUsageKwh ?? 0);
+  const gridConsumptionKwh = Number(today.gridConsumptionKwh ?? 0);
+  const blendedImportRate = Number(savings.blendedImportRate ?? 0);
+  const exportCredit = Number(savings.exportCredit ?? 0);
+  const withoutSolarCost = homeUsageKwh * blendedImportRate;
+  const gridEnergyCost = gridConsumptionKwh * blendedImportRate;
+  const netCostAfterExport = gridEnergyCost - exportCredit;
+  const billBenefit = withoutSolarCost - netCostAfterExport;
+
+  return {
+    currency: savings.currency ?? "AUD",
+    avoidedGridImportKwh: Number(savings.avoidedGridImportKwh ?? Math.max(0, homeUsageKwh - gridConsumptionKwh)),
+    exportedKwh: Number(savings.exportedKwh ?? today.returnToGridKwh ?? 0),
+    withoutSolarCost,
+    gridEnergyCost,
+    exportCredit,
+    netCostAfterExport,
+    billBenefit,
+  };
+}
+
+function renderTodayBillImpact(payload) {
+  if (!payload?.today) {
+    return;
+  }
+
+  const impact = getTodayBillImpact(payload);
+
+  metricFields.todayBillImpactBenefit.textContent = formatMoney(impact.billBenefit, impact.currency);
+  metricFields.todayBillWithoutSolar.textContent = formatMoney(impact.withoutSolarCost, impact.currency);
+  metricFields.todayBillGridCost.textContent = formatMoney(impact.gridEnergyCost, impact.currency);
+  metricFields.todayBillExportCredit.textContent = formatMoney(impact.exportCredit, impact.currency);
+  metricFields.todayBillNetCost.textContent = formatMoney(impact.netCostAfterExport, impact.currency);
+  textFields.todayBillImpactDetail.textContent = interpolate(t("todayBillImpactDetail"), {
+    avoided: formatKwh(impact.avoidedGridImportKwh),
+    exported: formatKwh(impact.exportedKwh),
+  });
 }
 
 function getLocalWeekdayIndex(dateString) {
@@ -5103,6 +5160,7 @@ function renderMetrics(payload) {
   renderDataQuality(payload);
   renderVisualKpis(payload);
   renderOperatingSummary(payload);
+  renderTodayBillImpact(payload);
   renderEnergyScore(payload);
   renderTariffTimeline(payload.todaySavings);
   renderTrendSnapshot(payload);
