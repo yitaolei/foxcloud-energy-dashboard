@@ -1880,6 +1880,78 @@ select {
   background: linear-gradient(180deg, #ef4444, #dc2626);
 }
 
+.action-board-panel {
+  border-color: rgba(37, 99, 235, 0.16);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(239, 246, 255, 0.78)),
+    var(--surface-strong);
+}
+
+.action-board-status {
+  color: #1d4ed8;
+  font-size: 1.25rem;
+  text-align: right;
+}
+
+.action-board-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.action-board-card {
+  position: relative;
+  min-height: 142px;
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 1rem 1rem 1rem 1.15rem;
+  overflow: hidden;
+}
+
+.action-board-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: linear-gradient(180deg, #22c55e, #14b8a6);
+}
+
+.action-board-card[data-tone="watch"]::before {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+
+.action-board-card[data-tone="alert"]::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.action-board-card[data-tone="neutral"]::before {
+  background: linear-gradient(180deg, #64748b, #94a3b8);
+}
+
+.action-board-card > span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.action-board-card strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--ink);
+  font-size: clamp(1.18rem, 1.8vw, 1.5rem);
+  line-height: 1.08;
+}
+
+.action-board-card small {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--muted);
+  line-height: 1.38;
+}
+
 .energy-coach-panel {
   border-color: rgba(15, 118, 110, 0.18);
   background:
@@ -3015,6 +3087,7 @@ tbody tr:hover {
   .chart-grid,
   .weather-current,
   .insight-panel,
+  .action-board-grid,
   .metrics-grid,
   .gauge-panel,
   .trend-grid,
@@ -3092,6 +3165,10 @@ tbody tr:hover {
   }
 
   .tomorrow-prep-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .action-board-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3380,6 +3457,7 @@ tbody tr:hover {
   .tariff-grid,
   .totals-grid,
   .insight-panel,
+  .action-board-grid,
   .metrics-grid,
   .gauge-panel,
   .trend-grid,

@@ -262,6 +262,20 @@ const textFields = {
   insightTemperatureDetail: document.getElementById("insightTemperatureDetail"),
   insightSmartHint: document.getElementById("insightSmartHint"),
   insightSmartHintDetail: document.getElementById("insightSmartHintDetail"),
+  actionBoardDetail: document.getElementById("actionBoardDetail"),
+  actionBoardStatus: document.getElementById("actionBoardStatus"),
+  actionBoardNowCard: document.getElementById("actionBoardNowCard"),
+  actionBoardNowStatus: document.getElementById("actionBoardNowStatus"),
+  actionBoardNowDetail: document.getElementById("actionBoardNowDetail"),
+  actionBoardBatteryCard: document.getElementById("actionBoardBatteryCard"),
+  actionBoardBatteryStatus: document.getElementById("actionBoardBatteryStatus"),
+  actionBoardBatteryDetail: document.getElementById("actionBoardBatteryDetail"),
+  actionBoardPeakCard: document.getElementById("actionBoardPeakCard"),
+  actionBoardPeakStatus: document.getElementById("actionBoardPeakStatus"),
+  actionBoardPeakDetail: document.getElementById("actionBoardPeakDetail"),
+  actionBoardTomorrowCard: document.getElementById("actionBoardTomorrowCard"),
+  actionBoardTomorrowStatus: document.getElementById("actionBoardTomorrowStatus"),
+  actionBoardTomorrowDetail: document.getElementById("actionBoardTomorrowDetail"),
   coachVerdictCard: document.getElementById("coachVerdictCard"),
   coachVerdictStatus: document.getElementById("coachVerdictStatus"),
   coachVerdictDetail: document.getElementById("coachVerdictDetail"),
@@ -758,6 +772,38 @@ const translations = {
     smartHintPeak: "Peak tariff is active; battery support is most valuable now.",
     smartHintLowBattery: "Battery is below 50%; consider saving stored energy for peak hours.",
     smartHintNormal: "System looks steady. Keep an eye on weather and peak tariff window.",
+    actionBoardKicker: "Priority board",
+    actionBoardTitle: "What to do now",
+    actionBoardNow: "Now",
+    actionBoardBattery: "Battery",
+    actionBoardPeak: "Peak window",
+    actionBoardTomorrow: "Tomorrow",
+    actionBoardDetail: "Priority: {priority}. Grid {grid}; battery {battery}; tomorrow {tomorrow}.",
+    actionBoardAllGood: "Steady",
+    actionBoardUseSurplus: "Use surplus now",
+    actionBoardProtectBattery: "Protect battery",
+    actionBoardReduceImport: "Reduce import",
+    actionBoardPlanTomorrow: "Plan tomorrow",
+    actionNowUseSolar: "Run flexible loads",
+    actionNowUseSolarDetail: "Available headroom {headroom}. Best before the surplus is exported.",
+    actionNowReduceImport: "Pause heavy loads",
+    actionNowReduceImportDetail: "Import pressure {pressure}. Grid flow {grid}.",
+    actionNowWait: "Keep normal use",
+    actionNowWaitDetail: "No urgent load shift is needed right now.",
+    actionBatterySave: "Hold reserve",
+    actionBatterySaveDetail: "Reserve above 20% is {reserve}. Recent runway risk {risk}.",
+    actionBatteryUse: "Reserve is usable",
+    actionBatteryUseDetail: "Battery reserve {reserve}; current mode {mode}.",
+    actionPeakActive: "Peak active",
+    actionPeakActiveDetail: "Avoid import during {window}; grid flow {grid}.",
+    actionPeakPrepare: "Prepare for peak",
+    actionPeakPrepareDetail: "{time} until peak window {window}.",
+    actionTomorrowSolar: "Use solar window",
+    actionTomorrowSolarDetail: "Tomorrow is {outlook}; best window {window}.",
+    actionTomorrowConserve: "Conserve tonight",
+    actionTomorrowConserveDetail: "Tomorrow is {outlook}; keep reserve and avoid heavy loads.",
+    actionTomorrowWaiting: "Waiting for forecast",
+    actionTomorrowWaitingDetail: "Weather data is not ready yet.",
     energyCoachKicker: "Energy coach",
     energyCoachTitle: "Actionable home energy tips",
     coachVerdictLabel: "Today verdict",
@@ -1299,6 +1345,38 @@ const translations = {
     smartHintPeak: "当前是高峰电价，电池支撑最有价值。",
     smartHintLowBattery: "电池低于 50%，建议尽量把电留给高峰时段。",
     smartHintNormal: "系统状态稳定，继续关注天气和高峰电价时段。",
+    actionBoardKicker: "优先行动",
+    actionBoardTitle: "现在该做什么",
+    actionBoardNow: "现在",
+    actionBoardBattery: "电池",
+    actionBoardPeak: "高峰时段",
+    actionBoardTomorrow: "明天",
+    actionBoardDetail: "优先事项：{priority}。电网 {grid}；电池 {battery}；明天 {tomorrow}。",
+    actionBoardAllGood: "保持节奏",
+    actionBoardUseSurplus: "现在利用富余电",
+    actionBoardProtectBattery: "保护电池余量",
+    actionBoardReduceImport: "减少电网取电",
+    actionBoardPlanTomorrow: "安排明日用电",
+    actionNowUseSolar: "运行可推迟负载",
+    actionNowUseSolarDetail: "可用余量 {headroom}。最好在富余电回馈前使用。",
+    actionNowReduceImport: "暂停大功率负载",
+    actionNowReduceImportDetail: "取电压力 {pressure}。电网流向 {grid}。",
+    actionNowWait: "正常使用",
+    actionNowWaitDetail: "当前没有紧急需要转移的负载。",
+    actionBatterySave: "保留电池余量",
+    actionBatterySaveDetail: "高于 20% 的余量为 {reserve}。最近续航风险 {risk}。",
+    actionBatteryUse: "电池余量可用",
+    actionBatteryUseDetail: "电池余量 {reserve}；当前模式 {mode}。",
+    actionPeakActive: "高峰正在进行",
+    actionPeakActiveDetail: "在 {window} 尽量避免取电；电网流向 {grid}。",
+    actionPeakPrepare: "准备高峰时段",
+    actionPeakPrepareDetail: "距离高峰窗口 {window} 还有 {time}。",
+    actionTomorrowSolar: "利用明日太阳能窗口",
+    actionTomorrowSolarDetail: "明天 {outlook}；最佳窗口 {window}。",
+    actionTomorrowConserve: "今晚保守用电",
+    actionTomorrowConserveDetail: "明天 {outlook}；保留电池，避免大功率负载。",
+    actionTomorrowWaiting: "等待天气预报",
+    actionTomorrowWaitingDetail: "天气数据还没有准备好。",
     energyCoachKicker: "能源建议",
     energyCoachTitle: "可执行的家庭能源建议",
     coachVerdictLabel: "今天总结",
@@ -1840,6 +1918,38 @@ const translations = {
     smartHintPeak: "ช่วงค่าไฟพีคกำลังทำงาน แบตเตอรี่ช่วยคุ้มที่สุดตอนนี้",
     smartHintLowBattery: "แบตเตอรี่ต่ำกว่า 50%; ควรเก็บไว้ใช้ช่วงพีค",
     smartHintNormal: "ระบบค่อนข้างนิ่ง ติดตามอากาศและช่วงค่าไฟพีคต่อไป",
+    actionBoardKicker: "ลำดับความสำคัญ",
+    actionBoardTitle: "ควรทำอะไรตอนนี้",
+    actionBoardNow: "ตอนนี้",
+    actionBoardBattery: "แบตเตอรี่",
+    actionBoardPeak: "ช่วงพีค",
+    actionBoardTomorrow: "พรุ่งนี้",
+    actionBoardDetail: "สำคัญที่สุด: {priority} กริด {grid}; แบต {battery}; พรุ่งนี้ {tomorrow}",
+    actionBoardAllGood: "คงจังหวะเดิม",
+    actionBoardUseSurplus: "ใช้ไฟส่วนเกินตอนนี้",
+    actionBoardProtectBattery: "ปกป้องสำรองแบต",
+    actionBoardReduceImport: "ลดการนำเข้ากริด",
+    actionBoardPlanTomorrow: "วางแผนพรุ่งนี้",
+    actionNowUseSolar: "เดินโหลดที่เลื่อนได้",
+    actionNowUseSolarDetail: "กำลังเหลือ {headroom} ใช้ก่อนส่งออกจะคุ้มกว่า",
+    actionNowReduceImport: "พักโหลดหนัก",
+    actionNowReduceImportDetail: "แรงกดดันนำเข้า {pressure} การไหลกริด {grid}",
+    actionNowWait: "ใช้งานปกติ",
+    actionNowWaitDetail: "ตอนนี้ยังไม่จำเป็นต้องย้ายโหลดเร่งด่วน",
+    actionBatterySave: "เก็บสำรองไว้",
+    actionBatterySaveDetail: "สำรองเหนือ 20% คือ {reserve} ความเสี่ยงล่าสุด {risk}",
+    actionBatteryUse: "สำรองแบตใช้ได้",
+    actionBatteryUseDetail: "สำรองแบต {reserve}; โหมดตอนนี้ {mode}",
+    actionPeakActive: "พีคกำลังทำงาน",
+    actionPeakActiveDetail: "หลีกเลี่ยงนำเข้าในช่วง {window}; กริด {grid}",
+    actionPeakPrepare: "เตรียมช่วงพีค",
+    actionPeakPrepareDetail: "อีก {time} ถึงช่วงพีค {window}",
+    actionTomorrowSolar: "ใช้ช่วงแดดพรุ่งนี้",
+    actionTomorrowSolarDetail: "พรุ่งนี้ {outlook}; ช่วงที่ดีที่สุด {window}",
+    actionTomorrowConserve: "ประหยัดคืนนี้",
+    actionTomorrowConserveDetail: "พรุ่งนี้ {outlook}; เก็บสำรองและหลีกเลี่ยงโหลดหนัก",
+    actionTomorrowWaiting: "รอพยากรณ์",
+    actionTomorrowWaitingDetail: "ข้อมูลอากาศยังไม่พร้อม",
     energyCoachKicker: "โค้ชพลังงาน",
     energyCoachTitle: "คำแนะนำพลังงานที่ทำได้จริง",
     coachVerdictLabel: "สรุปวันนี้",
@@ -3540,6 +3650,144 @@ function renderTomorrowPrep(payload, weatherPayload = lastWeatherPayload) {
   textFields.tomorrowPrepAction.textContent = t(plan.actionKey);
 }
 
+function setActionBoardCard(card, statusElement, detailElement, tone, statusKey, detail) {
+  card.dataset.tone = tone;
+  statusElement.textContent = t(statusKey);
+  detailElement.textContent = detail;
+}
+
+function getActionBoardPriority({ flexibleLoad, batteryRunway, gridForecast, tomorrowPrep }) {
+  if (gridForecast.importPressure >= 65) {
+    return "actionBoardReduceImport";
+  }
+
+  if (batteryRunway.riskKey === "runwayRiskHigh" || (batteryRunway.reservePercent !== null && batteryRunway.reservePercent < 20)) {
+    return "actionBoardProtectBattery";
+  }
+
+  if (flexibleLoad.headroomKw >= 0.8 && flexibleLoad.statusKey !== "loadPlanAvoidPeak") {
+    return "actionBoardUseSurplus";
+  }
+
+  if (tomorrowPrep.statusKey === "tomorrowPrepReady" || tomorrowPrep.statusKey === "tomorrowPrepGood") {
+    return "actionBoardPlanTomorrow";
+  }
+
+  return "actionBoardAllGood";
+}
+
+function renderActionBoard(payload, weatherPayload = lastWeatherPayload) {
+  if (!payload?.live) {
+    return;
+  }
+
+  const flexibleLoad = getFlexibleLoadPlan(payload);
+  const batteryReserve = getBatteryReservePlan(payload);
+  const batteryRunway = getBatteryRunwayPlan(payload);
+  const gridForecast = getGridImportForecast(payload);
+  const tomorrowPrep = getTomorrowPrepPlan(payload, weatherPayload);
+  const priorityKey = getActionBoardPriority({
+    flexibleLoad,
+    batteryRunway,
+    gridForecast,
+    tomorrowPrep,
+  });
+  const gridSummary = gridForecast.importPressure >= 65
+    ? t("gridForecastHigh")
+    : gridForecast.importPressure >= 35
+      ? t("gridForecastWatch")
+      : t("gridForecastLow");
+  const batterySummary = batteryRunway.reservePercent === null
+    ? "--"
+    : formatPercent(batteryRunway.reservePercent);
+
+  textFields.actionBoardStatus.textContent = t(priorityKey);
+  textFields.actionBoardDetail.textContent = interpolate(t("actionBoardDetail"), {
+    priority: t(priorityKey),
+    grid: gridSummary,
+    battery: batterySummary,
+    tomorrow: t(tomorrowPrep.statusKey),
+  });
+
+  const nowUseSolar = flexibleLoad.headroomKw >= 0.8 && gridForecast.importPressure < 45;
+  const nowReduceImport = gridForecast.importPressure >= 55;
+  setActionBoardCard(
+    textFields.actionBoardNowCard,
+    textFields.actionBoardNowStatus,
+    textFields.actionBoardNowDetail,
+    nowReduceImport ? "alert" : nowUseSolar ? "good" : "neutral",
+    nowReduceImport ? "actionNowReduceImport" : nowUseSolar ? "actionNowUseSolar" : "actionNowWait",
+    nowReduceImport
+      ? interpolate(t("actionNowReduceImportDetail"), {
+        pressure: formatPercent(gridForecast.importPressure),
+        grid: gridForecast.gridFlow,
+      })
+      : nowUseSolar
+        ? interpolate(t("actionNowUseSolarDetail"), {
+          headroom: formatKw(flexibleLoad.headroomKw),
+        })
+        : t("actionNowWaitDetail"),
+  );
+
+  const batteryShouldSave = batteryRunway.riskKey === "runwayRiskHigh"
+    || (batteryRunway.reservePercent !== null && batteryRunway.reservePercent < 25);
+  setActionBoardCard(
+    textFields.actionBoardBatteryCard,
+    textFields.actionBoardBatteryStatus,
+    textFields.actionBoardBatteryDetail,
+    batteryShouldSave ? "alert" : batteryRunway.riskKey === "runwayRiskMedium" ? "watch" : "good",
+    batteryShouldSave ? "actionBatterySave" : "actionBatteryUse",
+    batteryShouldSave
+      ? interpolate(t("actionBatterySaveDetail"), {
+        reserve: batteryRunway.reservePercent === null ? "--" : formatPercent(batteryRunway.reservePercent),
+        risk: t(batteryRunway.riskKey),
+      })
+      : interpolate(t("actionBatteryUseDetail"), {
+        reserve: batteryReserve.reservePercent === null ? "--" : formatPercent(batteryReserve.reservePercent),
+        mode: t(batteryReserve.modeKey),
+      }),
+  );
+
+  const tariff = gridForecast.tariff;
+  setActionBoardCard(
+    textFields.actionBoardPeakCard,
+    textFields.actionBoardPeakStatus,
+    textFields.actionBoardPeakDetail,
+    tariff.isPeak && gridForecast.importPressure >= 35 ? "alert" : tariff.isPeak ? "watch" : "good",
+    tariff.isPeak ? "actionPeakActive" : "actionPeakPrepare",
+    tariff.isPeak
+      ? interpolate(t("actionPeakActiveDetail"), {
+        window: tariff.peakWindow,
+        grid: gridForecast.gridFlow,
+      })
+      : interpolate(t("actionPeakPrepareDetail"), {
+        time: formatDurationMinutes(tariff.detailMinutes),
+        window: tariff.peakWindow,
+      }),
+  );
+
+  const tomorrowWaiting = tomorrowPrep.statusKey === "tomorrowPrepWaiting";
+  const tomorrowConserve = tomorrowPrep.statusKey === "tomorrowPrepLimited"
+    || tomorrowPrep.actionKey === "tomorrowActionSaveBattery";
+  setActionBoardCard(
+    textFields.actionBoardTomorrowCard,
+    textFields.actionBoardTomorrowStatus,
+    textFields.actionBoardTomorrowDetail,
+    tomorrowWaiting ? "watch" : tomorrowConserve ? "alert" : "good",
+    tomorrowWaiting ? "actionTomorrowWaiting" : tomorrowConserve ? "actionTomorrowConserve" : "actionTomorrowSolar",
+    tomorrowWaiting
+      ? t("actionTomorrowWaitingDetail")
+      : tomorrowConserve
+        ? interpolate(t("actionTomorrowConserveDetail"), {
+          outlook: t(tomorrowPrep.outlookKey),
+        })
+        : interpolate(t("actionTomorrowSolarDetail"), {
+          outlook: t(tomorrowPrep.outlookKey),
+          window: t(tomorrowPrep.windowKey),
+        }),
+  );
+}
+
 function setCoachCard(card, tone, statusKey, detail) {
   card.dataset.tone = tone;
   const statusId = card.id.replace("Card", "Status");
@@ -4035,6 +4283,7 @@ function renderWeather(payload) {
   renderEnergyScore(lastPayload, payload);
   renderEnergyCoach(lastPayload, payload);
   renderTomorrowPrep(lastPayload, payload);
+  renderActionBoard(lastPayload, payload);
 }
 
 async function loadWeather() {
@@ -5370,6 +5619,7 @@ function renderMetrics(payload) {
   renderBatteryRunwayPlan(payload);
   renderGridImportForecast(payload);
   renderTomorrowPrep(payload);
+  renderActionBoard(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);

@@ -18,6 +18,7 @@
 - Added structured Modbus TCP connection diagnostics so DHCP/IP changes show a useful dashboard warning with the attempted host, port, timeout, and next steps.
 - Added a tomorrow solar readiness panel that combines tomorrow's forecast, rain/cloud outlook, current battery reserve, recent home load, and tariff state into a practical load-planning recommendation.
 - Added daily mean cloud-cover data to the weather forecast payload so solar-readiness decisions can account for tomorrow's cloud conditions.
+- Added a priority action board that summarizes live solar surplus, grid import pressure, battery runway, peak tariff timing, and tomorrow's forecast into immediate household actions.
 - Added SQLite backup status metadata to the protected `/api/health` response, including backup path, interval, retention count, scheduler state, next run time, running state, last successful backup path, and last success/failure timestamps.
 - Added regression coverage for the SQLite backup health status shape.
 
