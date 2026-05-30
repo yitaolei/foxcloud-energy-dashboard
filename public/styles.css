@@ -1266,6 +1266,93 @@ select {
   line-height: 1.15;
 }
 
+.tomorrow-prep-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(240, 253, 244, 0.8)),
+    var(--surface-strong);
+}
+
+.tomorrow-prep-status {
+  color: #047857;
+  font-size: 1.25rem;
+  text-align: right;
+}
+
+.tomorrow-prep-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.86fr) 1.7fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.tomorrow-prep-main {
+  display: grid;
+  align-content: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 1rem;
+}
+
+.tomorrow-prep-main span,
+.tomorrow-prep-grid span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.tomorrow-prep-main strong {
+  color: #065f46;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.tomorrow-prep-main small {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.tomorrow-prep-track {
+  height: 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.tomorrow-prep-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f59e0b, #22c55e 52%, #0ea5e9);
+  transition: width 260ms ease;
+}
+
+.tomorrow-prep-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.tomorrow-prep-grid article {
+  display: grid;
+  align-content: center;
+  min-height: 120px;
+  border: 1px solid rgba(16, 185, 129, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 1rem;
+}
+
+.tomorrow-prep-grid strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--ink);
+  font-size: 1.12rem;
+  line-height: 1.15;
+}
+
 .visual-status-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2934,6 +3021,7 @@ tbody tr:hover {
   .flexible-load-layout,
   .battery-runway-layout,
   .grid-forecast-layout,
+  .tomorrow-prep-layout,
   .visual-kpi-grid,
   .savings-overview-grid,
   .visual-status-strip,
@@ -3001,6 +3089,10 @@ tbody tr:hover {
 
   .grid-forecast-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tomorrow-prep-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .energy-timeline-summary {
@@ -3297,6 +3389,8 @@ tbody tr:hover {
   .battery-runway-grid,
   .grid-forecast-layout,
   .grid-forecast-grid,
+  .tomorrow-prep-layout,
+  .tomorrow-prep-grid,
   .energy-timeline-summary,
   .visual-kpi-grid,
   .savings-overview-grid,

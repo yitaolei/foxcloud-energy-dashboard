@@ -109,7 +109,7 @@ https://api.open-meteo.com/v1/forecast
   &longitude=...
   &current=temperature_2m,apparent_temperature,weather_code,cloud_cover,precipitation
   &hourly=temperature_2m,weather_code,cloud_cover,precipitation_probability,precipitation
-  &daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,sunrise,sunset
+  &daily=weather_code,temperature_2m_max,temperature_2m_min,cloud_cover_mean,precipitation_sum,precipitation_probability_max,sunrise,sunset
   &timezone=auto
 ```
 
@@ -139,6 +139,7 @@ Implemented API shape:
 - `GET /api/tariff` returns the active tariff
 - `PUT /api/tariff` saves validated tariff settings into SQLite
 - Modbus TCP connection failures now return a structured diagnostic payload so the UI can show the attempted host/port and DHCP/static-IP recovery steps.
+- Tomorrow solar readiness is now shown as a planning panel that blends tomorrow's weather outlook, rain/cloud conditions, battery reserve, recent home load, and tariff state.
 
 Current estimate:
 

@@ -57,6 +57,7 @@ interface OpenMeteoResponse {
     weather_code?: number[];
     temperature_2m_max?: number[];
     temperature_2m_min?: number[];
+    cloud_cover_mean?: number[];
     precipitation_sum?: number[];
     precipitation_probability_max?: number[];
   };
@@ -204,7 +205,7 @@ const buildOpenMeteoUrl = (location: WeatherLocation, settings: WeatherSettings)
     current: "temperature_2m,apparent_temperature,weather_code,cloud_cover,precipitation",
     hourly: "precipitation_probability",
     daily:
-      "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max",
+      "weather_code,temperature_2m_max,temperature_2m_min,cloud_cover_mean,precipitation_sum,precipitation_probability_max",
     timezone: location.timezone || settings.timezone || "auto",
     forecast_days: "5",
   });
@@ -268,9 +269,15 @@ const normalizeOpenMeteoResponse = (
       conditionKey: getWeatherConditionKey(dailyCode),
       temperatureMaxCelsius: round(weather.daily?.temperature_2m_max?.[index], 1),
       temperatureMinCelsius: round(weather.daily?.temperature_2m_min?.[index], 1),
+      cloudCoverMeanPercent: round(weather.daily?.cloud_cover_mean?.[index], 0),
       precipitationSumMm: dailyPrecipitation,
       precipitationProbabilityMaxPercent: dailyRainProbability,
-      solarOutlook: getSolarOutlook(dailyCode, null, dailyRainProbability, dailyPrecipitation),
+      solarOutlook: getSolarOutlook(
+        dailyCode,
+        round(weather.daily?.cloud_cover_mean?.[index], 0),
+        dailyRainProbability,
+        dailyPrecipitation,
+      ),
     };
   });
 

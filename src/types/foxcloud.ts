@@ -247,6 +247,7 @@ export interface WeatherPayload {
     conditionKey: string;
     temperatureMaxCelsius: number | null;
     temperatureMinCelsius: number | null;
+    cloudCoverMeanPercent: number | null;
     precipitationSumMm: number | null;
     precipitationProbabilityMaxPercent: number | null;
     solarOutlook: string;

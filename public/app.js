@@ -230,6 +230,15 @@ const textFields = {
   gridForecastImport: document.getElementById("gridForecastImport"),
   gridForecastSolar: document.getElementById("gridForecastSolar"),
   gridForecastAction: document.getElementById("gridForecastAction"),
+  tomorrowPrepDetail: document.getElementById("tomorrowPrepDetail"),
+  tomorrowPrepStatus: document.getElementById("tomorrowPrepStatus"),
+  tomorrowPrepScore: document.getElementById("tomorrowPrepScore"),
+  tomorrowPrepBar: document.getElementById("tomorrowPrepBar"),
+  tomorrowPrepMeta: document.getElementById("tomorrowPrepMeta"),
+  tomorrowPrepWeather: document.getElementById("tomorrowPrepWeather"),
+  tomorrowPrepReserve: document.getElementById("tomorrowPrepReserve"),
+  tomorrowPrepWindow: document.getElementById("tomorrowPrepWindow"),
+  tomorrowPrepAction: document.getElementById("tomorrowPrepAction"),
   gaugeSolarArc: document.getElementById("gaugeSolarArc"),
   gaugeBatteryArc: document.getElementById("gaugeBatteryArc"),
   gaugeHomeArc: document.getElementById("gaugeHomeArc"),
@@ -671,6 +680,27 @@ const translations = {
     gridSolarFalling: "Falling",
     gridSolarFlat: "Flat",
     gridForecastMeta: "Home load {load}; live grid flow {grid}.",
+    tomorrowPrepKicker: "Tomorrow prep",
+    tomorrowPrepTitle: "Tomorrow solar readiness",
+    tomorrowPrepDetail: "Tomorrow outlook {outlook}. Expected rain {rain}; cloud cover {cloud}.",
+    tomorrowPrepScore: "Readiness score",
+    tomorrowSolarOutlook: "Tomorrow solar",
+    tonightBatteryReserve: "Tonight reserve",
+    tomorrowLoadWindow: "Best load window",
+    tomorrowPrepAction: "Action",
+    tomorrowPrepReady: "Ready",
+    tomorrowPrepGood: "Good setup",
+    tomorrowPrepWatch: "Watch tonight",
+    tomorrowPrepLimited: "Limited solar",
+    tomorrowPrepWaiting: "Waiting for forecast",
+    tomorrowPrepMeta: "Battery {soc}; recent home load {load}; tariff {tariff}.",
+    tomorrowWindowSolar: "Late morning to afternoon",
+    tomorrowWindowLightOnly: "Small daytime loads only",
+    tomorrowWindowOffPeak: "Off-peak or after forecast improves",
+    tomorrowActionUseSolar: "Plan flexible loads for solar hours",
+    tomorrowActionSaveBattery: "Keep battery reserve overnight",
+    tomorrowActionAvoidHeavy: "Avoid heavy daytime loads",
+    tomorrowActionWaitWeather: "Refresh weather forecast",
     trendMeta: "Recent avg {average} • {percent}% of average",
     exportedToGrid: "Exported to grid",
     ofYesterday: "{percent}% of yesterday",
@@ -1191,6 +1221,27 @@ const translations = {
     gridSolarFalling: "下降",
     gridSolarFlat: "平稳",
     gridForecastMeta: "家庭负载 {load}；实时电网流向 {grid}。",
+    tomorrowPrepKicker: "明日准备",
+    tomorrowPrepTitle: "明日太阳能准备度",
+    tomorrowPrepDetail: "明日天气 {outlook}。预计降雨 {rain}；云量 {cloud}。",
+    tomorrowPrepScore: "准备度评分",
+    tomorrowSolarOutlook: "明日太阳能",
+    tonightBatteryReserve: "今晚电池余量",
+    tomorrowLoadWindow: "最佳用电窗口",
+    tomorrowPrepAction: "建议操作",
+    tomorrowPrepReady: "准备充足",
+    tomorrowPrepGood: "状态良好",
+    tomorrowPrepWatch: "今晚留意",
+    tomorrowPrepLimited: "太阳能有限",
+    tomorrowPrepWaiting: "等待天气预报",
+    tomorrowPrepMeta: "电池 {soc}；最近家庭负载 {load}；电价 {tariff}。",
+    tomorrowWindowSolar: "上午后段到下午",
+    tomorrowWindowLightOnly: "只安排小型日间负载",
+    tomorrowWindowOffPeak: "非高峰或天气改善后",
+    tomorrowActionUseSolar: "把可推迟负载安排到有太阳时",
+    tomorrowActionSaveBattery: "今晚尽量保留电池余量",
+    tomorrowActionAvoidHeavy: "避免安排大功率日间负载",
+    tomorrowActionWaitWeather: "刷新天气预报",
     trendMeta: "最近平均 {average} • 相当于平均值 {percent}%",
     exportedToGrid: "已回馈电网",
     ofYesterday: "相当于昨天 {percent}%",
@@ -1711,6 +1762,27 @@ const translations = {
     gridSolarFalling: "ลดลง",
     gridSolarFlat: "คงที่",
     gridForecastMeta: "โหลดบ้าน {load}; การไหลกริดสด {grid}",
+    tomorrowPrepKicker: "เตรียมพรุ่งนี้",
+    tomorrowPrepTitle: "ความพร้อมโซลาร์พรุ่งนี้",
+    tomorrowPrepDetail: "แนวโน้มพรุ่งนี้ {outlook} ฝนคาดการณ์ {rain}; เมฆ {cloud}",
+    tomorrowPrepScore: "คะแนนความพร้อม",
+    tomorrowSolarOutlook: "โซลาร์พรุ่งนี้",
+    tonightBatteryReserve: "สำรองแบตคืนนี้",
+    tomorrowLoadWindow: "ช่วงโหลดที่ดีที่สุด",
+    tomorrowPrepAction: "คำแนะนำ",
+    tomorrowPrepReady: "พร้อม",
+    tomorrowPrepGood: "พร้อมดี",
+    tomorrowPrepWatch: "เฝ้าดูคืนนี้",
+    tomorrowPrepLimited: "โซลาร์จำกัด",
+    tomorrowPrepWaiting: "รอพยากรณ์",
+    tomorrowPrepMeta: "แบต {soc}; โหลดบ้านล่าสุด {load}; ค่าไฟ {tariff}",
+    tomorrowWindowSolar: "สายถึงบ่าย",
+    tomorrowWindowLightOnly: "โหลดกลางวันขนาดเล็กเท่านั้น",
+    tomorrowWindowOffPeak: "นอกพีคหรือหลังพยากรณ์ดีขึ้น",
+    tomorrowActionUseSolar: "วางแผนโหลดที่เลื่อนได้ช่วงมีแดด",
+    tomorrowActionSaveBattery: "เก็บสำรองแบตไว้คืนนี้",
+    tomorrowActionAvoidHeavy: "หลีกเลี่ยงโหลดกลางวันหนัก",
+    tomorrowActionWaitWeather: "รีเฟรชพยากรณ์อากาศ",
     trendMeta: "ค่าเฉลี่ยล่าสุด {average} • {percent}% ของค่าเฉลี่ย",
     exportedToGrid: "ส่งออกเข้ากริด",
     ofYesterday: "{percent}% ของเมื่อวาน",
@@ -3375,6 +3447,99 @@ function renderGridImportForecast(payload) {
   textFields.gridForecastAction.textContent = t(forecast.actionKey);
 }
 
+function getTomorrowPrepPlan(payload, weatherPayload = lastWeatherPayload) {
+  const live = payload?.live ?? {};
+  const history = payload?.last24Hours ?? {};
+  const tomorrow = weatherPayload?.daily?.[1] ?? null;
+  const tariff = getTariffStatus(payload?.todaySavings ?? {});
+  const soc = Number(live.batterySocPercent);
+  const reservePercent = Number.isFinite(soc) ? Math.max(0, soc - 20) : null;
+  const recentHomeLoad = averageFinite((history.homeUsageKw ?? []).slice(-8)) ?? Number(live.homeUsageKw ?? 0);
+
+  if (!weatherPayload?.enabled || !tomorrow) {
+    return {
+      score: 0,
+      statusKey: "tomorrowPrepWaiting",
+      outlookKey: "unknown",
+      rain: null,
+      cloud: null,
+      soc,
+      reservePercent,
+      recentHomeLoad,
+      tariff,
+      windowKey: "tomorrowWindowOffPeak",
+      actionKey: "tomorrowActionWaitWeather",
+    };
+  }
+
+  const outlookScore = {
+    excellent: 48,
+    good: 38,
+    fair: 24,
+    poor: 8,
+  }[tomorrow.solarOutlook] ?? 16;
+  const batteryScore = reservePercent === null ? 12 : Math.max(0, Math.min(28, reservePercent * 0.7));
+  const rainPenalty = Math.min(12, Number(tomorrow.precipitationProbabilityMaxPercent ?? 0) / 8);
+  const loadPenalty = recentHomeLoad > 2.5 ? 8 : recentHomeLoad > 1.5 ? 4 : 0;
+  const score = Math.round(Math.max(0, Math.min(100, outlookScore + batteryScore + 16 - rainPenalty - loadPenalty)));
+  const statusKey = score >= 78
+    ? "tomorrowPrepReady"
+    : score >= 58
+      ? "tomorrowPrepGood"
+      : score >= 38
+        ? "tomorrowPrepWatch"
+        : "tomorrowPrepLimited";
+  const windowKey = tomorrow.solarOutlook === "excellent" || tomorrow.solarOutlook === "good"
+    ? "tomorrowWindowSolar"
+    : tomorrow.solarOutlook === "fair"
+      ? "tomorrowWindowLightOnly"
+      : "tomorrowWindowOffPeak";
+  const actionKey = tomorrow.solarOutlook === "poor"
+    ? "tomorrowActionAvoidHeavy"
+    : reservePercent !== null && reservePercent < 25
+      ? "tomorrowActionSaveBattery"
+      : "tomorrowActionUseSolar";
+
+  return {
+    score,
+    statusKey,
+    outlookKey: tomorrow.solarOutlook ?? "unknown",
+    rain: tomorrow.precipitationProbabilityMaxPercent,
+    cloud: tomorrow.cloudCoverMeanPercent,
+    soc,
+    reservePercent,
+    recentHomeLoad,
+    tariff,
+    windowKey,
+    actionKey,
+  };
+}
+
+function renderTomorrowPrep(payload, weatherPayload = lastWeatherPayload) {
+  if (!payload?.live) {
+    return;
+  }
+
+  const plan = getTomorrowPrepPlan(payload, weatherPayload);
+  textFields.tomorrowPrepStatus.textContent = t(plan.statusKey);
+  textFields.tomorrowPrepScore.textContent = `${plan.score}/100`;
+  textFields.tomorrowPrepBar.style.width = `${plan.score.toFixed(1)}%`;
+  textFields.tomorrowPrepDetail.textContent = interpolate(t("tomorrowPrepDetail"), {
+    outlook: t(plan.outlookKey),
+    rain: formatOptionalPercent(plan.rain),
+    cloud: formatOptionalPercent(plan.cloud),
+  });
+  textFields.tomorrowPrepMeta.textContent = interpolate(t("tomorrowPrepMeta"), {
+    soc: Number.isFinite(plan.soc) ? formatPercent(plan.soc) : "--",
+    load: formatKw(plan.recentHomeLoad),
+    tariff: plan.tariff.isPeak ? t("peakNow") : t("offPeakNow"),
+  });
+  textFields.tomorrowPrepWeather.textContent = t(plan.outlookKey);
+  textFields.tomorrowPrepReserve.textContent = plan.reservePercent === null ? "--" : formatPercent(plan.reservePercent);
+  textFields.tomorrowPrepWindow.textContent = t(plan.windowKey);
+  textFields.tomorrowPrepAction.textContent = t(plan.actionKey);
+}
+
 function setCoachCard(card, tone, statusKey, detail) {
   card.dataset.tone = tone;
   const statusId = card.id.replace("Card", "Status");
@@ -3827,6 +3992,7 @@ function renderWeather(payload) {
 
   if (!payload?.enabled || !payload.current) {
     weatherPanel.classList.add("hidden");
+    renderTomorrowPrep(lastPayload, payload);
     return;
   }
 
@@ -3868,6 +4034,7 @@ function renderWeather(payload) {
   renderSolarPerformance(lastPayload, payload);
   renderEnergyScore(lastPayload, payload);
   renderEnergyCoach(lastPayload, payload);
+  renderTomorrowPrep(lastPayload, payload);
 }
 
 async function loadWeather() {
@@ -5202,6 +5369,7 @@ function renderMetrics(payload) {
   renderFlexibleLoadPlan(payload);
   renderBatteryRunwayPlan(payload);
   renderGridImportForecast(payload);
+  renderTomorrowPrep(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);
