@@ -33,6 +33,35 @@ const publicDir = path.resolve(process.cwd(), "public");
 const chartJsDir = path.resolve(process.cwd(), "node_modules/chart.js/dist");
 const startedAt = new Date();
 
+const isModbusConnectionError = (message: string): boolean => {
+  const normalized = message.toLowerCase();
+  return env.dataProvider === "modbus" && (
+    normalized.includes("tcp") ||
+    normalized.includes("timed out") ||
+    normalized.includes("timeout") ||
+    normalized.includes("econnrefused") ||
+    normalized.includes("ehostunreach") ||
+    normalized.includes("enetunreach")
+  );
+};
+
+const buildModbusDiagnostic = (message: string) => {
+  if (!isModbusConnectionError(message)) {
+    return null;
+  }
+
+  return {
+    kind: "modbus_connection",
+    target: `${env.modbus.host || "missing-host"}:${env.modbus.port}`,
+    host: env.modbus.host,
+    port: env.modbus.port,
+    unitId: env.modbus.unitId,
+    timeoutMs: env.modbus.timeoutMs,
+    profile: env.modbus.profile,
+    readOnly: env.modbus.readOnly,
+  };
+};
+
 const getAppVersion = (): string => {
   return process.env.APP_VERSION?.trim() || process.env.npm_package_version || "0.1.0";
 };
@@ -101,6 +130,10 @@ app.get("/api/health", (_req, res) => {
     hasConfiguredDeviceSn: Boolean(env.foxCloud.deviceSn),
     usingApiKeyAuth: env.dataProvider === "foxcloud",
     modbusConfigured: env.dataProvider === "modbus" && Boolean(env.modbus.host),
+    modbusTarget: env.dataProvider === "modbus" && env.modbus.host
+      ? `${env.modbus.host}:${env.modbus.port}`
+      : null,
+    modbusTimeoutMs: env.modbus.timeoutMs,
     modbusReadOnly: env.modbus.readOnly,
     configuredModbusProfile: env.modbus.profile,
     activeModbusProfile: modbusProfile.activeProfile.id,
@@ -263,9 +296,11 @@ app.use((error: unknown, _req: Request, res: Response, _next: NextFunction) => {
   }
 
   const message = error instanceof Error ? error.message : "Unknown server error";
+  const diagnostic = buildModbusDiagnostic(message);
 
   res.status(500).json({
     error: message,
+    diagnostic,
   });
 });
 

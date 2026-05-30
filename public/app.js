@@ -401,6 +401,10 @@ const translations = {
     rebuildCacheConfirmLocal: "Refresh the selected range from local Modbus/SQLite data? This will not call FoxCloud.",
     rebuildCacheConfirmDemo: "Demo mode is enabled. Rebuild will not call FoxCloud or change live data. Continue?",
     unableToLoad: "Unable to load the dashboard",
+    modbusConnectError: "Modbus TCP cannot connect to {target} within {timeoutMs} ms.",
+    modbusConnectAdviceIp: "Check whether the inverter DHCP IP changed, then update MODBUS_HOST in the Synology .env file.",
+    modbusConnectAdvicePort: "Confirm the inverter is online on the 2.4 GHz LAN and port 502 is reachable from Synology.",
+    modbusConnectAdviceRestart: "After changing MODBUS_HOST, restart the foxcloud-dashboard container.",
     period: "Period",
     periodTotals: "Energy totals",
     periodTotalsHelp: "Choose a period to summarize daily energy data.",
@@ -917,6 +921,10 @@ const translations = {
     rebuildCacheConfirmLocal: "确定要用本地 Modbus/SQLite 数据刷新所选范围吗？这不会调用 FoxCloud。",
     rebuildCacheConfirmDemo: "当前是演示模式。重算不会调用 FoxCloud，也不会改变真实数据。是否继续？",
     unableToLoad: "无法加载仪表板",
+    modbusConnectError: "Modbus TCP 无法在 {timeoutMs} ms 内连接到 {target}。",
+    modbusConnectAdviceIp: "检查逆变器 DHCP IP 是否变化，然后更新 Synology .env 里的 MODBUS_HOST。",
+    modbusConnectAdvicePort: "确认逆变器仍在 2.4GHz 局域网在线，并且 Synology 能访问 502 端口。",
+    modbusConnectAdviceRestart: "修改 MODBUS_HOST 后，重启 foxcloud-dashboard container 让配置生效。",
     period: "周期",
     periodTotals: "能源总计",
     periodTotalsHelp: "选择一个周期来汇总每日能源数据。",
@@ -1433,6 +1441,10 @@ const translations = {
     rebuildCacheConfirmLocal: "ต้องการรีเฟรชช่วงที่เลือกจากข้อมูล Modbus/SQLite ในเครื่องหรือไม่? จะไม่เรียก FoxCloud",
     rebuildCacheConfirmDemo: "กำลังใช้โหมดตัวอย่าง การสร้างใหม่จะไม่เรียก FoxCloud หรือเปลี่ยนข้อมูลจริง ต้องการดำเนินการต่อหรือไม่?",
     unableToLoad: "ไม่สามารถโหลดแดชบอร์ดได้",
+    modbusConnectError: "Modbus TCP ไม่สามารถเชื่อมต่อกับ {target} ภายใน {timeoutMs} ms",
+    modbusConnectAdviceIp: "ตรวจสอบว่า DHCP IP ของอินเวอร์เตอร์เปลี่ยนหรือไม่ แล้วอัปเดต MODBUS_HOST ในไฟล์ .env บน Synology",
+    modbusConnectAdvicePort: "ยืนยันว่าอินเวอร์เตอร์ออนไลน์บน LAN 2.4 GHz และ Synology เข้าถึงพอร์ต 502 ได้",
+    modbusConnectAdviceRestart: "หลังจากเปลี่ยน MODBUS_HOST ให้รีสตาร์ต container foxcloud-dashboard",
     period: "ช่วงเวลา",
     periodTotals: "ยอดรวมพลังงาน",
     periodTotalsHelp: "เลือกช่วงเวลาเพื่อสรุปข้อมูลพลังงานรายวัน",
@@ -3970,6 +3982,23 @@ function renderWarnings(warnings) {
   );
 }
 
+function buildDashboardLoadWarnings(payload, message) {
+  const diagnostic = payload?.diagnostic;
+  if (diagnostic?.kind !== "modbus_connection") {
+    return [message];
+  }
+
+  return [
+    interpolate(t("modbusConnectError"), {
+      target: diagnostic.target ?? "--",
+      timeoutMs: diagnostic.timeoutMs ?? "--",
+    }),
+    t("modbusConnectAdviceIp"),
+    t("modbusConnectAdvicePort"),
+    t("modbusConnectAdviceRestart"),
+  ];
+}
+
 function getMaxValues(rows) {
   const numericKeys = [
     "generation",
@@ -5194,7 +5223,10 @@ async function loadDashboard() {
     const payload = await response.json();
 
     if (!response.ok || payload.error) {
-      throw new Error(payload.error || "Dashboard request failed.");
+      const message = payload.error || "Dashboard request failed.";
+      const loadError = new Error(message);
+      loadError.dashboardWarnings = buildDashboardLoadWarnings(payload, message);
+      throw loadError;
     }
 
     renderMetrics(payload);
@@ -5212,7 +5244,7 @@ async function loadDashboard() {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     statusText.textContent = `${t("unableToLoad")}: ${message}`;
-    renderWarnings([message]);
+    renderWarnings(error?.dashboardWarnings ?? [message]);
   } finally {
     refreshButton.disabled = false;
   }

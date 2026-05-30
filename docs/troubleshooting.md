@@ -77,12 +77,16 @@ Checks:
 - Confirm the dashboard server is on the same LAN or Wi-Fi as the inverter/datalogger.
 - Confirm `DATA_PROVIDER=modbus`.
 - Confirm `MODBUS_HOST`, `MODBUS_PORT`, and `MODBUS_UNIT_ID`.
+- If the router rebooted, check whether DHCP assigned a new inverter IP address. Update `MODBUS_HOST` and restart the container if it changed.
+- Add a DHCP reservation/static lease for the inverter MAC address so future router reboots keep the same IP.
 - Keep `MODBUS_READ_ONLY=true`.
 - Test TCP connectivity:
 
 ```bash
 nc -zv YOUR_INVERTER_IP 502
 ```
+
+When the dashboard shows `TCP Connection Timed Out`, the app is usually running but cannot open a Modbus TCP connection to `MODBUS_HOST:MODBUS_PORT`. Check the inverter IP in the router, confirm port `502` is reachable from Synology, then restart the `foxcloud-dashboard` container after any `.env` change.
 
 If TCP connects but values are wrong, the inverter model may need a different Modbus register profile.
 

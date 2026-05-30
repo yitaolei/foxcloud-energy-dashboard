@@ -15,6 +15,7 @@
 - Added a today energy timeline that groups recent 24-hour samples into solar-led, battery-led, grid-import, mixed, and quiet operating segments.
 - Added an operating summary panel that turns self-sufficiency, net grid position, recent operating mode, battery reserve, and suggested action into a single at-a-glance daily verdict.
 - Added a top-level bill impact panel that compares today's estimated no-solar/no-battery grid cost, actual grid cost, export credit, and net bill benefit.
+- Added structured Modbus TCP connection diagnostics so DHCP/IP changes show a useful dashboard warning with the attempted host, port, timeout, and next steps.
 - Added SQLite backup status metadata to the protected `/api/health` response, including backup path, interval, retention count, scheduler state, next run time, running state, last successful backup path, and last success/failure timestamps.
 - Added regression coverage for the SQLite backup health status shape.
 
