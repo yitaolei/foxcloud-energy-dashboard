@@ -141,6 +141,8 @@ Implemented API shape:
 - Modbus TCP connection failures now return a structured diagnostic payload so the UI can show the attempted host/port and DHCP/static-IP recovery steps.
 - Tomorrow solar readiness is now shown as a planning panel that blends tomorrow's weather outlook, rain/cloud conditions, battery reserve, recent home load, and tariff state.
 - The priority action board now rolls up live surplus, import pressure, battery reserve/runway, peak tariff state, and tomorrow's solar outlook into four immediate action cards.
+- Lower-frequency panels now sit below the daily energy table: weather settings, live data confidence, the 24-hour heatmap, solar calendar, weekday profile, and savings settings.
+- Energy health now emphasizes battery SOC as a large color-coded factor so low, medium, and healthy battery states are easier to scan.
 
 Current estimate:
 

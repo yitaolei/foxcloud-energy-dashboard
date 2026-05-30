@@ -175,6 +175,34 @@ select {
   gap: 1rem;
 }
 
+.daily-energy-table-panel {
+  order: 80;
+}
+
+.location-panel {
+  order: 81;
+}
+
+.data-quality-panel {
+  order: 82;
+}
+
+.operational-heatmap-panel {
+  order: 83;
+}
+
+.solar-calendar-panel {
+  order: 84;
+}
+
+.weekday-profile-panel {
+  order: 85;
+}
+
+.tariff-panel {
+  order: 86;
+}
+
 .dashboard-overview {
   display: grid;
   grid-template-columns: minmax(380px, 0.95fr) minmax(420px, 1.35fr);
@@ -1523,6 +1551,38 @@ select {
   font-weight: 900;
 }
 
+.energy-score-factors .energy-score-battery-factor {
+  border-radius: 12px;
+  padding: 0.68rem 0.9rem;
+  font-size: clamp(1.15rem, 2vw, 1.6rem);
+  line-height: 1;
+  box-shadow: 0 12px 28px rgba(22, 101, 52, 0.12);
+}
+
+.energy-score-battery-factor[data-level="high"] {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(220, 252, 231, 0.86);
+  color: #166534;
+}
+
+.energy-score-battery-factor[data-level="medium"] {
+  border-color: rgba(245, 158, 11, 0.38);
+  background: rgba(254, 243, 199, 0.9);
+  color: #92400e;
+}
+
+.energy-score-battery-factor[data-level="low"] {
+  border-color: rgba(220, 38, 38, 0.34);
+  background: rgba(254, 226, 226, 0.9);
+  color: #991b1b;
+}
+
+.energy-score-battery-factor[data-level="unknown"] {
+  border-color: rgba(100, 116, 139, 0.24);
+  background: rgba(241, 245, 249, 0.9);
+  color: #475569;
+}
+
 .data-quality-panel {
   border-color: rgba(20, 184, 166, 0.2);
   background:
@@ -1581,6 +1641,10 @@ select {
   margin-top: 1rem;
 }
 
+.data-quality-warning-detail {
+  grid-column: 1 / -1;
+}
+
 .data-quality-grid article {
   border: 1px solid rgba(29, 43, 36, 0.08);
   border-radius: 12px;
@@ -1593,6 +1657,10 @@ select {
   margin-top: 0.35rem;
   color: var(--ink);
   font-size: 1.05rem;
+}
+
+.data-quality-warning-detail strong {
+  line-height: 1.45;
 }
 
 .tariff-timeline-panel {

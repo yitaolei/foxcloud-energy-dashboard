@@ -153,6 +153,7 @@ const textFields = {
   dataQualitySource: document.getElementById("dataQualitySource"),
   dataQualityWarnings: document.getElementById("dataQualityWarnings"),
   dataQualityResponse: document.getElementById("dataQualityResponse"),
+  dataQualityWarningDetail: document.getElementById("dataQualityWarningDetail"),
   tariffTimelineStatus: document.getElementById("tariffTimelineStatus"),
   tariffTimelineDetail: document.getElementById("tariffTimelineDetail"),
   tariffPeakSegmentA: document.getElementById("tariffPeakSegmentA"),
@@ -564,6 +565,10 @@ const translations = {
     warningsLabel: "Warnings",
     warningsCount: "{count} warning(s)",
     noWarnings: "No warnings",
+    warningDetailLabel: "Warning detail",
+    warningDetailNone: "No warning in this response.",
+    warningDetailOne: "Latest warning in this response: {warning}. Generated at {time}.",
+    warningDetailMany: "Latest of {count} warnings in this response: {warning}. Generated at {time}.",
     tariffTimeline: "Electricity price timeline",
     tariffTimelineHelp: "Shows the peak price window and where the current time sits in the day.",
     currentTariff: "Current tariff",
@@ -1137,6 +1142,10 @@ const translations = {
     warningsLabel: "警告",
     warningsCount: "{count} 个警告",
     noWarnings: "没有警告",
+    warningDetailLabel: "警告说明",
+    warningDetailNone: "这次响应没有警告。",
+    warningDetailOne: "这次响应里的警告：{warning}。生成时间：{time}。",
+    warningDetailMany: "这次响应共有 {count} 个警告，最新/首条是：{warning}。生成时间：{time}。",
     tariffTimeline: "电价时间轴",
     tariffTimelineHelp: "显示高峰电价时段，以及当前时间在一天中的位置。",
     currentTariff: "当前电价",
@@ -1710,6 +1719,10 @@ const translations = {
     warningsLabel: "คำเตือน",
     warningsCount: "{count} คำเตือน",
     noWarnings: "ไม่มีคำเตือน",
+    warningDetailLabel: "รายละเอียดคำเตือน",
+    warningDetailNone: "ไม่มีคำเตือนในคำตอบนี้",
+    warningDetailOne: "คำเตือนในคำตอบนี้: {warning} สร้างเมื่อ {time}",
+    warningDetailMany: "มี {count} คำเตือนในคำตอบนี้ ล่าสุด/รายการแรก: {warning} สร้างเมื่อ {time}",
     tariffTimeline: "ไทม์ไลน์ค่าไฟ",
     tariffTimelineHelp: "แสดงช่วงค่าไฟพีคและตำแหน่งเวลาปัจจุบันของวัน",
     currentTariff: "ค่าไฟตอนนี้",
@@ -4369,6 +4382,7 @@ function getDataQuality(payload) {
 function renderDataQuality(payload) {
   const quality = getDataQuality(payload);
   const warningCount = payload.warnings?.length ?? 0;
+  const firstWarning = (payload.warnings?.[0] ?? "").replace(/[.。]+$/, "");
 
   textFields.dataQualityPanel.dataset.tone = quality.tone;
   textFields.dataQualityStatus.textContent = t(quality.statusKey);
@@ -4379,6 +4393,13 @@ function renderDataQuality(payload) {
     ? interpolate(t("warningsCount"), { count: warningCount })
     : t("noWarnings");
   textFields.dataQualityResponse.textContent = formatTimestamp(payload.generatedAt);
+  textFields.dataQualityWarningDetail.textContent = warningCount === 0
+    ? t("warningDetailNone")
+    : interpolate(t(warningCount === 1 ? "warningDetailOne" : "warningDetailMany"), {
+      count: warningCount,
+      warning: firstWarning,
+      time: formatTimestamp(payload.generatedAt),
+    });
 }
 
 function renderWarnings(warnings) {
@@ -5443,6 +5464,13 @@ function renderEnergyScore(payload, weatherPayload = lastWeatherPayload) {
   textFields.energyScoreBatteryFactor.textContent = interpolate(t("energyScoreBatteryFactor"), {
     value: formatPercent(energyScore.batterySoc),
   });
+  textFields.energyScoreBatteryFactor.dataset.level = energyScore.batterySoc === null
+    ? "unknown"
+    : energyScore.batterySoc >= 60
+      ? "high"
+      : energyScore.batterySoc >= 35
+        ? "medium"
+        : "low";
   textFields.energyScoreGridFactor.textContent = interpolate(t("energyScoreGridFactor"), {
     value: formatKw(energyScore.gridFlow),
   });

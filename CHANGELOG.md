@@ -22,6 +22,12 @@
 - Added SQLite backup status metadata to the protected `/api/health` response, including backup path, interval, retention count, scheduler state, next run time, running state, last successful backup path, and last success/failure timestamps.
 - Added regression coverage for the SQLite backup health status shape.
 
+### Changed
+
+- Moved weather forecast settings, live data confidence, the 24-hour heatmap, the solar calendar, the weekday profile, and savings settings below the daily energy table so the main dashboard stays focused on daily operation.
+- Made the battery factor in the energy health score larger and color-coded by SOC level.
+- Expanded live data confidence warning text with the current response warning detail and generated timestamp.
+
 ### Fixed
 
 - Prevented duplicate SQLite backup scheduler intervals if the scheduler startup hook is called more than once in the same process.

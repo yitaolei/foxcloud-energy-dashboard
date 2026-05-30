@@ -251,7 +251,7 @@
             <p id="energyScoreDetail" class="muted-copy">--</p>
             <div class="energy-score-factors">
               <span id="energyScoreSelfFactor">--</span>
-              <span id="energyScoreBatteryFactor">--</span>
+              <span id="energyScoreBatteryFactor" class="energy-score-battery-factor">--</span>
               <span id="energyScoreGridFactor">--</span>
               <span id="energyScoreTempFactor">--</span>
               <span id="energyScoreWeatherFactor">--</span>
@@ -287,6 +287,10 @@
             <article>
               <span data-i18n="responseGenerated">Response generated</span>
               <strong id="dataQualityResponse">--</strong>
+            </article>
+            <article class="data-quality-warning-detail">
+              <span data-i18n="warningDetailLabel">Warning detail</span>
+              <strong id="dataQualityWarningDetail">--</strong>
             </article>
           </div>
         </section>
@@ -957,7 +961,7 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel daily-energy-table-panel">
           <div class="panel-heading">
             <div>
               <p class="panel-kicker" data-i18n="period">Period</p>
