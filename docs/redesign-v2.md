@@ -145,6 +145,7 @@ Implemented API shape:
 - The top KPI row now includes today's battery net movement after daily consumption and before daily export, with charged and discharged energy shown in the detail text.
 - Energy health now emphasizes battery SOC as a large color-coded factor so low, medium, and healthy battery states are easier to scan.
 - New settings panels should use the shared `settings-panel` class and stay near the bottom of the dashboard. Weather forecast settings should remain immediately before savings settings.
+- The sticky section navigator should keep anchors for overview, actions, battery, daily data, and settings so the longer dashboard remains easy to move around.
 
 Current estimate:
 

@@ -21,6 +21,7 @@
 - Added a priority action board that summarizes live solar surplus, grid import pressure, battery runway, peak tariff timing, and tomorrow's forecast into immediate household actions.
 - Added SQLite backup status metadata to the protected `/api/health` response, including backup path, interval, retention count, scheduler state, next run time, running state, last successful backup path, and last success/failure timestamps.
 - Added regression coverage for the SQLite backup health status shape.
+- Added a sticky dashboard section navigator for jumping directly to overview, actions, battery, daily data, and settings.
 
 ### Changed
 
