@@ -164,6 +164,7 @@ const textFields = {
   smartHubWatchStatus: document.getElementById("smartHubWatchStatus"),
   smartHubWatchDetail: document.getElementById("smartHubWatchDetail"),
   smartLoadMeta: document.getElementById("smartLoadMeta"),
+  smartPlanStrip: document.getElementById("smartPlanStrip"),
   smartLoadGrid: document.getElementById("smartLoadGrid"),
   todayBillImpactDetail: document.getElementById("todayBillImpactDetail"),
   energyScoreRing: document.getElementById("energyScoreRing"),
@@ -640,6 +641,18 @@ const translations = {
     smartLoadWindowOffPeak: "Best window: off-peak in {time}",
     smartLoadWindowTomorrow: "Best window: {window}",
     smartLoadWindowBattery: "Best window: after battery reserve improves",
+    smartPlanNow: "Now",
+    smartPlanNext: "Next",
+    smartPlanPeak: "Peak",
+    smartPlanTomorrow: "Tomorrow",
+    smartPlanNowUse: "Use flexible loads",
+    smartPlanNowWait: "Keep loads light",
+    smartPlanNextOffPeak: "Wait for off-peak in {time}",
+    smartPlanNextSolar: "Watch for solar surplus",
+    smartPlanPeakAvoid: "Avoid heavy import",
+    smartPlanPeakReady: "Battery can help",
+    smartPlanTomorrowSolar: "{outlook}; {window}",
+    smartPlanTomorrowWait: "Wait for forecast",
     operatingSolarDay: "Solar-led day",
     operatingBalancedDay: "Balanced day",
     operatingGridDay: "Grid-heavy day",
@@ -1301,6 +1314,18 @@ const translations = {
     smartLoadWindowOffPeak: "最佳窗口：{time} 后非高峰",
     smartLoadWindowTomorrow: "最佳窗口：{window}",
     smartLoadWindowBattery: "最佳窗口：电池余量改善后",
+    smartPlanNow: "现在",
+    smartPlanNext: "下一步",
+    smartPlanPeak: "高峰",
+    smartPlanTomorrow: "明天",
+    smartPlanNowUse: "运行可推迟负载",
+    smartPlanNowWait: "保持轻负载",
+    smartPlanNextOffPeak: "等 {time} 后非高峰",
+    smartPlanNextSolar: "观察太阳能富余",
+    smartPlanPeakAvoid: "避免大功率取电",
+    smartPlanPeakReady: "电池可支撑",
+    smartPlanTomorrowSolar: "{outlook}；{window}",
+    smartPlanTomorrowWait: "等待天气预报",
     operatingSolarDay: "太阳能主导日",
     operatingBalancedDay: "运行均衡",
     operatingGridDay: "电网依赖偏高",
@@ -1962,6 +1987,18 @@ const translations = {
     smartLoadWindowOffPeak: "ช่วงที่ดีที่สุด: นอกพีคใน {time}",
     smartLoadWindowTomorrow: "ช่วงที่ดีที่สุด: {window}",
     smartLoadWindowBattery: "ช่วงที่ดีที่สุด: หลังสำรองแบตดีขึ้น",
+    smartPlanNow: "ตอนนี้",
+    smartPlanNext: "ถัดไป",
+    smartPlanPeak: "พีค",
+    smartPlanTomorrow: "พรุ่งนี้",
+    smartPlanNowUse: "ใช้โหลดที่เลื่อนได้",
+    smartPlanNowWait: "ใช้โหลดเบา",
+    smartPlanNextOffPeak: "รอนอกพีคใน {time}",
+    smartPlanNextSolar: "รอดูโซลาร์ส่วนเกิน",
+    smartPlanPeakAvoid: "เลี่ยงนำเข้าหนัก",
+    smartPlanPeakReady: "แบตช่วยได้",
+    smartPlanTomorrowSolar: "{outlook}; {window}",
+    smartPlanTomorrowWait: "รอพยากรณ์",
     operatingSolarDay: "วันที่โซลาร์นำ",
     operatingBalancedDay: "สมดุล",
     operatingGridDay: "พึ่งกริดมาก",
@@ -3163,6 +3200,7 @@ function renderSmartLoadAdvisor(decision) {
     headroom: formatKw(decision.headroomKw),
     reserve: decision.reserve === null ? "--" : formatPercent(decision.reserve),
   });
+  renderSmartPlanStrip(decision);
   textFields.smartLoadGrid.replaceChildren(...smartLoads.map((load) => {
     const advice = getSmartLoadAdvice(load, decision);
     const card = document.createElement("article");
@@ -3187,6 +3225,55 @@ function renderSmartLoadAdvisor(decision) {
     card.append(label, status, detail, meta, window);
 
     return card;
+  }));
+}
+
+function renderSmartPlanStrip(decision) {
+  const batteryCanSupport = decision.reserve !== null && decision.reserve >= 35;
+  const hasSurplus = decision.headroomKw >= 0.8;
+  const tomorrowKnown = decision.tomorrowOutlookKey !== "unknown";
+  const steps = [
+    {
+      labelKey: "smartPlanNow",
+      valueKey: hasSurplus ? "smartPlanNowUse" : "smartPlanNowWait",
+      tone: hasSurplus ? "good" : "watch",
+    },
+    {
+      labelKey: "smartPlanNext",
+      valueKey: decision.tariff.isPeak || decision.pressure >= 55 ? "smartPlanNextOffPeak" : "smartPlanNextSolar",
+      tone: decision.tariff.isPeak || decision.pressure >= 55 ? "watch" : "good",
+    },
+    {
+      labelKey: "smartPlanPeak",
+      valueKey: decision.pressure >= 55 ? "smartPlanPeakAvoid" : "smartPlanPeakReady",
+      tone: decision.pressure >= 55 ? "alert" : batteryCanSupport ? "good" : "watch",
+    },
+    {
+      labelKey: "smartPlanTomorrow",
+      valueKey: tomorrowKnown ? "smartPlanTomorrowSolar" : "smartPlanTomorrowWait",
+      tone: tomorrowKnown && (decision.tomorrowOutlookKey === "excellent" || decision.tomorrowOutlookKey === "good")
+        ? "good"
+        : tomorrowKnown && decision.tomorrowOutlookKey === "poor"
+          ? "alert"
+          : "watch",
+    },
+  ];
+
+  textFields.smartPlanStrip.replaceChildren(...steps.map((step) => {
+    const item = document.createElement("article");
+    const label = document.createElement("span");
+    const value = document.createElement("strong");
+
+    item.dataset.tone = step.tone;
+    label.textContent = t(step.labelKey);
+    value.textContent = interpolate(t(step.valueKey), {
+      time: formatDurationMinutes(decision.tariff.detailMinutes),
+      outlook: t(decision.tomorrowOutlookKey),
+      window: t(decision.tomorrowWindowKey),
+    });
+    item.append(label, value);
+
+    return item;
   }));
 }
 

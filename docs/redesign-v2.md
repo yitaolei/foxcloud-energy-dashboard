@@ -150,6 +150,7 @@ Implemented API shape:
 - Smart energy pilot recommendations should remain explainable: show the key basis values used for the decision, including solar surplus, battery reserve, grid pressure, and the next tariff/weather window.
 - The load advisor under the smart energy pilot should stay advisory-only: it estimates whether common flexible loads fit the current solar/battery/tariff window, but it must not control appliances or write inverter settings.
 - Load advisor cards should include a best-window hint, not only a now/avoid verdict, so the user can tell whether to run a load now, wait for off-peak, wait for tomorrow's solar window, or wait for battery reserve recovery.
+- The smart daily plan strip should make the next few decisions scannable as now/next/peak/tomorrow steps, while reusing local smart-hub signals rather than introducing a separate rules engine.
 
 Current estimate:
 
