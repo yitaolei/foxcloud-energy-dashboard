@@ -165,6 +165,9 @@ const textFields = {
   smartHubWatchDetail: document.getElementById("smartHubWatchDetail"),
   smartLoadMeta: document.getElementById("smartLoadMeta"),
   smartPlanStrip: document.getElementById("smartPlanStrip"),
+  smartLoadPriority: document.getElementById("smartLoadPriority"),
+  smartLoadPriorityTitle: document.getElementById("smartLoadPriorityTitle"),
+  smartLoadPriorityDetail: document.getElementById("smartLoadPriorityDetail"),
   smartLoadGrid: document.getElementById("smartLoadGrid"),
   todayBillImpactDetail: document.getElementById("todayBillImpactDetail"),
   energyScoreRing: document.getElementById("energyScoreRing"),
@@ -653,6 +656,11 @@ const translations = {
     smartPlanPeakReady: "Battery can help",
     smartPlanTomorrowSolar: "{outlook}; {window}",
     smartPlanTomorrowWait: "Wait for forecast",
+    smartLoadPriority: "Priority",
+    smartLoadPriorityRun: "Run {load} first",
+    smartLoadPriorityWait: "Wait before starting loads",
+    smartLoadPriorityDetailRun: "{load} has the lightest impact now. Put {defer} later.",
+    smartLoadPriorityDetailWait: "No flexible load fits well now. Best next move: {window}.",
     operatingSolarDay: "Solar-led day",
     operatingBalancedDay: "Balanced day",
     operatingGridDay: "Grid-heavy day",
@@ -1326,6 +1334,11 @@ const translations = {
     smartPlanPeakReady: "电池可支撑",
     smartPlanTomorrowSolar: "{outlook}；{window}",
     smartPlanTomorrowWait: "等待天气预报",
+    smartLoadPriority: "优先级",
+    smartLoadPriorityRun: "优先运行 {load}",
+    smartLoadPriorityWait: "先不要启动负载",
+    smartLoadPriorityDetailRun: "{load} 现在影响最小。{defer} 可以排到后面。",
+    smartLoadPriorityDetailWait: "现在没有特别合适的可推迟负载。下一步建议：{window}。",
     operatingSolarDay: "太阳能主导日",
     operatingBalancedDay: "运行均衡",
     operatingGridDay: "电网依赖偏高",
@@ -1999,6 +2012,11 @@ const translations = {
     smartPlanPeakReady: "แบตช่วยได้",
     smartPlanTomorrowSolar: "{outlook}; {window}",
     smartPlanTomorrowWait: "รอพยากรณ์",
+    smartLoadPriority: "ลำดับ",
+    smartLoadPriorityRun: "เปิด {load} ก่อน",
+    smartLoadPriorityWait: "รอก่อนเริ่มโหลด",
+    smartLoadPriorityDetailRun: "{load} กระทบน้อยที่สุดตอนนี้ เลื่อน {defer} ไว้ทีหลัง",
+    smartLoadPriorityDetailWait: "ตอนนี้ยังไม่มีโหลดที่เหมาะมาก ขั้นต่อไป: {window}",
     operatingSolarDay: "วันที่โซลาร์นำ",
     operatingBalancedDay: "สมดุล",
     operatingGridDay: "พึ่งกริดมาก",
@@ -3195,14 +3213,52 @@ function getSmartLoadAdvice(load, decision) {
   };
 }
 
+function getSmartLoadRank(load, advice) {
+  const statusPenalty = advice.statusKey === "smartLoadGood" ? 0 : advice.statusKey === "smartLoadWatch" ? 20 : 60;
+  return statusPenalty + advice.extraGridKw * 18 + load.kw * 2;
+}
+
+function renderSmartLoadPriority(loadPlans, decision) {
+  const bestPlan = loadPlans[0];
+  const shouldWait = !bestPlan || bestPlan.advice.statusKey === "smartLoadAvoid";
+  const deferred = loadPlans
+    .slice(1)
+    .filter((plan) => plan.advice.statusKey !== "smartLoadGood")
+    .map((plan) => t(plan.load.key))
+    .slice(0, 2)
+    .join(" / ");
+  const windowText = interpolate(t(bestPlan?.advice.windowKey ?? "smartLoadWindowTomorrow"), {
+    time: formatDurationMinutes(decision.tariff.detailMinutes),
+    window: t(decision.tomorrowWindowKey),
+  });
+
+  textFields.smartLoadPriority.dataset.tone = shouldWait ? "watch" : bestPlan.advice.tone;
+  textFields.smartLoadPriorityTitle.textContent = shouldWait
+    ? t("smartLoadPriorityWait")
+    : interpolate(t("smartLoadPriorityRun"), { load: t(bestPlan.load.key) });
+  textFields.smartLoadPriorityDetail.textContent = shouldWait
+    ? interpolate(t("smartLoadPriorityDetailWait"), { window: windowText })
+    : interpolate(t("smartLoadPriorityDetailRun"), {
+      load: t(bestPlan.load.key),
+      defer: deferred || t(decision.tomorrowWindowKey),
+    });
+}
+
 function renderSmartLoadAdvisor(decision) {
   textFields.smartLoadMeta.textContent = interpolate(t("smartLoadMeta"), {
     headroom: formatKw(decision.headroomKw),
     reserve: decision.reserve === null ? "--" : formatPercent(decision.reserve),
   });
   renderSmartPlanStrip(decision);
-  textFields.smartLoadGrid.replaceChildren(...smartLoads.map((load) => {
-    const advice = getSmartLoadAdvice(load, decision);
+  const loadPlans = smartLoads
+    .map((load) => ({
+      load,
+      advice: getSmartLoadAdvice(load, decision),
+    }))
+    .sort((left, right) => getSmartLoadRank(left.load, left.advice) - getSmartLoadRank(right.load, right.advice));
+
+  renderSmartLoadPriority(loadPlans, decision);
+  textFields.smartLoadGrid.replaceChildren(...loadPlans.map(({ load, advice }) => {
     const card = document.createElement("article");
     const label = document.createElement("span");
     const status = document.createElement("strong");

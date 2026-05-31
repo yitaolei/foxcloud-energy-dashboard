@@ -1778,6 +1778,60 @@ section[id] {
   line-height: 1.18;
 }
 
+.smart-load-priority {
+  position: relative;
+  min-height: 86px;
+  margin-bottom: 0.85rem;
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.8rem 1rem 0.8rem 1.1rem;
+  overflow: hidden;
+}
+
+.smart-load-priority::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #64748b, #94a3b8);
+}
+
+.smart-load-priority[data-tone="good"]::before {
+  background: linear-gradient(180deg, #22c55e, #14b8a6);
+}
+
+.smart-load-priority[data-tone="watch"]::before {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+
+.smart-load-priority[data-tone="alert"]::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.smart-load-priority span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.smart-load-priority strong {
+  display: block;
+  margin-top: 0.34rem;
+  color: var(--ink);
+  font-size: clamp(1.12rem, 1.7vw, 1.45rem);
+  line-height: 1.08;
+}
+
+.smart-load-priority small {
+  display: block;
+  margin-top: 0.42rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .smart-load-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

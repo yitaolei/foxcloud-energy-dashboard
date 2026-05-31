@@ -27,6 +27,7 @@
 - Added a local load advisor that estimates whether common flexible loads are worth running now based on current surplus, battery reserve, tariff state, and grid pressure.
 - Added best-window guidance to the load advisor so each flexible load can point to now, off-peak, tomorrow's solar window, or a battery-recovery window.
 - Added a smart daily plan strip that summarizes what to do now, next, during peak, and tomorrow based on the same local decision signals.
+- Added a flexible-load priority recommendation that ranks the load advisor options and highlights the lowest-impact load to run first.
 
 ### Changed
 
