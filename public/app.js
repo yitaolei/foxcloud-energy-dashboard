@@ -14,6 +14,7 @@ const weatherPanel = document.getElementById("weatherPanel");
 const dailyTableBody = document.getElementById("dailyTableBody");
 const storageKeys = {
   language: "foxcloud-dashboard-language",
+  smartDecisionLog: "foxcloud-dashboard-smart-decision-log",
   tableRange: "foxcloud-dashboard-table-range",
 };
 
@@ -145,6 +146,8 @@ const textFields = {
   smartHubConfidenceDetail: document.getElementById("smartHubConfidenceDetail"),
   smartHubNarrative: document.getElementById("smartHubNarrative"),
   smartHubTags: document.getElementById("smartHubTags"),
+  smartDecisionLogMeta: document.getElementById("smartDecisionLogMeta"),
+  smartDecisionLogList: document.getElementById("smartDecisionLogList"),
   smartHubSolarBasisCard: document.getElementById("smartHubSolarBasisCard"),
   smartHubSolarBasis: document.getElementById("smartHubSolarBasis"),
   smartHubSolarBasisDetail: document.getElementById("smartHubSolarBasisDetail"),
@@ -431,6 +434,24 @@ function setStoredValue(key, value) {
   }
 }
 
+function getStoredJson(key, fallback) {
+  try {
+    const storedValue = localStorage.getItem(key);
+
+    return storedValue ? JSON.parse(storedValue) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function setStoredJson(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Some browsers disable localStorage in private or restricted modes.
+  }
+}
+
 let currentLanguage = getStoredSelectValue(storageKeys.language, languageSelect, "en");
 
 const translations = {
@@ -636,6 +657,12 @@ const translations = {
     smartHubTagOffPeak: "Off-peak",
     smartHubTagTomorrowGood: "Tomorrow solar OK",
     smartHubTagTomorrowWeak: "Tomorrow solar weak",
+    smartDecisionLog: "Recent decisions",
+    smartDecisionLogEmpty: "Waiting for smart decisions.",
+    smartDecisionLogMeta: "Stored in this browser · latest {time}",
+    smartDecisionLogMetaEmpty: "Stored in this browser",
+    smartDecisionLogConfidence: "Confidence {value}",
+    smartDecisionLogSignals: "Reserve {reserve} · grid {pressure} · surplus {headroom}",
     smartLoadKicker: "Load advisor",
     smartLoadTitle: "If I run it now",
     smartLoadMeta: "Assumes current surplus {headroom} and battery reserve {reserve}.",
@@ -1323,6 +1350,12 @@ const translations = {
     smartHubTagOffPeak: "非高峰",
     smartHubTagTomorrowGood: "明天太阳能可用",
     smartHubTagTomorrowWeak: "明天太阳能偏弱",
+    smartDecisionLog: "最近判断",
+    smartDecisionLogEmpty: "等待智能判断记录。",
+    smartDecisionLogMeta: "仅保存在这个浏览器 · 最新 {time}",
+    smartDecisionLogMetaEmpty: "仅保存在这个浏览器",
+    smartDecisionLogConfidence: "可信度 {value}",
+    smartDecisionLogSignals: "余量 {reserve} · 电网 {pressure} · 富余 {headroom}",
     smartLoadKicker: "负载试算",
     smartLoadTitle: "如果现在运行",
     smartLoadMeta: "按当前富余 {headroom} 和电池余量 {reserve} 估算。",
@@ -2010,6 +2043,12 @@ const translations = {
     smartHubTagOffPeak: "นอกพีค",
     smartHubTagTomorrowGood: "โซลาร์พรุ่งนี้ดี",
     smartHubTagTomorrowWeak: "โซลาร์พรุ่งนี้อ่อน",
+    smartDecisionLog: "การตัดสินใจล่าสุด",
+    smartDecisionLogEmpty: "กำลังรอการตัดสินใจอัจฉริยะ",
+    smartDecisionLogMeta: "เก็บในเบราว์เซอร์นี้ · ล่าสุด {time}",
+    smartDecisionLogMetaEmpty: "เก็บในเบราว์เซอร์นี้",
+    smartDecisionLogConfidence: "มั่นใจ {value}",
+    smartDecisionLogSignals: "สำรอง {reserve} · กริด {pressure} · ส่วนเกิน {headroom}",
     smartLoadKicker: "ตัวช่วยโหลด",
     smartLoadTitle: "ถ้าเปิดตอนนี้",
     smartLoadMeta: "ประเมินจากไฟส่วนเกิน {headroom} และสำรองแบต {reserve}",
@@ -3224,6 +3263,80 @@ function renderSmartHubConfidence(payload, weatherPayload = lastWeatherPayload) 
   });
 }
 
+function getSmartDecisionLog() {
+  const entries = getStoredJson(storageKeys.smartDecisionLog, []);
+
+  return Array.isArray(entries) ? entries : [];
+}
+
+function saveSmartDecisionLog(entries) {
+  setStoredJson(storageKeys.smartDecisionLog, entries.slice(0, 6));
+}
+
+function buildSmartDecisionEntry(payload, decision, confidence) {
+  return {
+    generatedAt: payload?.generatedAt ?? new Date().toISOString(),
+    statusKey: decision.statusKey,
+    confidenceScore: confidence.score,
+    confidenceTone: confidence.tone,
+    reserve: decision.reserve,
+    pressure: decision.pressure,
+    headroomKw: decision.headroomKw,
+  };
+}
+
+function upsertSmartDecisionLogEntry(entry) {
+  const nextEntries = [
+    entry,
+    ...getSmartDecisionLog().filter((item) => item.generatedAt !== entry.generatedAt),
+  ].slice(0, 6);
+
+  saveSmartDecisionLog(nextEntries);
+
+  return nextEntries;
+}
+
+function renderSmartDecisionLog(payload, decision, confidence) {
+  if (!textFields.smartDecisionLogList) {
+    return;
+  }
+
+  const entries = upsertSmartDecisionLogEntry(buildSmartDecisionEntry(payload, decision, confidence));
+
+  if (entries.length === 0) {
+    textFields.smartDecisionLogMeta.textContent = t("smartDecisionLogMetaEmpty");
+    textFields.smartDecisionLogList.textContent = t("smartDecisionLogEmpty");
+
+    return;
+  }
+
+  textFields.smartDecisionLogMeta.textContent = interpolate(t("smartDecisionLogMeta"), {
+    time: formatTimestamp(entries[0].generatedAt),
+  });
+  textFields.smartDecisionLogList.replaceChildren(...entries.map((item) => {
+    const card = document.createElement("article");
+    const time = document.createElement("span");
+    const title = document.createElement("strong");
+    const detail = document.createElement("small");
+    const confidenceLabel = document.createElement("em");
+
+    card.dataset.tone = item.confidenceTone ?? "neutral";
+    time.textContent = formatTimestamp(item.generatedAt);
+    title.textContent = t(item.statusKey);
+    detail.textContent = interpolate(t("smartDecisionLogSignals"), {
+      reserve: item.reserve === null ? "--" : formatPercent(item.reserve),
+      pressure: formatPercent(item.pressure),
+      headroom: formatKw(item.headroomKw),
+    });
+    confidenceLabel.textContent = interpolate(t("smartDecisionLogConfidence"), {
+      value: `${Number(item.confidenceScore ?? 0).toFixed(0)}%`,
+    });
+    card.append(time, title, detail, confidenceLabel);
+
+    return card;
+  }));
+}
+
 const smartLoads = [
   {
     key: "smartLoadDishwasher",
@@ -3419,6 +3532,7 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
   }
 
   const decision = getSmartHubDecision(payload, weatherPayload);
+  const confidence = getSmartHubConfidence(payload, weatherPayload);
   const commonValues = {
     self: formatOptionalPercent(decision.selfSufficiency),
     headroom: formatKw(decision.headroomKw),
@@ -3542,6 +3656,7 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
     decision.watchStatusKey,
     interpolate(t(decision.watchDetailKey), commonValues),
   );
+  renderSmartDecisionLog(payload, decision, confidence);
 }
 
 function getTodayBillImpact(payload) {

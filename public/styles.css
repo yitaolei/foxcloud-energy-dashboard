@@ -1627,6 +1627,107 @@ section[id] {
   color: #475569;
 }
 
+.smart-decision-log {
+  margin-top: 0.85rem;
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+  padding: 0.75rem;
+}
+
+.smart-decision-log-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.62rem;
+}
+
+.smart-decision-log-head span {
+  color: #14352c;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.smart-decision-log-head small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.smart-decision-log-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.smart-decision-log-list article {
+  position: relative;
+  min-height: 96px;
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.72rem 0.78rem 0.72rem 0.95rem;
+  overflow: hidden;
+}
+
+.smart-decision-log-list article::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #64748b, #94a3b8);
+}
+
+.smart-decision-log-list article[data-tone="good"]::before {
+  background: linear-gradient(180deg, #22c55e, #14b8a6);
+}
+
+.smart-decision-log-list article[data-tone="watch"]::before {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+
+.smart-decision-log-list article[data-tone="alert"]::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.smart-decision-log-list span,
+.smart-decision-log-list small,
+.smart-decision-log-list em {
+  display: block;
+}
+
+.smart-decision-log-list span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.smart-decision-log-list strong {
+  display: block;
+  margin-top: 0.2rem;
+  color: #14352c;
+  font-size: 0.95rem;
+  font-weight: 950;
+}
+
+.smart-decision-log-list small {
+  margin-top: 0.3rem;
+  color: #45645a;
+  font-size: 0.76rem;
+  line-height: 1.32;
+}
+
+.smart-decision-log-list em {
+  margin-top: 0.42rem;
+  color: #1f6f5a;
+  font-size: 0.74rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .smart-hub-basis {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3666,6 +3767,7 @@ tbody tr:hover {
   .action-board-grid,
   .smart-hub-grid,
   .smart-hub-basis,
+  .smart-decision-log-list,
   .smart-plan-strip,
   .smart-load-grid,
   .metrics-grid,
@@ -4079,6 +4181,7 @@ tbody tr:hover {
   .smart-hub-head,
   .smart-hub-grid,
   .smart-hub-basis,
+  .smart-decision-log-list,
   .smart-plan-strip,
   .smart-load-grid,
   .operating-summary-head,
