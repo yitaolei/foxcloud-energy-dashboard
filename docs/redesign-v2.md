@@ -144,6 +144,7 @@ Implemented API shape:
 - Lower-frequency panels now sit below the daily energy table: weather settings, live data confidence, the 24-hour heatmap, solar calendar, weekday profile, and savings settings.
 - The top KPI row now includes today's battery net movement after daily consumption and before daily export, with charged and discharged energy shown in the detail text.
 - Energy health now emphasizes battery SOC as a large color-coded factor so low, medium, and healthy battery states are easier to scan.
+- New settings panels should use the shared `settings-panel` class and stay near the bottom of the dashboard. Weather forecast settings should remain immediately before savings settings.
 
 Current estimate:
 

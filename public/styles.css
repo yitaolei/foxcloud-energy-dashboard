@@ -179,28 +179,32 @@ select {
   order: 80;
 }
 
-.location-panel {
+.data-quality-panel {
   order: 81;
 }
 
-.data-quality-panel {
+.operational-heatmap-panel {
   order: 82;
 }
 
-.operational-heatmap-panel {
+.solar-calendar-panel {
   order: 83;
 }
 
-.solar-calendar-panel {
+.weekday-profile-panel {
   order: 84;
 }
 
-.weekday-profile-panel {
-  order: 85;
+.settings-panel {
+  order: 90;
+}
+
+.location-panel {
+  order: 90;
 }
 
 .tariff-panel {
-  order: 86;
+  order: 91;
 }
 
 .dashboard-overview {

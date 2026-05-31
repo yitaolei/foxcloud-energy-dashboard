@@ -28,6 +28,7 @@
 - Added a top KPI card for today's battery net charge/discharge between daily consumption and daily export.
 - Made the battery factor in the energy health score larger and color-coded by SOC level.
 - Expanded live data confidence warning text with the current response warning detail and generated timestamp.
+- Kept settings panels grouped near the bottom of the dashboard, with forecast location settings immediately before savings settings.
 
 ### Fixed
 
