@@ -23,6 +23,7 @@
 - Added regression coverage for the SQLite backup health status shape.
 - Added a sticky dashboard section navigator for jumping directly to overview, actions, battery, daily data, and settings.
 - Added a smart energy pilot panel that combines solar surplus, battery reserve, grid pressure, tariff timing, weather outlook, and warnings into one plain-language decision with action cards.
+- Added a decision-basis row to the smart energy pilot so solar surplus, battery reserve, grid pressure, and next-window inputs are visible beside the recommendation.
 
 ### Changed
 

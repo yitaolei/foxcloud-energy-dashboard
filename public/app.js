@@ -142,6 +142,18 @@ const textFields = {
   smartHubStatus: document.getElementById("smartHubStatus"),
   smartHubNarrative: document.getElementById("smartHubNarrative"),
   smartHubTags: document.getElementById("smartHubTags"),
+  smartHubSolarBasisCard: document.getElementById("smartHubSolarBasisCard"),
+  smartHubSolarBasis: document.getElementById("smartHubSolarBasis"),
+  smartHubSolarBasisDetail: document.getElementById("smartHubSolarBasisDetail"),
+  smartHubBatteryBasisCard: document.getElementById("smartHubBatteryBasisCard"),
+  smartHubBatteryBasis: document.getElementById("smartHubBatteryBasis"),
+  smartHubBatteryBasisDetail: document.getElementById("smartHubBatteryBasisDetail"),
+  smartHubGridBasisCard: document.getElementById("smartHubGridBasisCard"),
+  smartHubGridBasis: document.getElementById("smartHubGridBasis"),
+  smartHubGridBasisDetail: document.getElementById("smartHubGridBasisDetail"),
+  smartHubOutlookBasisCard: document.getElementById("smartHubOutlookBasisCard"),
+  smartHubOutlookBasis: document.getElementById("smartHubOutlookBasis"),
+  smartHubOutlookBasisDetail: document.getElementById("smartHubOutlookBasisDetail"),
   smartHubNowCard: document.getElementById("smartHubNowCard"),
   smartHubNowStatus: document.getElementById("smartHubNowStatus"),
   smartHubNowDetail: document.getElementById("smartHubNowDetail"),
@@ -561,6 +573,14 @@ const translations = {
     smartHubStatusBattery: "Protect reserve",
     smartHubStatusPeak: "Avoid peak import",
     smartHubStatusBalanced: "Steady day",
+    smartHubBasisSolar: "Solar surplus",
+    smartHubBasisBattery: "Battery reserve",
+    smartHubBasisGrid: "Grid pressure",
+    smartHubBasisOutlook: "Next window",
+    smartHubBasisSolarDetail: "Export now {exportKw}; home load {homeKw}.",
+    smartHubBasisBatteryDetail: "SOC {soc}; runway risk {risk}.",
+    smartHubBasisGridDetail: "Grid flow {grid}; tariff {tariff}.",
+    smartHubBasisOutlookDetail: "Peak window {window}; tomorrow {outlook}.",
     smartHubSummarySolar: "Solar is covering the home and there is about {headroom} usable surplus. Battery reserve is {reserve}, so flexible loads are best run now.",
     smartHubSummaryBattery: "Battery reserve is only {reserve}. Keep flexible loads light until solar output improves or the peak window passes.",
     smartHubSummaryPeak: "Grid import pressure is {pressure} during the tariff watch window. Reduce large loads and let the battery cover essentials.",
@@ -1194,6 +1214,14 @@ const translations = {
     smartHubStatusBattery: "保护电池余量",
     smartHubStatusPeak: "避开高峰取电",
     smartHubStatusBalanced: "运行平稳",
+    smartHubBasisSolar: "太阳富余",
+    smartHubBasisBattery: "电池余量",
+    smartHubBasisGrid: "电网压力",
+    smartHubBasisOutlook: "后续窗口",
+    smartHubBasisSolarDetail: "当前回馈 {exportKw}；家庭负载 {homeKw}。",
+    smartHubBasisBatteryDetail: "电池电量 {soc}；续航风险 {risk}。",
+    smartHubBasisGridDetail: "电网流向 {grid}；电价 {tariff}。",
+    smartHubBasisOutlookDetail: "高峰窗口 {window}；明天 {outlook}。",
     smartHubSummarySolar: "太阳能正在覆盖家庭用电，约有 {headroom} 可用富余功率。电池余量为 {reserve}，现在适合安排可推迟负载。",
     smartHubSummaryBattery: "电池余量只有 {reserve}。在太阳能改善或高峰时段过去前，建议减少非必要大功率负载。",
     smartHubSummaryPeak: "电网取电压力为 {pressure}，并接近或处于电价观察窗口。建议减少大功率负载，让电池优先覆盖必要用电。",
@@ -1827,6 +1855,14 @@ const translations = {
     smartHubStatusBattery: "รักษาสำรองแบต",
     smartHubStatusPeak: "เลี่ยงนำเข้าช่วงพีค",
     smartHubStatusBalanced: "ระบบนิ่ง",
+    smartHubBasisSolar: "โซลาร์ส่วนเกิน",
+    smartHubBasisBattery: "สำรองแบต",
+    smartHubBasisGrid: "แรงกดดันกริด",
+    smartHubBasisOutlook: "หน้าต่างถัดไป",
+    smartHubBasisSolarDetail: "ส่งออกตอนนี้ {exportKw}; โหลดบ้าน {homeKw}",
+    smartHubBasisBatteryDetail: "SOC {soc}; ความเสี่ยง {risk}",
+    smartHubBasisGridDetail: "การไหลกริด {grid}; ค่าไฟ {tariff}",
+    smartHubBasisOutlookDetail: "ช่วงพีค {window}; พรุ่งนี้ {outlook}",
     smartHubSummarySolar: "โซลาร์กำลังครอบคลุมบ้านและมีส่วนเกินประมาณ {headroom} สำรองแบตคือ {reserve} จึงเหมาะกับโหลดที่เลื่อนได้ตอนนี้",
     smartHubSummaryBattery: "สำรองแบตเหลือ {reserve} ควรลดโหลดหนักจนกว่าโซลาร์จะดีขึ้นหรือพ้นช่วงพีค",
     smartHubSummaryPeak: "แรงกดดันการนำเข้ากริดคือ {pressure} ในช่วงเฝ้าระวังค่าไฟ ควรลดโหลดใหญ่และให้แบตรองรับของจำเป็น",
@@ -2962,6 +2998,9 @@ function getSmartHubDecision(payload, weatherPayload = lastWeatherPayload) {
     pressure,
     tariff,
     gridFlow: gridForecast.gridFlow,
+    solarExportKw: gridExportKw,
+    homeUsageKw: Number(live.homeUsageKw ?? 0),
+    batterySoc: Number.isFinite(Number(live.batterySocPercent)) ? Number(live.batterySocPercent) : null,
     runwayRiskKey: batteryRunway.riskKey,
     tomorrowOutlookKey: tomorrowPrep.outlookKey,
     nowStatusKey,
@@ -2981,6 +3020,12 @@ function setSmartHubCard(card, statusElement, detailElement, tone, statusKey, de
   detailElement.textContent = detail;
 }
 
+function setSmartHubBasis(card, valueElement, detailElement, tone, value, detail) {
+  card.dataset.tone = tone;
+  valueElement.textContent = value;
+  detailElement.textContent = detail;
+}
+
 function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
   if (!payload?.live || !payload?.today) {
     return;
@@ -2991,12 +3036,16 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
     self: formatOptionalPercent(decision.selfSufficiency),
     headroom: formatKw(decision.headroomKw),
     reserve: decision.reserve === null ? "--" : formatPercent(decision.reserve),
+    soc: decision.batterySoc === null ? "--" : formatPercent(decision.batterySoc),
     pressure: formatPercent(decision.pressure),
     window: decision.tariff.peakWindow,
     time: formatDurationMinutes(decision.tariff.detailMinutes),
     risk: t(decision.runwayRiskKey),
     outlook: t(decision.tomorrowOutlookKey),
     grid: decision.gridFlow,
+    exportKw: formatKw(decision.solarExportKw),
+    homeKw: formatKw(decision.homeUsageKw),
+    tariff: decision.tariff.isPeak ? t("peakNow") : t("offPeakNow"),
     count: String(decision.warningsCount),
   };
 
@@ -3024,6 +3073,61 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
     : decision.watchStatusKey === "smartHubWatchData" || decision.watchStatusKey === "smartHubWatchBattery"
       ? "alert"
       : "watch";
+  const solarTone = decision.headroomKw >= 0.8
+    ? "good"
+    : decision.solarExportKw > 0.1
+      ? "watch"
+      : "neutral";
+  const batteryTone = decision.reserve === null
+    ? "neutral"
+    : decision.reserve < 25
+      ? "alert"
+      : decision.reserve < 45
+        ? "watch"
+        : "good";
+  const gridTone = decision.pressure >= 65
+    ? "alert"
+    : decision.pressure >= 35
+      ? "watch"
+      : "good";
+  const outlookTone = decision.tomorrowOutlookKey === "excellent" || decision.tomorrowOutlookKey === "good"
+    ? "good"
+    : decision.tomorrowOutlookKey === "poor"
+      ? "alert"
+      : "watch";
+
+  setSmartHubBasis(
+    textFields.smartHubSolarBasisCard,
+    textFields.smartHubSolarBasis,
+    textFields.smartHubSolarBasisDetail,
+    solarTone,
+    formatKw(decision.headroomKw),
+    interpolate(t("smartHubBasisSolarDetail"), commonValues),
+  );
+  setSmartHubBasis(
+    textFields.smartHubBatteryBasisCard,
+    textFields.smartHubBatteryBasis,
+    textFields.smartHubBatteryBasisDetail,
+    batteryTone,
+    commonValues.reserve,
+    interpolate(t("smartHubBasisBatteryDetail"), commonValues),
+  );
+  setSmartHubBasis(
+    textFields.smartHubGridBasisCard,
+    textFields.smartHubGridBasis,
+    textFields.smartHubGridBasisDetail,
+    gridTone,
+    commonValues.pressure,
+    interpolate(t("smartHubBasisGridDetail"), commonValues),
+  );
+  setSmartHubBasis(
+    textFields.smartHubOutlookBasisCard,
+    textFields.smartHubOutlookBasis,
+    textFields.smartHubOutlookBasisDetail,
+    outlookTone,
+    decision.tariff.isPeak ? t("peakNow") : formatDurationMinutes(decision.tariff.detailMinutes),
+    interpolate(t("smartHubBasisOutlookDetail"), commonValues),
+  );
 
   setSmartHubCard(
     textFields.smartHubNowCard,
