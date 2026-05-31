@@ -1700,6 +1700,99 @@ section[id] {
   line-height: 1.42;
 }
 
+.smart-load-advisor {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(15, 118, 110, 0.12);
+  padding-top: 1rem;
+}
+
+.smart-load-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 0.75rem;
+}
+
+.smart-load-head h3 {
+  margin: 0.18rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.15;
+}
+
+.smart-load-head span {
+  max-width: 360px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.smart-load-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.smart-load-grid article {
+  position: relative;
+  min-height: 154px;
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.9rem 0.9rem 0.85rem 1rem;
+  overflow: hidden;
+}
+
+.smart-load-grid article::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #22c55e, #14b8a6);
+}
+
+.smart-load-grid article[data-tone="watch"]::before {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+
+.smart-load-grid article[data-tone="alert"]::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.smart-load-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.smart-load-grid strong {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--ink);
+  font-size: clamp(1.1rem, 1.65vw, 1.42rem);
+  line-height: 1.08;
+}
+
+.smart-load-grid small {
+  display: block;
+  margin-top: 0.52rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.smart-load-grid em {
+  display: block;
+  margin-top: 0.62rem;
+  color: #1f6f5a;
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .top-bill-impact-panel {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 251, 235, 0.82)),
@@ -3411,6 +3504,7 @@ tbody tr:hover {
   .action-board-grid,
   .smart-hub-grid,
   .smart-hub-basis,
+  .smart-load-grid,
   .metrics-grid,
   .gauge-panel,
   .trend-grid,
@@ -3452,6 +3546,16 @@ tbody tr:hover {
   }
 
   .smart-hub-status {
+    max-width: none;
+    text-align: left;
+  }
+
+  .smart-load-head {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .smart-load-head span {
     max-width: none;
     text-align: left;
   }
@@ -3807,6 +3911,7 @@ tbody tr:hover {
   .smart-hub-head,
   .smart-hub-grid,
   .smart-hub-basis,
+  .smart-load-grid,
   .operating-summary-head,
   .operating-summary-grid,
   .top-bill-impact-grid,

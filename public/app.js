@@ -163,6 +163,8 @@ const textFields = {
   smartHubWatchCard: document.getElementById("smartHubWatchCard"),
   smartHubWatchStatus: document.getElementById("smartHubWatchStatus"),
   smartHubWatchDetail: document.getElementById("smartHubWatchDetail"),
+  smartLoadMeta: document.getElementById("smartLoadMeta"),
+  smartLoadGrid: document.getElementById("smartLoadGrid"),
   todayBillImpactDetail: document.getElementById("todayBillImpactDetail"),
   energyScoreRing: document.getElementById("energyScoreRing"),
   energyScoreStatus: document.getElementById("energyScoreStatus"),
@@ -618,6 +620,22 @@ const translations = {
     smartHubTagOffPeak: "Off-peak",
     smartHubTagTomorrowGood: "Tomorrow solar OK",
     smartHubTagTomorrowWeak: "Tomorrow solar weak",
+    smartLoadKicker: "Load advisor",
+    smartLoadTitle: "If I run it now",
+    smartLoadMeta: "Assumes current surplus {headroom} and battery reserve {reserve}.",
+    smartLoadDishwasher: "Dishwasher",
+    smartLoadLaundry: "Washing machine",
+    smartLoadDryer: "Dryer",
+    smartLoadEv: "EV top-up",
+    smartLoadGood: "Good now",
+    smartLoadWatch: "Maybe later",
+    smartLoadAvoid: "Avoid now",
+    smartLoadGoodDetail: "{load} should mostly fit the current solar/battery window. Extra grid need: {grid}.",
+    smartLoadWatchDetail: "{load} may need about {grid} from grid/battery. Better if solar improves.",
+    smartLoadAvoidDetail: "{load} is likely to raise grid import by about {grid}. Wait for surplus or off-peak.",
+    smartLoadBatteryGuard: "Battery guard",
+    smartLoadPeakGuard: "Peak guard",
+    smartLoadSolarFit: "Solar fit",
     operatingSolarDay: "Solar-led day",
     operatingBalancedDay: "Balanced day",
     operatingGridDay: "Grid-heavy day",
@@ -1259,6 +1277,22 @@ const translations = {
     smartHubTagOffPeak: "非高峰",
     smartHubTagTomorrowGood: "明天太阳能可用",
     smartHubTagTomorrowWeak: "明天太阳能偏弱",
+    smartLoadKicker: "负载试算",
+    smartLoadTitle: "如果现在运行",
+    smartLoadMeta: "按当前富余 {headroom} 和电池余量 {reserve} 估算。",
+    smartLoadDishwasher: "洗碗机",
+    smartLoadLaundry: "洗衣机",
+    smartLoadDryer: "烘干机",
+    smartLoadEv: "EV 补电",
+    smartLoadGood: "现在适合",
+    smartLoadWatch: "可以再等等",
+    smartLoadAvoid: "现在避免",
+    smartLoadGoodDetail: "{load} 基本适合当前太阳能/电池窗口。额外电网需求：{grid}。",
+    smartLoadWatchDetail: "{load} 可能需要约 {grid} 来自电网或电池。太阳能改善后更合适。",
+    smartLoadAvoidDetail: "{load} 很可能让电网取电增加约 {grid}。建议等富余电或非高峰。",
+    smartLoadBatteryGuard: "保护电池",
+    smartLoadPeakGuard: "避开高峰",
+    smartLoadSolarFit: "太阳能匹配",
     operatingSolarDay: "太阳能主导日",
     operatingBalancedDay: "运行均衡",
     operatingGridDay: "电网依赖偏高",
@@ -1900,6 +1934,22 @@ const translations = {
     smartHubTagOffPeak: "นอกพีค",
     smartHubTagTomorrowGood: "โซลาร์พรุ่งนี้ดี",
     smartHubTagTomorrowWeak: "โซลาร์พรุ่งนี้อ่อน",
+    smartLoadKicker: "ตัวช่วยโหลด",
+    smartLoadTitle: "ถ้าเปิดตอนนี้",
+    smartLoadMeta: "ประเมินจากไฟส่วนเกิน {headroom} และสำรองแบต {reserve}",
+    smartLoadDishwasher: "เครื่องล้างจาน",
+    smartLoadLaundry: "เครื่องซักผ้า",
+    smartLoadDryer: "เครื่องอบผ้า",
+    smartLoadEv: "ชาร์จ EV",
+    smartLoadGood: "เหมาะตอนนี้",
+    smartLoadWatch: "รอก่อนได้",
+    smartLoadAvoid: "เลี่ยงตอนนี้",
+    smartLoadGoodDetail: "{load} น่าจะพอดีกับหน้าต่างโซลาร์/แบตตอนนี้ ใช้กริดเพิ่ม {grid}",
+    smartLoadWatchDetail: "{load} อาจต้องใช้กริด/แบตประมาณ {grid} รอให้โซลาร์ดีขึ้นจะเหมาะกว่า",
+    smartLoadAvoidDetail: "{load} น่าจะเพิ่มนำเข้ากริดประมาณ {grid} รอไฟส่วนเกินหรือนอกพีคดีกว่า",
+    smartLoadBatteryGuard: "ป้องกันแบต",
+    smartLoadPeakGuard: "เลี่ยงพีค",
+    smartLoadSolarFit: "พอดีกับโซลาร์",
     operatingSolarDay: "วันที่โซลาร์นำ",
     operatingBalancedDay: "สมดุล",
     operatingGridDay: "พึ่งกริดมาก",
@@ -3026,6 +3076,94 @@ function setSmartHubBasis(card, valueElement, detailElement, tone, value, detail
   detailElement.textContent = detail;
 }
 
+const smartLoads = [
+  {
+    key: "smartLoadDishwasher",
+    kw: 1.2,
+    durationMinutes: 90,
+  },
+  {
+    key: "smartLoadLaundry",
+    kw: 0.8,
+    durationMinutes: 60,
+  },
+  {
+    key: "smartLoadDryer",
+    kw: 2.4,
+    durationMinutes: 75,
+  },
+  {
+    key: "smartLoadEv",
+    kw: 3.6,
+    durationMinutes: 120,
+  },
+];
+
+function getSmartLoadAdvice(load, decision) {
+  const extraGridKw = Math.max(0, load.kw - Math.max(0, decision.headroomKw));
+  const reserve = decision.reserve;
+  const isPeak = decision.tariff.isPeak;
+  const pressure = decision.pressure;
+  const batteryProtected = reserve !== null && reserve < 30;
+  const solarFit = extraGridKw <= 0.2;
+  const shouldAvoid = (isPeak && extraGridKw > 0.4)
+    || pressure >= 65
+    || (batteryProtected && extraGridKw > 0.2)
+    || extraGridKw >= 1.6;
+  const shouldWatch = !shouldAvoid && (!solarFit || pressure >= 35 || batteryProtected);
+  const statusKey = shouldAvoid
+    ? "smartLoadAvoid"
+    : shouldWatch
+      ? "smartLoadWatch"
+      : "smartLoadGood";
+  const detailKey = shouldAvoid
+    ? "smartLoadAvoidDetail"
+    : shouldWatch
+      ? "smartLoadWatchDetail"
+      : "smartLoadGoodDetail";
+  const tone = shouldAvoid ? "alert" : shouldWatch ? "watch" : "good";
+  const guardKey = batteryProtected
+    ? "smartLoadBatteryGuard"
+    : isPeak
+      ? "smartLoadPeakGuard"
+      : "smartLoadSolarFit";
+
+  return {
+    extraGridKw,
+    statusKey,
+    detailKey,
+    tone,
+    guardKey,
+  };
+}
+
+function renderSmartLoadAdvisor(decision) {
+  textFields.smartLoadMeta.textContent = interpolate(t("smartLoadMeta"), {
+    headroom: formatKw(decision.headroomKw),
+    reserve: decision.reserve === null ? "--" : formatPercent(decision.reserve),
+  });
+  textFields.smartLoadGrid.replaceChildren(...smartLoads.map((load) => {
+    const advice = getSmartLoadAdvice(load, decision);
+    const card = document.createElement("article");
+    const label = document.createElement("span");
+    const status = document.createElement("strong");
+    const detail = document.createElement("small");
+    const meta = document.createElement("em");
+
+    card.dataset.tone = advice.tone;
+    label.textContent = t(load.key);
+    status.textContent = t(advice.statusKey);
+    detail.textContent = interpolate(t(advice.detailKey), {
+      load: t(load.key),
+      grid: formatKw(advice.extraGridKw),
+    });
+    meta.textContent = `${formatKw(load.kw)} · ${formatDurationMinutes(load.durationMinutes)} · ${t(advice.guardKey)}`;
+    card.append(label, status, detail, meta);
+
+    return card;
+  }));
+}
+
 function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
   if (!payload?.live || !payload?.today) {
     return;
@@ -3128,6 +3266,7 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
     decision.tariff.isPeak ? t("peakNow") : formatDurationMinutes(decision.tariff.detailMinutes),
     interpolate(t("smartHubBasisOutlookDetail"), commonValues),
   );
+  renderSmartLoadAdvisor(decision);
 
   setSmartHubCard(
     textFields.smartHubNowCard,
