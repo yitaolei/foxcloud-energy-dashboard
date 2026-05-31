@@ -1793,6 +1793,18 @@ section[id] {
   font-weight: 900;
 }
 
+.smart-load-grid b {
+  display: block;
+  margin-top: 0.42rem;
+  border-radius: 8px;
+  background: rgba(31, 111, 90, 0.08);
+  color: #174f40;
+  padding: 0.42rem 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
 .top-bill-impact-panel {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 251, 235, 0.82)),

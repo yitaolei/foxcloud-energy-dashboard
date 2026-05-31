@@ -25,6 +25,7 @@
 - Added a smart energy pilot panel that combines solar surplus, battery reserve, grid pressure, tariff timing, weather outlook, and warnings into one plain-language decision with action cards.
 - Added a decision-basis row to the smart energy pilot so solar surplus, battery reserve, grid pressure, and next-window inputs are visible beside the recommendation.
 - Added a local load advisor that estimates whether common flexible loads are worth running now based on current surplus, battery reserve, tariff state, and grid pressure.
+- Added best-window guidance to the load advisor so each flexible load can point to now, off-peak, tomorrow's solar window, or a battery-recovery window.
 
 ### Changed
 

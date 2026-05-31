@@ -636,6 +636,10 @@ const translations = {
     smartLoadBatteryGuard: "Battery guard",
     smartLoadPeakGuard: "Peak guard",
     smartLoadSolarFit: "Solar fit",
+    smartLoadWindowNow: "Best window: now",
+    smartLoadWindowOffPeak: "Best window: off-peak in {time}",
+    smartLoadWindowTomorrow: "Best window: {window}",
+    smartLoadWindowBattery: "Best window: after battery reserve improves",
     operatingSolarDay: "Solar-led day",
     operatingBalancedDay: "Balanced day",
     operatingGridDay: "Grid-heavy day",
@@ -1293,6 +1297,10 @@ const translations = {
     smartLoadBatteryGuard: "保护电池",
     smartLoadPeakGuard: "避开高峰",
     smartLoadSolarFit: "太阳能匹配",
+    smartLoadWindowNow: "最佳窗口：现在",
+    smartLoadWindowOffPeak: "最佳窗口：{time} 后非高峰",
+    smartLoadWindowTomorrow: "最佳窗口：{window}",
+    smartLoadWindowBattery: "最佳窗口：电池余量改善后",
     operatingSolarDay: "太阳能主导日",
     operatingBalancedDay: "运行均衡",
     operatingGridDay: "电网依赖偏高",
@@ -1950,6 +1958,10 @@ const translations = {
     smartLoadBatteryGuard: "ป้องกันแบต",
     smartLoadPeakGuard: "เลี่ยงพีค",
     smartLoadSolarFit: "พอดีกับโซลาร์",
+    smartLoadWindowNow: "ช่วงที่ดีที่สุด: ตอนนี้",
+    smartLoadWindowOffPeak: "ช่วงที่ดีที่สุด: นอกพีคใน {time}",
+    smartLoadWindowTomorrow: "ช่วงที่ดีที่สุด: {window}",
+    smartLoadWindowBattery: "ช่วงที่ดีที่สุด: หลังสำรองแบตดีขึ้น",
     operatingSolarDay: "วันที่โซลาร์นำ",
     operatingBalancedDay: "สมดุล",
     operatingGridDay: "พึ่งกริดมาก",
@@ -3053,6 +3065,7 @@ function getSmartHubDecision(payload, weatherPayload = lastWeatherPayload) {
     batterySoc: Number.isFinite(Number(live.batterySocPercent)) ? Number(live.batterySocPercent) : null,
     runwayRiskKey: batteryRunway.riskKey,
     tomorrowOutlookKey: tomorrowPrep.outlookKey,
+    tomorrowWindowKey: tomorrowPrep.windowKey,
     nowStatusKey,
     nowDetailKey,
     laterStatusKey,
@@ -3127,6 +3140,13 @@ function getSmartLoadAdvice(load, decision) {
     : isPeak
       ? "smartLoadPeakGuard"
       : "smartLoadSolarFit";
+  const windowKey = !shouldAvoid && !shouldWatch
+    ? "smartLoadWindowNow"
+    : batteryProtected
+      ? "smartLoadWindowBattery"
+      : isPeak || pressure >= 55
+        ? "smartLoadWindowOffPeak"
+        : "smartLoadWindowTomorrow";
 
   return {
     extraGridKw,
@@ -3134,6 +3154,7 @@ function getSmartLoadAdvice(load, decision) {
     detailKey,
     tone,
     guardKey,
+    windowKey,
   };
 }
 
@@ -3149,6 +3170,7 @@ function renderSmartLoadAdvisor(decision) {
     const status = document.createElement("strong");
     const detail = document.createElement("small");
     const meta = document.createElement("em");
+    const window = document.createElement("b");
 
     card.dataset.tone = advice.tone;
     label.textContent = t(load.key);
@@ -3158,7 +3180,11 @@ function renderSmartLoadAdvisor(decision) {
       grid: formatKw(advice.extraGridKw),
     });
     meta.textContent = `${formatKw(load.kw)} · ${formatDurationMinutes(load.durationMinutes)} · ${t(advice.guardKey)}`;
-    card.append(label, status, detail, meta);
+    window.textContent = interpolate(t(advice.windowKey), {
+      time: formatDurationMinutes(decision.tariff.detailMinutes),
+      window: t(decision.tomorrowWindowKey),
+    });
+    card.append(label, status, detail, meta, window);
 
     return card;
   }));
