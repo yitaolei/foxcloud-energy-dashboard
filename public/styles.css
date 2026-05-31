@@ -1532,11 +1532,58 @@ section[id] {
 }
 
 .smart-hub-status {
-  max-width: 280px;
   color: #0f766e;
   font-size: clamp(1.35rem, 2.2vw, 2rem);
   line-height: 1.05;
   text-align: right;
+}
+
+.smart-hub-verdict {
+  display: grid;
+  justify-items: end;
+  gap: 0.65rem;
+  max-width: 320px;
+}
+
+.smart-hub-confidence {
+  width: min(320px, 100%);
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.74);
+  padding: 0.72rem 0.8rem;
+  text-align: left;
+}
+
+.smart-hub-confidence span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.smart-hub-confidence b {
+  display: block;
+  margin-top: 0.25rem;
+  color: #0f766e;
+  font-size: 1.28rem;
+  line-height: 1;
+}
+
+.smart-hub-confidence[data-tone="watch"] b {
+  color: #b45309;
+}
+
+.smart-hub-confidence[data-tone="alert"] b {
+  color: #b91c1c;
+}
+
+.smart-hub-confidence small {
+  display: block;
+  margin-top: 0.38rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.32;
 }
 
 .smart-hub-narrative {
@@ -3664,6 +3711,11 @@ tbody tr:hover {
   .smart-hub-status {
     max-width: none;
     text-align: left;
+  }
+
+  .smart-hub-verdict {
+    justify-items: start;
+    max-width: none;
   }
 
   .smart-load-head {

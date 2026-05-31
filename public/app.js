@@ -140,6 +140,9 @@ const textFields = {
   operatingSummaryReserve: document.getElementById("operatingSummaryReserve"),
   operatingSummaryAction: document.getElementById("operatingSummaryAction"),
   smartHubStatus: document.getElementById("smartHubStatus"),
+  smartHubConfidence: document.getElementById("smartHubConfidence"),
+  smartHubConfidenceValue: document.getElementById("smartHubConfidenceValue"),
+  smartHubConfidenceDetail: document.getElementById("smartHubConfidenceDetail"),
   smartHubNarrative: document.getElementById("smartHubNarrative"),
   smartHubTags: document.getElementById("smartHubTags"),
   smartHubSolarBasisCard: document.getElementById("smartHubSolarBasisCard"),
@@ -579,6 +582,15 @@ const translations = {
     smartHubStatusBattery: "Protect reserve",
     smartHubStatusPeak: "Avoid peak import",
     smartHubStatusBalanced: "Steady day",
+    smartHubConfidence: "Confidence",
+    smartHubConfidenceHigh: "High",
+    smartHubConfidenceMedium: "Medium",
+    smartHubConfidenceLow: "Low",
+    smartHubConfidenceDetail: "{level}: live age {age}, {samples} samples, {warnings}, weather {weather}.",
+    smartHubWarningsNone: "no warnings",
+    smartHubWarningsCount: "{count} warning(s)",
+    smartHubWeatherReady: "ready",
+    smartHubWeatherMissing: "missing",
     smartHubBasisSolar: "Solar surplus",
     smartHubBasisBattery: "Battery reserve",
     smartHubBasisGrid: "Grid pressure",
@@ -1257,6 +1269,15 @@ const translations = {
     smartHubStatusBattery: "保护电池余量",
     smartHubStatusPeak: "避开高峰取电",
     smartHubStatusBalanced: "运行平稳",
+    smartHubConfidence: "可信度",
+    smartHubConfidenceHigh: "高",
+    smartHubConfidenceMedium: "中",
+    smartHubConfidenceLow: "低",
+    smartHubConfidenceDetail: "{level}：实时数据 {age}，{samples} 个样本，{warnings}，天气 {weather}。",
+    smartHubWarningsNone: "无警告",
+    smartHubWarningsCount: "{count} 个警告",
+    smartHubWeatherReady: "可用",
+    smartHubWeatherMissing: "缺失",
     smartHubBasisSolar: "太阳富余",
     smartHubBasisBattery: "电池余量",
     smartHubBasisGrid: "电网压力",
@@ -1935,6 +1956,15 @@ const translations = {
     smartHubStatusBattery: "รักษาสำรองแบต",
     smartHubStatusPeak: "เลี่ยงนำเข้าช่วงพีค",
     smartHubStatusBalanced: "ระบบนิ่ง",
+    smartHubConfidence: "ความมั่นใจ",
+    smartHubConfidenceHigh: "สูง",
+    smartHubConfidenceMedium: "กลาง",
+    smartHubConfidenceLow: "ต่ำ",
+    smartHubConfidenceDetail: "{level}: อายุข้อมูล {age}, {samples} ตัวอย่าง, {warnings}, อากาศ {weather}",
+    smartHubWarningsNone: "ไม่มีคำเตือน",
+    smartHubWarningsCount: "{count} คำเตือน",
+    smartHubWeatherReady: "พร้อม",
+    smartHubWeatherMissing: "ไม่มี",
     smartHubBasisSolar: "โซลาร์ส่วนเกิน",
     smartHubBasisBattery: "สำรองแบต",
     smartHubBasisGrid: "แรงกดดันกริด",
@@ -3144,6 +3174,56 @@ function setSmartHubBasis(card, valueElement, detailElement, tone, value, detail
   detailElement.textContent = detail;
 }
 
+function getSmartHubConfidence(payload, weatherPayload = lastWeatherPayload) {
+  const liveAgeMinutes = getTimestampAgeMinutes(payload?.live?.updatedAt);
+  const warningCount = payload?.warnings?.length ?? 0;
+  const sampleCount = payload?.last24Hours?.labels?.length ?? 0;
+  const hasWeather = Boolean(weatherPayload?.enabled && weatherPayload?.current);
+  const livePenalty = liveAgeMinutes === null
+    ? 28
+    : liveAgeMinutes > 15
+      ? 26
+      : liveAgeMinutes > 5
+        ? 14
+        : 0;
+  const warningPenalty = Math.min(30, warningCount * 12);
+  const samplePenalty = sampleCount >= 48 ? 0 : sampleCount >= 12 ? 8 : 18;
+  const weatherPenalty = hasWeather ? 0 : 6;
+  const score = Math.max(0, Math.min(100, 100 - livePenalty - warningPenalty - samplePenalty - weatherPenalty));
+  const levelKey = score >= 82
+    ? "smartHubConfidenceHigh"
+    : score >= 58
+      ? "smartHubConfidenceMedium"
+      : "smartHubConfidenceLow";
+  const tone = score >= 82 ? "good" : score >= 58 ? "watch" : "alert";
+
+  return {
+    score,
+    levelKey,
+    tone,
+    liveAgeMinutes,
+    sampleCount,
+    warningCount,
+    hasWeather,
+  };
+}
+
+function renderSmartHubConfidence(payload, weatherPayload = lastWeatherPayload) {
+  const confidence = getSmartHubConfidence(payload, weatherPayload);
+
+  textFields.smartHubConfidence.dataset.tone = confidence.tone;
+  textFields.smartHubConfidenceValue.textContent = `${confidence.score}%`;
+  textFields.smartHubConfidenceDetail.textContent = interpolate(t("smartHubConfidenceDetail"), {
+    level: t(confidence.levelKey),
+    age: confidence.liveAgeMinutes === null ? t("dataAgeUnknown") : interpolate(t("dataAgeMinutes"), { minutes: confidence.liveAgeMinutes }),
+    samples: confidence.sampleCount,
+    warnings: confidence.warningCount > 0
+      ? interpolate(t("smartHubWarningsCount"), { count: confidence.warningCount })
+      : t("smartHubWarningsNone"),
+    weather: confidence.hasWeather ? t("smartHubWeatherReady") : t("smartHubWeatherMissing"),
+  });
+}
+
 const smartLoads = [
   {
     key: "smartLoadDishwasher",
@@ -3357,6 +3437,7 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
   };
 
   textFields.smartHubStatus.textContent = t(decision.statusKey);
+  renderSmartHubConfidence(payload, weatherPayload);
   textFields.smartHubNarrative.textContent = interpolate(t(decision.summaryKey), commonValues);
   textFields.smartHubTags.replaceChildren(...decision.tags.map(([key, tone]) => {
     const tag = document.createElement("span");

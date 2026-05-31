@@ -152,6 +152,7 @@ Implemented API shape:
 - Load advisor cards should include a best-window hint, not only a now/avoid verdict, so the user can tell whether to run a load now, wait for off-peak, wait for tomorrow's solar window, or wait for battery reserve recovery.
 - The smart daily plan strip should make the next few decisions scannable as now/next/peak/tomorrow steps, while reusing local smart-hub signals rather than introducing a separate rules engine.
 - The load advisor should rank flexible-load options by likely impact and expose a single "run this first" recommendation when one load is clearly less costly to run.
+- Smart-hub advice should expose its confidence level, derived from local data freshness, warning count, last-24-hour sample coverage, and weather availability.
 
 Current estimate:
 
