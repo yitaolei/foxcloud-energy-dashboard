@@ -76,6 +76,7 @@ const metricFields = {
   periodSolarUtilizationTotal: document.getElementById("periodSolarUtilizationTotal"),
   kpiDailySolar: document.getElementById("kpiDailySolar"),
   kpiDailyConsumption: document.getElementById("kpiDailyConsumption"),
+  kpiDailyBattery: document.getElementById("kpiDailyBattery"),
   kpiDailyExport: document.getElementById("kpiDailyExport"),
   kpiNetGrid: document.getElementById("kpiNetGrid"),
   kpiSelfSufficiency: document.getElementById("kpiSelfSufficiency"),
@@ -125,6 +126,7 @@ const textFields = {
   solarPerformanceMeta: document.getElementById("solarPerformanceMeta"),
   kpiDailySolarMeta: document.getElementById("kpiDailySolarMeta"),
   kpiDailyConsumptionMeta: document.getElementById("kpiDailyConsumptionMeta"),
+  kpiDailyBatteryMeta: document.getElementById("kpiDailyBatteryMeta"),
   kpiNetGridMeta: document.getElementById("kpiNetGridMeta"),
   kpiSelfSufficiencyMeta: document.getElementById("kpiSelfSufficiencyMeta"),
   kpiSystemStatus: document.getElementById("kpiSystemStatus"),
@@ -515,10 +517,15 @@ const translations = {
     tariffSaveFailed: "Unable to save tariff",
     kpiDailySolar: "Daily solar",
     kpiDailyConsumption: "Daily consumption",
+    kpiDailyBattery: "Daily battery",
     kpiDailyExport: "Daily export",
     kpiNetGrid: "Net grid",
     kpiSelfSufficiency: "Self sufficiency",
     kpiEstimatedSavings: "Est. savings",
+    batteryNetChargedShort: "Net charged",
+    batteryNetDischargedShort: "Net discharged",
+    batteryNetBalancedShort: "Balanced",
+    batteryKpiDetail: "In {charged} · out {discharged}",
     netGridExporting: "Net exporter today",
     netGridImporting: "Net importer today",
     operatingSummaryKicker: "Operating summary",
@@ -1092,10 +1099,15 @@ const translations = {
     tariffSaveFailed: "无法保存电价",
     kpiDailySolar: "今日太阳能",
     kpiDailyConsumption: "今日用电",
+    kpiDailyBattery: "今日电池",
     kpiDailyExport: "今日回馈",
     kpiNetGrid: "电网净流向",
     kpiSelfSufficiency: "自给率",
     kpiEstimatedSavings: "预估节省",
+    batteryNetChargedShort: "净充入",
+    batteryNetDischargedShort: "净放出",
+    batteryNetBalancedShort: "基本平衡",
+    batteryKpiDetail: "充入 {charged} · 放出 {discharged}",
     netGridExporting: "今天净回馈电网",
     netGridImporting: "今天净从电网取电",
     operatingSummaryKicker: "运行摘要",
@@ -1669,10 +1681,15 @@ const translations = {
     tariffSaveFailed: "ไม่สามารถบันทึกค่าไฟได้",
     kpiDailySolar: "โซลาร์วันนี้",
     kpiDailyConsumption: "ใช้ไฟวันนี้",
+    kpiDailyBattery: "แบตวันนี้",
     kpiDailyExport: "ส่งออกวันนี้",
     kpiNetGrid: "กริดสุทธิ",
     kpiSelfSufficiency: "พึ่งพาตนเอง",
     kpiEstimatedSavings: "ประหยัดโดยประมาณ",
+    batteryNetChargedShort: "ชาร์จสุทธิ",
+    batteryNetDischargedShort: "คายสุทธิ",
+    batteryNetBalancedShort: "สมดุล",
+    batteryKpiDetail: "เข้า {charged} · ออก {discharged}",
     netGridExporting: "วันนี้ส่งออกสุทธิ",
     netGridImporting: "วันนี้นำเข้าสุทธิ",
     operatingSummaryKicker: "สรุปการทำงาน",
@@ -5321,12 +5338,21 @@ function renderVisualKpis(payload) {
   const latestRow = rows.at(-1) ?? {};
   const previousRow = rows.length > 1 ? rows.at(-2) : null;
   const homeUsage = Number(today.homeUsageKwh ?? latestRow.home_usage ?? 0);
+  const batteryCharged = Number(today.energyGoingIntoBatteryKwh ?? 0);
+  const batteryDischarged = Number(today.energyComingOutOfBatteryKwh ?? 0);
+  const batteryNetKwh = batteryCharged - batteryDischarged;
   const selfSufficiency = calculateSelfSufficiency(today);
   const netGridKwh = Number(today.returnToGridKwh ?? 0) - Number(today.gridConsumptionKwh ?? 0);
   const isNetExporter = netGridKwh >= 0;
+  const batteryModeKey = Math.abs(batteryNetKwh) < 0.05
+    ? "batteryNetBalancedShort"
+    : batteryNetKwh > 0
+      ? "batteryNetChargedShort"
+      : "batteryNetDischargedShort";
 
   metricFields.kpiDailySolar.textContent = formatKwh(today.solarProductionKwh);
   metricFields.kpiDailyConsumption.textContent = formatKwh(homeUsage);
+  metricFields.kpiDailyBattery.textContent = formatKwh(Math.abs(batteryNetKwh));
   metricFields.kpiDailyExport.textContent = formatKwh(today.returnToGridKwh);
   metricFields.kpiNetGrid.textContent = formatKwh(Math.abs(netGridKwh));
   metricFields.kpiSelfSufficiency.textContent = formatOptionalPercent(selfSufficiency);
@@ -5343,6 +5369,15 @@ function renderVisualKpis(payload) {
     homeUsage,
     previousRow?.home_usage,
   );
+  metricFields.kpiDailyBattery.closest(".visual-kpi-card").dataset.mode = batteryNetKwh > 0.05
+    ? "charged"
+    : batteryNetKwh < -0.05
+      ? "discharged"
+      : "balanced";
+  textFields.kpiDailyBatteryMeta.textContent = `${t(batteryModeKey)} · ${interpolate(t("batteryKpiDetail"), {
+    charged: formatKwh(batteryCharged),
+    discharged: formatKwh(batteryDischarged),
+  })}`;
   metricFields.kpiNetGrid.closest(".visual-kpi-card").dataset.mode = isNetExporter ? "export" : "import";
   textFields.kpiNetGridMeta.textContent = t(isNetExporter ? "netGridExporting" : "netGridImporting");
   textFields.kpiSelfSufficiencyMeta.textContent = getSelfSufficiencyStatus(selfSufficiency);

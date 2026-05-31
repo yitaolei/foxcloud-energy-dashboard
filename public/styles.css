@@ -293,7 +293,7 @@ select {
 
 .visual-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 0.85rem;
 }
 
@@ -368,6 +368,18 @@ select {
 
 .visual-kpi-home {
   color: #60a5fa;
+}
+
+.visual-kpi-battery {
+  color: #84cc16;
+}
+
+.visual-kpi-battery[data-mode="discharged"] {
+  color: #a78bfa;
+}
+
+.visual-kpi-battery[data-mode="balanced"] {
+  color: #2dd4bf;
 }
 
 .visual-kpi-export {

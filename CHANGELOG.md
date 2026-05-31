@@ -25,6 +25,7 @@
 ### Changed
 
 - Moved weather forecast settings, live data confidence, the 24-hour heatmap, the solar calendar, the weekday profile, and savings settings below the daily energy table so the main dashboard stays focused on daily operation.
+- Added a top KPI card for today's battery net charge/discharge between daily consumption and daily export.
 - Made the battery factor in the energy health score larger and color-coded by SOC level.
 - Expanded live data confidence warning text with the current response warning detail and generated timestamp.
 
