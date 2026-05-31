@@ -146,6 +146,7 @@ Implemented API shape:
 - Energy health now emphasizes battery SOC as a large color-coded factor so low, medium, and healthy battery states are easier to scan.
 - New settings panels should use the shared `settings-panel` class and stay near the bottom of the dashboard. Weather forecast settings should remain immediately before savings settings.
 - The sticky section navigator should keep anchors for overview, actions, battery, daily data, and settings so the longer dashboard remains easy to move around.
+- The smart energy pilot panel is the first local "AI-style" integration layer: it should explain the current household energy situation in plain language and produce now/later/watch actions from local rules, without sending household data to an external AI service.
 
 Current estimate:
 

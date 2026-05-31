@@ -139,6 +139,18 @@ const textFields = {
   operatingSummaryGrid: document.getElementById("operatingSummaryGrid"),
   operatingSummaryReserve: document.getElementById("operatingSummaryReserve"),
   operatingSummaryAction: document.getElementById("operatingSummaryAction"),
+  smartHubStatus: document.getElementById("smartHubStatus"),
+  smartHubNarrative: document.getElementById("smartHubNarrative"),
+  smartHubTags: document.getElementById("smartHubTags"),
+  smartHubNowCard: document.getElementById("smartHubNowCard"),
+  smartHubNowStatus: document.getElementById("smartHubNowStatus"),
+  smartHubNowDetail: document.getElementById("smartHubNowDetail"),
+  smartHubLaterCard: document.getElementById("smartHubLaterCard"),
+  smartHubLaterStatus: document.getElementById("smartHubLaterStatus"),
+  smartHubLaterDetail: document.getElementById("smartHubLaterDetail"),
+  smartHubWatchCard: document.getElementById("smartHubWatchCard"),
+  smartHubWatchStatus: document.getElementById("smartHubWatchStatus"),
+  smartHubWatchDetail: document.getElementById("smartHubWatchDetail"),
   todayBillImpactDetail: document.getElementById("todayBillImpactDetail"),
   energyScoreRing: document.getElementById("energyScoreRing"),
   energyScoreStatus: document.getElementById("energyScoreStatus"),
@@ -540,6 +552,52 @@ const translations = {
     operatingNetImport: "Net import {value}",
     operatingSummaryReserve: "Reserve above 20%",
     operatingSummaryAction: "Next action",
+    smartHubKicker: "Smart energy pilot",
+    smartHubTitle: "Today's energy decision",
+    smartHubNow: "Now",
+    smartHubLater: "Later today",
+    smartHubWatch: "Watch",
+    smartHubStatusSolar: "Use the sun",
+    smartHubStatusBattery: "Protect reserve",
+    smartHubStatusPeak: "Avoid peak import",
+    smartHubStatusBalanced: "Steady day",
+    smartHubSummarySolar: "Solar is covering the home and there is about {headroom} usable surplus. Battery reserve is {reserve}, so flexible loads are best run now.",
+    smartHubSummaryBattery: "Battery reserve is only {reserve}. Keep flexible loads light until solar output improves or the peak window passes.",
+    smartHubSummaryPeak: "Grid import pressure is {pressure} during the tariff watch window. Reduce large loads and let the battery cover essentials.",
+    smartHubSummaryBalanced: "The system is steady: self-sufficiency is {self}, grid pressure is {pressure}, and battery reserve is {reserve}. No urgent change is needed.",
+    smartHubNowUseSolar: "Run flexible loads",
+    smartHubNowSaveBattery: "Hold heavy loads",
+    smartHubNowReduceImport: "Reduce grid import",
+    smartHubNowSteady: "Keep current rhythm",
+    smartHubNowUseSolarDetail: "Usable surplus is about {headroom}; this is a good window for dishwasher, laundry, or other deferrable loads.",
+    smartHubNowSaveBatteryDetail: "Battery reserve is {reserve}; keep discretionary loads waiting until reserve improves.",
+    smartHubNowReduceImportDetail: "Import pressure is {pressure}; avoid stacking high-power appliances right now.",
+    smartHubNowSteadyDetail: "Live flow is balanced. Keep watching solar and grid flow before starting larger loads.",
+    smartHubLaterPeak: "Prepare for peak",
+    smartHubLaterSolar: "Use solar window",
+    smartHubLaterConserve: "Conserve for tonight",
+    smartHubLaterNormal: "Normal evening plan",
+    smartHubLaterPeakDetail: "Peak window {window} is {time} away. Try to finish flexible loads before it starts.",
+    smartHubLaterSolarDetail: "Tomorrow outlook is {outlook}; keep heavier loads near the next solar window.",
+    smartHubLaterConserveDetail: "Runway risk is {risk}; protect the battery for evening and overnight coverage.",
+    smartHubLaterNormalDetail: "Peak pressure is low and reserve looks usable. Keep the usual evening plan.",
+    smartHubWatchData: "Data freshness",
+    smartHubWatchBattery: "Battery runway",
+    smartHubWatchWeather: "Tomorrow weather",
+    smartHubWatchGrid: "Grid pressure",
+    smartHubWatchDataDetail: "There are {count} dashboard warning(s). Check the data quality panel below the daily table.",
+    smartHubWatchBatteryDetail: "Reserve is {reserve}, runway risk is {risk}.",
+    smartHubWatchWeatherDetail: "Tomorrow solar outlook is {outlook}; adjust flexible loads if the forecast weakens.",
+    smartHubWatchGridDetail: "Current grid mode is {grid}; import pressure is {pressure}.",
+    smartHubTagSolarSurplus: "Solar surplus",
+    smartHubTagBatteryCharging: "Battery charging",
+    smartHubTagBatteryDischarging: "Battery supporting home",
+    smartHubTagGridImport: "Grid import",
+    smartHubTagGridExport: "Grid export",
+    smartHubTagPeakNow: "Peak tariff now",
+    smartHubTagOffPeak: "Off-peak",
+    smartHubTagTomorrowGood: "Tomorrow solar OK",
+    smartHubTagTomorrowWeak: "Tomorrow solar weak",
     operatingSolarDay: "Solar-led day",
     operatingBalancedDay: "Balanced day",
     operatingGridDay: "Grid-heavy day",
@@ -1127,6 +1185,52 @@ const translations = {
     operatingNetImport: "净取电 {value}",
     operatingSummaryReserve: "高于 20% 的余量",
     operatingSummaryAction: "下一步建议",
+    smartHubKicker: "智能能源驾驶舱",
+    smartHubTitle: "今日能源判断",
+    smartHubNow: "现在",
+    smartHubLater: "今天晚些时候",
+    smartHubWatch: "需要注意",
+    smartHubStatusSolar: "优先用太阳能",
+    smartHubStatusBattery: "保护电池余量",
+    smartHubStatusPeak: "避开高峰取电",
+    smartHubStatusBalanced: "运行平稳",
+    smartHubSummarySolar: "太阳能正在覆盖家庭用电，约有 {headroom} 可用富余功率。电池余量为 {reserve}，现在适合安排可推迟负载。",
+    smartHubSummaryBattery: "电池余量只有 {reserve}。在太阳能改善或高峰时段过去前，建议减少非必要大功率负载。",
+    smartHubSummaryPeak: "电网取电压力为 {pressure}，并接近或处于电价观察窗口。建议减少大功率负载，让电池优先覆盖必要用电。",
+    smartHubSummaryBalanced: "系统运行平稳：自给率 {self}，电网压力 {pressure}，电池余量 {reserve}。暂时不需要特别操作。",
+    smartHubNowUseSolar: "现在运行可推迟负载",
+    smartHubNowSaveBattery: "先保留大功率负载",
+    smartHubNowReduceImport: "减少电网取电",
+    smartHubNowSteady: "保持当前节奏",
+    smartHubNowUseSolarDetail: "可用富余功率约 {headroom}；洗碗机、洗衣机或其它可推迟负载适合放到这个窗口。",
+    smartHubNowSaveBatteryDetail: "电池余量为 {reserve}；建议等余量改善后再运行非必要负载。",
+    smartHubNowReduceImportDetail: "取电压力为 {pressure}；现在尽量不要叠加多个高功率电器。",
+    smartHubNowSteadyDetail: "实时流向比较平衡。启动大负载前，继续观察太阳能和电网流向。",
+    smartHubLaterPeak: "准备晚高峰",
+    smartHubLaterSolar: "利用太阳窗口",
+    smartHubLaterConserve: "为今晚保电",
+    smartHubLaterNormal: "正常晚间安排",
+    smartHubLaterPeakDetail: "高峰时段 {window} 还有 {time} 开始。尽量在开始前完成可推迟负载。",
+    smartHubLaterSolarDetail: "明天太阳能预报为 {outlook}；大负载尽量靠近下一个太阳窗口。",
+    smartHubLaterConserveDetail: "续航风险为 {risk}；建议保护电池，留给晚间和夜间用电。",
+    smartHubLaterNormalDetail: "高峰压力不高，电池余量可用。按正常晚间节奏即可。",
+    smartHubWatchData: "数据新鲜度",
+    smartHubWatchBattery: "电池续航",
+    smartHubWatchWeather: "明天天气",
+    smartHubWatchGrid: "电网压力",
+    smartHubWatchDataDetail: "当前有 {count} 个 dashboard 警告。可以查看每日表格下面的实时数据可信度。",
+    smartHubWatchBatteryDetail: "余量 {reserve}，续航风险 {risk}。",
+    smartHubWatchWeatherDetail: "明天太阳能预报为 {outlook}；如果预报变弱，就调整可推迟负载。",
+    smartHubWatchGridDetail: "当前电网状态：{grid}；取电压力 {pressure}。",
+    smartHubTagSolarSurplus: "太阳能富余",
+    smartHubTagBatteryCharging: "电池充电中",
+    smartHubTagBatteryDischarging: "电池支撑家庭",
+    smartHubTagGridImport: "电网取电",
+    smartHubTagGridExport: "回馈电网",
+    smartHubTagPeakNow: "当前高峰电价",
+    smartHubTagOffPeak: "非高峰",
+    smartHubTagTomorrowGood: "明天太阳能可用",
+    smartHubTagTomorrowWeak: "明天太阳能偏弱",
     operatingSolarDay: "太阳能主导日",
     operatingBalancedDay: "运行均衡",
     operatingGridDay: "电网依赖偏高",
@@ -1714,6 +1818,52 @@ const translations = {
     operatingNetImport: "นำเข้าสุทธิ {value}",
     operatingSummaryReserve: "สำรองเหนือ 20%",
     operatingSummaryAction: "ขั้นต่อไป",
+    smartHubKicker: "ผู้ช่วยพลังงานอัจฉริยะ",
+    smartHubTitle: "การตัดสินใจพลังงานวันนี้",
+    smartHubNow: "ตอนนี้",
+    smartHubLater: "ช่วงถัดไปวันนี้",
+    smartHubWatch: "เฝ้าดู",
+    smartHubStatusSolar: "ใช้โซลาร์",
+    smartHubStatusBattery: "รักษาสำรองแบต",
+    smartHubStatusPeak: "เลี่ยงนำเข้าช่วงพีค",
+    smartHubStatusBalanced: "ระบบนิ่ง",
+    smartHubSummarySolar: "โซลาร์กำลังครอบคลุมบ้านและมีส่วนเกินประมาณ {headroom} สำรองแบตคือ {reserve} จึงเหมาะกับโหลดที่เลื่อนได้ตอนนี้",
+    smartHubSummaryBattery: "สำรองแบตเหลือ {reserve} ควรลดโหลดหนักจนกว่าโซลาร์จะดีขึ้นหรือพ้นช่วงพีค",
+    smartHubSummaryPeak: "แรงกดดันการนำเข้ากริดคือ {pressure} ในช่วงเฝ้าระวังค่าไฟ ควรลดโหลดใหญ่และให้แบตรองรับของจำเป็น",
+    smartHubSummaryBalanced: "ระบบนิ่ง: พึ่งตนเอง {self}, แรงกดดันกริด {pressure}, สำรองแบต {reserve} ยังไม่ต้องปรับเร่งด่วน",
+    smartHubNowUseSolar: "เปิดโหลดที่เลื่อนได้",
+    smartHubNowSaveBattery: "พักโหลดหนักไว้ก่อน",
+    smartHubNowReduceImport: "ลดนำเข้ากริด",
+    smartHubNowSteady: "คงจังหวะเดิม",
+    smartHubNowUseSolarDetail: "ไฟส่วนเกินประมาณ {headroom}; เหมาะกับเครื่องล้างจาน ซักผ้า หรือโหลดที่เลื่อนได้",
+    smartHubNowSaveBatteryDetail: "สำรองแบตคือ {reserve}; รอให้สำรองดีขึ้นก่อนใช้โหลดที่ไม่จำเป็น",
+    smartHubNowReduceImportDetail: "แรงกดดันนำเข้าคือ {pressure}; อย่าเปิดเครื่องใช้ไฟแรงหลายตัวพร้อมกัน",
+    smartHubNowSteadyDetail: "การไหลพลังงานสมดุล รอดูโซลาร์และกริดก่อนเริ่มโหลดใหญ่",
+    smartHubLaterPeak: "เตรียมช่วงพีค",
+    smartHubLaterSolar: "ใช้หน้าต่างโซลาร์",
+    smartHubLaterConserve: "เก็บไว้คืนนี้",
+    smartHubLaterNormal: "แผนเย็นปกติ",
+    smartHubLaterPeakDetail: "ช่วงพีค {window} จะเริ่มใน {time} พยายามจบโหลดที่เลื่อนได้ก่อนเริ่ม",
+    smartHubLaterSolarDetail: "พยากรณ์โซลาร์พรุ่งนี้คือ {outlook}; วางโหลดหนักใกล้หน้าต่างโซลาร์ถัดไป",
+    smartHubLaterConserveDetail: "ความเสี่ยงแบตคือ {risk}; รักษาแบตไว้สำหรับเย็นและกลางคืน",
+    smartHubLaterNormalDetail: "แรงกดดันพีคต่ำและสำรองยังใช้ได้ ใช้แผนเย็นปกติ",
+    smartHubWatchData: "ความสดของข้อมูล",
+    smartHubWatchBattery: "ระยะใช้งานแบต",
+    smartHubWatchWeather: "อากาศพรุ่งนี้",
+    smartHubWatchGrid: "แรงกดดันกริด",
+    smartHubWatchDataDetail: "มีคำเตือนแดชบอร์ด {count} รายการ ดูรายละเอียดในแผงคุณภาพข้อมูลใต้ตารางรายวัน",
+    smartHubWatchBatteryDetail: "สำรอง {reserve}, ความเสี่ยง {risk}",
+    smartHubWatchWeatherDetail: "พยากรณ์โซลาร์พรุ่งนี้คือ {outlook}; ปรับโหลดที่เลื่อนได้ถ้าพยากรณ์แย่ลง",
+    smartHubWatchGridDetail: "สถานะกริดตอนนี้: {grid}; แรงกดดัน {pressure}",
+    smartHubTagSolarSurplus: "โซลาร์เหลือ",
+    smartHubTagBatteryCharging: "แบตชาร์จ",
+    smartHubTagBatteryDischarging: "แบตช่วยบ้าน",
+    smartHubTagGridImport: "นำเข้ากริด",
+    smartHubTagGridExport: "ส่งออกกริด",
+    smartHubTagPeakNow: "ค่าไฟพีคตอนนี้",
+    smartHubTagOffPeak: "นอกพีค",
+    smartHubTagTomorrowGood: "โซลาร์พรุ่งนี้ดี",
+    smartHubTagTomorrowWeak: "โซลาร์พรุ่งนี้อ่อน",
     operatingSolarDay: "วันที่โซลาร์นำ",
     operatingBalancedDay: "สมดุล",
     operatingGridDay: "พึ่งกริดมาก",
@@ -2713,6 +2863,192 @@ function renderOperatingSummary(payload) {
     ? "--"
     : formatPercent(summary.batteryReserve);
   textFields.operatingSummaryAction.textContent = t(summary.actionKey);
+}
+
+function getSmartHubDecision(payload, weatherPayload = lastWeatherPayload) {
+  const live = payload?.live ?? {};
+  const today = payload?.today ?? {};
+  const flexibleLoad = getFlexibleLoadPlan(payload);
+  const batteryRunway = getBatteryRunwayPlan(payload);
+  const gridForecast = getGridImportForecast(payload);
+  const tomorrowPrep = getTomorrowPrepPlan(payload, weatherPayload);
+  const tariff = gridForecast.tariff;
+  const selfSufficiency = calculateSelfSufficiency(today) ?? 0;
+  const reserve = batteryRunway.reservePercent;
+  const pressure = gridForecast.importPressure;
+  const warnings = payload?.warnings ?? [];
+  const gridImportKw = Number(live.gridImportKw ?? 0);
+  const gridExportKw = Number(live.gridExportKw ?? 0);
+  const batteryChargeKw = Number(live.batteryChargeKw ?? 0);
+  const batteryDischargeKw = Number(live.batteryDischargeKw ?? 0);
+  const hasSolarSurplus = flexibleLoad.headroomKw >= 0.8 && gridForecast.importPressure < 45;
+  const shouldProtectBattery = batteryRunway.riskKey === "runwayRiskHigh"
+    || (reserve !== null && reserve < 25);
+  const shouldReducePeak = tariff.isPeak && pressure >= 35;
+  const statusKey = hasSolarSurplus
+    ? "smartHubStatusSolar"
+    : shouldProtectBattery
+      ? "smartHubStatusBattery"
+      : shouldReducePeak || pressure >= 65
+        ? "smartHubStatusPeak"
+        : "smartHubStatusBalanced";
+  const summaryKey = hasSolarSurplus
+    ? "smartHubSummarySolar"
+    : shouldProtectBattery
+      ? "smartHubSummaryBattery"
+      : shouldReducePeak || pressure >= 65
+        ? "smartHubSummaryPeak"
+        : "smartHubSummaryBalanced";
+  const nowStatusKey = hasSolarSurplus
+    ? "smartHubNowUseSolar"
+    : shouldProtectBattery
+      ? "smartHubNowSaveBattery"
+      : pressure >= 55
+        ? "smartHubNowReduceImport"
+        : "smartHubNowSteady";
+  const nowDetailKey = hasSolarSurplus
+    ? "smartHubNowUseSolarDetail"
+    : shouldProtectBattery
+      ? "smartHubNowSaveBatteryDetail"
+      : pressure >= 55
+        ? "smartHubNowReduceImportDetail"
+        : "smartHubNowSteadyDetail";
+  const laterStatusKey = tariff.isPeak || tariff.detailMinutes <= 180
+    ? "smartHubLaterPeak"
+    : tomorrowPrep.statusKey === "tomorrowPrepReady" || tomorrowPrep.statusKey === "tomorrowPrepGood"
+      ? "smartHubLaterSolar"
+      : shouldProtectBattery
+        ? "smartHubLaterConserve"
+        : "smartHubLaterNormal";
+  const laterDetailKey = laterStatusKey === "smartHubLaterPeak"
+    ? "smartHubLaterPeakDetail"
+    : laterStatusKey === "smartHubLaterSolar"
+      ? "smartHubLaterSolarDetail"
+      : laterStatusKey === "smartHubLaterConserve"
+        ? "smartHubLaterConserveDetail"
+        : "smartHubLaterNormalDetail";
+  const watchStatusKey = warnings.length > 0
+    ? "smartHubWatchData"
+    : shouldProtectBattery
+      ? "smartHubWatchBattery"
+      : tomorrowPrep.statusKey === "tomorrowPrepLimited" || tomorrowPrep.outlookKey === "poor"
+        ? "smartHubWatchWeather"
+        : "smartHubWatchGrid";
+  const watchDetailKey = watchStatusKey === "smartHubWatchData"
+    ? "smartHubWatchDataDetail"
+    : watchStatusKey === "smartHubWatchBattery"
+      ? "smartHubWatchBatteryDetail"
+      : watchStatusKey === "smartHubWatchWeather"
+        ? "smartHubWatchWeatherDetail"
+        : "smartHubWatchGridDetail";
+  const tags = [
+    hasSolarSurplus ? ["smartHubTagSolarSurplus", "good"] : null,
+    batteryChargeKw > batteryDischargeKw + 0.05 ? ["smartHubTagBatteryCharging", "good"] : null,
+    batteryDischargeKw > batteryChargeKw + 0.05 ? ["smartHubTagBatteryDischarging", "watch"] : null,
+    gridImportKw > gridExportKw + 0.05 ? ["smartHubTagGridImport", pressure >= 55 ? "alert" : "watch"] : null,
+    gridExportKw > gridImportKw + 0.05 ? ["smartHubTagGridExport", "good"] : null,
+    tariff.isPeak ? ["smartHubTagPeakNow", "alert"] : ["smartHubTagOffPeak", "neutral"],
+    tomorrowPrep.statusKey === "tomorrowPrepReady" || tomorrowPrep.statusKey === "tomorrowPrepGood"
+      ? ["smartHubTagTomorrowGood", "good"]
+      : ["smartHubTagTomorrowWeak", "watch"],
+  ].filter(Boolean);
+
+  return {
+    statusKey,
+    summaryKey,
+    selfSufficiency,
+    headroomKw: flexibleLoad.headroomKw,
+    reserve,
+    pressure,
+    tariff,
+    gridFlow: gridForecast.gridFlow,
+    runwayRiskKey: batteryRunway.riskKey,
+    tomorrowOutlookKey: tomorrowPrep.outlookKey,
+    nowStatusKey,
+    nowDetailKey,
+    laterStatusKey,
+    laterDetailKey,
+    watchStatusKey,
+    watchDetailKey,
+    warningsCount: warnings.length,
+    tags,
+  };
+}
+
+function setSmartHubCard(card, statusElement, detailElement, tone, statusKey, detail) {
+  card.dataset.tone = tone;
+  statusElement.textContent = t(statusKey);
+  detailElement.textContent = detail;
+}
+
+function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
+  if (!payload?.live || !payload?.today) {
+    return;
+  }
+
+  const decision = getSmartHubDecision(payload, weatherPayload);
+  const commonValues = {
+    self: formatOptionalPercent(decision.selfSufficiency),
+    headroom: formatKw(decision.headroomKw),
+    reserve: decision.reserve === null ? "--" : formatPercent(decision.reserve),
+    pressure: formatPercent(decision.pressure),
+    window: decision.tariff.peakWindow,
+    time: formatDurationMinutes(decision.tariff.detailMinutes),
+    risk: t(decision.runwayRiskKey),
+    outlook: t(decision.tomorrowOutlookKey),
+    grid: decision.gridFlow,
+    count: String(decision.warningsCount),
+  };
+
+  textFields.smartHubStatus.textContent = t(decision.statusKey);
+  textFields.smartHubNarrative.textContent = interpolate(t(decision.summaryKey), commonValues);
+  textFields.smartHubTags.replaceChildren(...decision.tags.map(([key, tone]) => {
+    const tag = document.createElement("span");
+    tag.dataset.tone = tone;
+    tag.textContent = t(key);
+    return tag;
+  }));
+
+  const nowTone = decision.nowStatusKey === "smartHubNowUseSolar"
+    ? "good"
+    : decision.nowStatusKey === "smartHubNowSteady"
+      ? "neutral"
+      : "alert";
+  const laterTone = decision.laterStatusKey === "smartHubLaterNormal" || decision.laterStatusKey === "smartHubLaterSolar"
+    ? "good"
+    : decision.laterStatusKey === "smartHubLaterPeak"
+      ? "watch"
+      : "alert";
+  const watchTone = decision.watchStatusKey === "smartHubWatchGrid"
+    ? "neutral"
+    : decision.watchStatusKey === "smartHubWatchData" || decision.watchStatusKey === "smartHubWatchBattery"
+      ? "alert"
+      : "watch";
+
+  setSmartHubCard(
+    textFields.smartHubNowCard,
+    textFields.smartHubNowStatus,
+    textFields.smartHubNowDetail,
+    nowTone,
+    decision.nowStatusKey,
+    interpolate(t(decision.nowDetailKey), commonValues),
+  );
+  setSmartHubCard(
+    textFields.smartHubLaterCard,
+    textFields.smartHubLaterStatus,
+    textFields.smartHubLaterDetail,
+    laterTone,
+    decision.laterStatusKey,
+    interpolate(t(decision.laterDetailKey), commonValues),
+  );
+  setSmartHubCard(
+    textFields.smartHubWatchCard,
+    textFields.smartHubWatchStatus,
+    textFields.smartHubWatchDetail,
+    watchTone,
+    decision.watchStatusKey,
+    interpolate(t(decision.watchDetailKey), commonValues),
+  );
 }
 
 function getTodayBillImpact(payload) {
@@ -4328,6 +4664,7 @@ function renderWeather(payload) {
   renderEnergyScore(lastPayload, payload);
   renderEnergyCoach(lastPayload, payload);
   renderTomorrowPrep(lastPayload, payload);
+  renderSmartHub(lastPayload, payload);
   renderActionBoard(lastPayload, payload);
 }
 
@@ -5683,6 +6020,7 @@ function renderMetrics(payload) {
   renderDataQuality(payload);
   renderVisualKpis(payload);
   renderOperatingSummary(payload);
+  renderSmartHub(payload);
   renderTodayBillImpact(payload);
   renderEnergyScore(payload);
   renderTariffTimeline(payload.todaySavings);

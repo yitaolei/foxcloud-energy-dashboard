@@ -22,6 +22,7 @@
 - Added SQLite backup status metadata to the protected `/api/health` response, including backup path, interval, retention count, scheduler state, next run time, running state, last successful backup path, and last success/failure timestamps.
 - Added regression coverage for the SQLite backup health status shape.
 - Added a sticky dashboard section navigator for jumping directly to overview, actions, battery, daily data, and settings.
+- Added a smart energy pilot panel that combines solar surplus, battery reserve, grid pressure, tariff timing, weather outlook, and warnings into one plain-language decision with action cards.
 
 ### Changed
 
