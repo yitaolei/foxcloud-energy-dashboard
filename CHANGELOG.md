@@ -30,6 +30,7 @@
 - Added a flexible-load priority recommendation that ranks the load advisor options and highlights the lowest-impact load to run first.
 - Added a smart-hub confidence score that explains how reliable the current recommendation is based on live data age, warning count, sample coverage, and weather availability.
 - Added a browser-local smart decision log so recent smart-hub recommendations can be compared as conditions change.
+- Added a smart decision trend explanation that compares the latest recommendation with the previous browser-local entry and names the main changing signal.
 
 ### Changed
 

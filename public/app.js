@@ -147,6 +147,7 @@ const textFields = {
   smartHubNarrative: document.getElementById("smartHubNarrative"),
   smartHubTags: document.getElementById("smartHubTags"),
   smartDecisionLogMeta: document.getElementById("smartDecisionLogMeta"),
+  smartDecisionTrend: document.getElementById("smartDecisionTrend"),
   smartDecisionLogList: document.getElementById("smartDecisionLogList"),
   smartHubSolarBasisCard: document.getElementById("smartHubSolarBasisCard"),
   smartHubSolarBasis: document.getElementById("smartHubSolarBasis"),
@@ -663,6 +664,18 @@ const translations = {
     smartDecisionLogMetaEmpty: "Stored in this browser",
     smartDecisionLogConfidence: "Confidence {value}",
     smartDecisionLogSignals: "Reserve {reserve} · grid {pressure} · surplus {headroom}",
+    smartDecisionTrendFirst: "Starting a local comparison trail. The next refresh will explain what changed.",
+    smartDecisionTrendChanged: "Changed from {previous} to {current}. Main move: {driver}.",
+    smartDecisionTrendSteady: "Still {current}. Main move since last refresh: {driver}.",
+    smartDecisionDriverReserveUp: "battery reserve rose {value}",
+    smartDecisionDriverReserveDown: "battery reserve fell {value}",
+    smartDecisionDriverHeadroomUp: "solar surplus rose {value}",
+    smartDecisionDriverHeadroomDown: "solar surplus fell {value}",
+    smartDecisionDriverPressureUp: "grid pressure rose {value}",
+    smartDecisionDriverPressureDown: "grid pressure fell {value}",
+    smartDecisionDriverConfidenceUp: "confidence rose {value}",
+    smartDecisionDriverConfidenceDown: "confidence fell {value}",
+    smartDecisionDriverNoMajor: "signals are mostly unchanged",
     smartLoadKicker: "Load advisor",
     smartLoadTitle: "If I run it now",
     smartLoadMeta: "Assumes current surplus {headroom} and battery reserve {reserve}.",
@@ -1356,6 +1369,18 @@ const translations = {
     smartDecisionLogMetaEmpty: "仅保存在这个浏览器",
     smartDecisionLogConfidence: "可信度 {value}",
     smartDecisionLogSignals: "余量 {reserve} · 电网 {pressure} · 富余 {headroom}",
+    smartDecisionTrendFirst: "已开始本地对比记录。下次刷新会说明主要变化来自哪里。",
+    smartDecisionTrendChanged: "建议从“{previous}”变为“{current}”。主要变化：{driver}。",
+    smartDecisionTrendSteady: "仍然建议“{current}”。上次刷新以来主要变化：{driver}。",
+    smartDecisionDriverReserveUp: "电池余量上升 {value}",
+    smartDecisionDriverReserveDown: "电池余量下降 {value}",
+    smartDecisionDriverHeadroomUp: "太阳富余增加 {value}",
+    smartDecisionDriverHeadroomDown: "太阳富余减少 {value}",
+    smartDecisionDriverPressureUp: "电网压力上升 {value}",
+    smartDecisionDriverPressureDown: "电网压力下降 {value}",
+    smartDecisionDriverConfidenceUp: "可信度上升 {value}",
+    smartDecisionDriverConfidenceDown: "可信度下降 {value}",
+    smartDecisionDriverNoMajor: "主要信号变化不大",
     smartLoadKicker: "负载试算",
     smartLoadTitle: "如果现在运行",
     smartLoadMeta: "按当前富余 {headroom} 和电池余量 {reserve} 估算。",
@@ -2049,6 +2074,18 @@ const translations = {
     smartDecisionLogMetaEmpty: "เก็บในเบราว์เซอร์นี้",
     smartDecisionLogConfidence: "มั่นใจ {value}",
     smartDecisionLogSignals: "สำรอง {reserve} · กริด {pressure} · ส่วนเกิน {headroom}",
+    smartDecisionTrendFirst: "เริ่มบันทึกเปรียบเทียบในเครื่องแล้ว รีเฟรชครั้งหน้าจะบอกว่าอะไรเปลี่ยน",
+    smartDecisionTrendChanged: "เปลี่ยนจาก {previous} เป็น {current} เหตุผลหลัก: {driver}",
+    smartDecisionTrendSteady: "ยังเป็น {current} เหตุผลหลักตั้งแต่รีเฟรชก่อน: {driver}",
+    smartDecisionDriverReserveUp: "สำรองแบตเพิ่ม {value}",
+    smartDecisionDriverReserveDown: "สำรองแบตลด {value}",
+    smartDecisionDriverHeadroomUp: "โซลาร์ส่วนเกินเพิ่ม {value}",
+    smartDecisionDriverHeadroomDown: "โซลาร์ส่วนเกินลด {value}",
+    smartDecisionDriverPressureUp: "แรงกดดันกริดเพิ่ม {value}",
+    smartDecisionDriverPressureDown: "แรงกดดันกริดลด {value}",
+    smartDecisionDriverConfidenceUp: "ความมั่นใจเพิ่ม {value}",
+    smartDecisionDriverConfidenceDown: "ความมั่นใจลด {value}",
+    smartDecisionDriverNoMajor: "สัญญาณหลักแทบไม่เปลี่ยน",
     smartLoadKicker: "ตัวช่วยโหลด",
     smartLoadTitle: "ถ้าเปิดตอนนี้",
     smartLoadMeta: "ประเมินจากไฟส่วนเกิน {headroom} และสำรองแบต {reserve}",
@@ -3296,6 +3333,79 @@ function upsertSmartDecisionLogEntry(entry) {
   return nextEntries;
 }
 
+function getSmartDecisionDriver(current, previous) {
+  if (!current || !previous) {
+    return t("smartDecisionDriverNoMajor");
+  }
+
+  const candidates = [
+    {
+      delta: Number(current.reserve ?? 0) - Number(previous.reserve ?? 0),
+      threshold: 3,
+      score: 1,
+      upKey: "smartDecisionDriverReserveUp",
+      downKey: "smartDecisionDriverReserveDown",
+      format: (value) => formatPercent(value),
+    },
+    {
+      delta: Number(current.headroomKw ?? 0) - Number(previous.headroomKw ?? 0),
+      threshold: 0.2,
+      score: 12,
+      upKey: "smartDecisionDriverHeadroomUp",
+      downKey: "smartDecisionDriverHeadroomDown",
+      format: (value) => formatKw(value),
+    },
+    {
+      delta: Number(current.pressure ?? 0) - Number(previous.pressure ?? 0),
+      threshold: 3,
+      score: 1,
+      upKey: "smartDecisionDriverPressureUp",
+      downKey: "smartDecisionDriverPressureDown",
+      format: (value) => formatPercent(value),
+    },
+    {
+      delta: Number(current.confidenceScore ?? 0) - Number(previous.confidenceScore ?? 0),
+      threshold: 3,
+      score: 1,
+      upKey: "smartDecisionDriverConfidenceUp",
+      downKey: "smartDecisionDriverConfidenceDown",
+      format: (value) => `${Number(value).toFixed(0)}%`,
+    },
+  ]
+    .filter((candidate) => Math.abs(candidate.delta) >= candidate.threshold)
+    .sort((left, right) => Math.abs(right.delta) * right.score - Math.abs(left.delta) * left.score);
+
+  const driver = candidates[0];
+
+  if (!driver) {
+    return t("smartDecisionDriverNoMajor");
+  }
+
+  return interpolate(t(driver.delta > 0 ? driver.upKey : driver.downKey), {
+    value: driver.format(Math.abs(driver.delta)),
+  });
+}
+
+function getSmartDecisionTrend(entries) {
+  const current = entries[0];
+  const previous = entries[1];
+
+  if (!current || !previous) {
+    return t("smartDecisionTrendFirst");
+  }
+
+  const values = {
+    current: t(current.statusKey),
+    previous: t(previous.statusKey),
+    driver: getSmartDecisionDriver(current, previous),
+  };
+
+  return interpolate(
+    t(current.statusKey === previous.statusKey ? "smartDecisionTrendSteady" : "smartDecisionTrendChanged"),
+    values,
+  );
+}
+
 function renderSmartDecisionLog(payload, decision, confidence) {
   if (!textFields.smartDecisionLogList) {
     return;
@@ -3305,6 +3415,7 @@ function renderSmartDecisionLog(payload, decision, confidence) {
 
   if (entries.length === 0) {
     textFields.smartDecisionLogMeta.textContent = t("smartDecisionLogMetaEmpty");
+    textFields.smartDecisionTrend.textContent = t("smartDecisionTrendFirst");
     textFields.smartDecisionLogList.textContent = t("smartDecisionLogEmpty");
 
     return;
@@ -3313,6 +3424,7 @@ function renderSmartDecisionLog(payload, decision, confidence) {
   textFields.smartDecisionLogMeta.textContent = interpolate(t("smartDecisionLogMeta"), {
     time: formatTimestamp(entries[0].generatedAt),
   });
+  textFields.smartDecisionTrend.textContent = getSmartDecisionTrend(entries);
   textFields.smartDecisionLogList.replaceChildren(...entries.map((item) => {
     const card = document.createElement("article");
     const time = document.createElement("span");

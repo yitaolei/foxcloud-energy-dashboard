@@ -1657,6 +1657,18 @@ section[id] {
   text-align: right;
 }
 
+.smart-decision-trend {
+  margin: 0 0 0.66rem;
+  border: 1px solid rgba(31, 111, 90, 0.12);
+  border-radius: 8px;
+  background: rgba(236, 253, 245, 0.62);
+  color: #14352c;
+  padding: 0.62rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
 .smart-decision-log-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

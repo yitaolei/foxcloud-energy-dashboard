@@ -21,6 +21,7 @@ energy command center:
 - visual daily KPI cards for solar production, consumption, export, self-sufficiency, and estimated savings
 - weather context near the top so users understand whether low solar production is expected
 - smart decision history should remain browser-local and capped to recent entries; it is for trend context only, not an audit log or backend persistence
+- smart decision explanations should compare the latest recommendation with the previous browser-local entry and surface the main driver, such as battery reserve, solar surplus, grid pressure, or confidence
 - simple status strip showing system, inverter, data source, and last update
 - keep the existing daily energy data table mostly unchanged because it is still useful for checking exact values
 
