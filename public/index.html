@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-01-dashboard-flow-3" />
   </head>
   <body>
     <div class="page-shell">
@@ -244,21 +244,6 @@
             </div>
           </div>
           <div id="smartHubTags" class="smart-hub-tags"></div>
-          <div class="smart-watchlist">
-            <div class="smart-watchlist-head">
-              <span data-i18n="smartWatchlist">Watchlist</span>
-              <small data-i18n="smartWatchlistMeta">Top signals to monitor now</small>
-            </div>
-            <div id="smartWatchlistGrid" class="smart-watchlist-grid"></div>
-          </div>
-          <div class="smart-decision-log">
-            <div class="smart-decision-log-head">
-              <span data-i18n="smartDecisionLog">Recent decisions</span>
-              <small id="smartDecisionLogMeta">--</small>
-            </div>
-            <p id="smartDecisionTrend" class="smart-decision-trend">--</p>
-            <div id="smartDecisionLogList" class="smart-decision-log-list"></div>
-          </div>
           <div class="smart-hub-basis" aria-label="Decision basis">
             <article id="smartHubSolarBasisCard" data-tone="neutral">
               <span data-i18n="smartHubBasisSolar">Solar surplus</span>
@@ -298,6 +283,23 @@
               <small id="smartHubWatchDetail">--</small>
             </article>
           </div>
+          <div class="smart-hub-support-grid">
+            <div class="smart-watchlist">
+              <div class="smart-watchlist-head">
+                <span data-i18n="smartWatchlist">Watchlist</span>
+                <small data-i18n="smartWatchlistMeta">Top signals to monitor now</small>
+              </div>
+              <div id="smartWatchlistGrid" class="smart-watchlist-grid"></div>
+            </div>
+            <div class="smart-decision-log">
+              <div class="smart-decision-log-head">
+                <span data-i18n="smartDecisionLog">Recent decisions</span>
+                <small id="smartDecisionLogMeta">--</small>
+              </div>
+              <p id="smartDecisionTrend" class="smart-decision-trend">--</p>
+              <div id="smartDecisionLogList" class="smart-decision-log-list"></div>
+            </div>
+          </div>
           <div class="smart-load-advisor">
             <div class="smart-load-head">
               <div>
@@ -316,122 +318,126 @@
           </div>
         </section>
 
-        <section class="panel top-bill-impact-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="todayBillImpactKicker">Bill impact</p>
-              <h2 data-i18n="todayBillImpactTitle">Today's bill impact</h2>
-              <p id="todayBillImpactDetail" class="muted-copy">--</p>
+        <div class="dashboard-summary-grid">
+          <section class="panel top-bill-impact-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="todayBillImpactKicker">Bill impact</p>
+                <h2 data-i18n="todayBillImpactTitle">Today's bill impact</h2>
+                <p id="todayBillImpactDetail" class="muted-copy">--</p>
+              </div>
+              <strong id="todayBillImpactBenefit" class="top-bill-impact-benefit">--</strong>
             </div>
-            <strong id="todayBillImpactBenefit" class="top-bill-impact-benefit">--</strong>
-          </div>
-          <div class="top-bill-impact-grid">
-            <article>
-              <span data-i18n="withoutSolarBattery">Without solar/battery</span>
-              <strong id="todayBillWithoutSolar">--</strong>
-            </article>
-            <article>
-              <span data-i18n="gridEnergyCost">Grid energy cost</span>
-              <strong id="todayBillGridCost">--</strong>
-            </article>
-            <article>
-              <span data-i18n="exportCredit">Export credit</span>
-              <strong id="todayBillExportCredit">--</strong>
-            </article>
-            <article>
-              <span data-i18n="netCostAfterExport">Net after export credit</span>
-              <strong id="todayBillNetCost">--</strong>
-            </article>
-          </div>
-        </section>
+            <div class="top-bill-impact-grid">
+              <article>
+                <span data-i18n="withoutSolarBattery">Without solar/battery</span>
+                <strong id="todayBillWithoutSolar">--</strong>
+              </article>
+              <article>
+                <span data-i18n="gridEnergyCost">Grid energy cost</span>
+                <strong id="todayBillGridCost">--</strong>
+              </article>
+              <article>
+                <span data-i18n="exportCredit">Export credit</span>
+                <strong id="todayBillExportCredit">--</strong>
+              </article>
+              <article>
+                <span data-i18n="netCostAfterExport">Net after export credit</span>
+                <strong id="todayBillNetCost">--</strong>
+              </article>
+            </div>
+          </section>
 
-        <section class="panel energy-score-panel" aria-live="polite">
-          <div id="energyScoreRing" class="energy-score-ring" style="--score-percent: 0%">
-            <strong id="energyScoreValue">--</strong>
-            <span id="energyScoreStatus">--</span>
-          </div>
-          <div class="energy-score-copy">
-            <p class="panel-kicker" data-i18n="energyScoreKicker">Home energy score</p>
-            <h2 data-i18n="energyScoreTitle">Energy health score</h2>
-            <p id="energyScoreDetail" class="muted-copy">--</p>
-            <div class="energy-score-factors">
-              <span id="energyScoreSelfFactor">--</span>
-              <span id="energyScoreBatteryFactor" class="energy-score-battery-factor">--</span>
-              <span id="energyScoreGridFactor">--</span>
-              <span id="energyScoreTempFactor">--</span>
-              <span id="energyScoreWeatherFactor">--</span>
+          <section class="panel energy-score-panel" aria-live="polite">
+            <div id="energyScoreRing" class="energy-score-ring" style="--score-percent: 0%">
+              <strong id="energyScoreValue">--</strong>
+              <span id="energyScoreStatus">--</span>
             </div>
-          </div>
-        </section>
+            <div class="energy-score-copy">
+              <p class="panel-kicker" data-i18n="energyScoreKicker">Home energy score</p>
+              <h2 data-i18n="energyScoreTitle">Energy health score</h2>
+              <p id="energyScoreDetail" class="muted-copy">--</p>
+              <div class="energy-score-factors">
+                <span id="energyScoreSelfFactor">--</span>
+                <span id="energyScoreBatteryFactor" class="energy-score-battery-factor">--</span>
+                <span id="energyScoreGridFactor">--</span>
+                <span id="energyScoreTempFactor">--</span>
+                <span id="energyScoreWeatherFactor">--</span>
+              </div>
+            </div>
+          </section>
+        </div>
 
-        <section id="dataQualityPanel" class="panel data-quality-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="dataQualityKicker">Data quality</p>
-              <h2 data-i18n="dataQualityTitle">Live data confidence</h2>
-              <p id="dataQualityDetail" class="muted-copy">--</p>
+        <div class="dashboard-support-strip">
+          <section id="dataQualityPanel" class="panel data-quality-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="dataQualityKicker">Data quality</p>
+                <h2 data-i18n="dataQualityTitle">Live data confidence</h2>
+                <p id="dataQualityDetail" class="muted-copy">--</p>
+              </div>
+              <div class="data-quality-status">
+                <span data-i18n="systemStatus">System status</span>
+                <strong id="dataQualityStatus">--</strong>
+              </div>
             </div>
-            <div class="data-quality-status">
-              <span data-i18n="systemStatus">System status</span>
-              <strong id="dataQualityStatus">--</strong>
+            <div class="data-quality-grid">
+              <article>
+                <span data-i18n="dataFreshness">Data freshness</span>
+                <strong id="dataQualityFreshness">--</strong>
+              </article>
+              <article>
+                <span data-i18n="dataSource">Data source</span>
+                <strong id="dataQualitySource">--</strong>
+              </article>
+              <article>
+                <span data-i18n="warningsLabel">Warnings</span>
+                <strong id="dataQualityWarnings">--</strong>
+              </article>
+              <article>
+                <span data-i18n="responseGenerated">Response generated</span>
+                <strong id="dataQualityResponse">--</strong>
+              </article>
+              <article class="data-quality-warning-detail">
+                <span data-i18n="warningDetailLabel">Warning detail</span>
+                <strong id="dataQualityWarningDetail">--</strong>
+              </article>
             </div>
-          </div>
-          <div class="data-quality-grid">
-            <article>
-              <span data-i18n="dataFreshness">Data freshness</span>
-              <strong id="dataQualityFreshness">--</strong>
-            </article>
-            <article>
-              <span data-i18n="dataSource">Data source</span>
-              <strong id="dataQualitySource">--</strong>
-            </article>
-            <article>
-              <span data-i18n="warningsLabel">Warnings</span>
-              <strong id="dataQualityWarnings">--</strong>
-            </article>
-            <article>
-              <span data-i18n="responseGenerated">Response generated</span>
-              <strong id="dataQualityResponse">--</strong>
-            </article>
-            <article class="data-quality-warning-detail">
-              <span data-i18n="warningDetailLabel">Warning detail</span>
-              <strong id="dataQualityWarningDetail">--</strong>
-            </article>
-          </div>
-        </section>
+          </section>
 
-        <section class="panel tariff-timeline-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="tariffWindow">Tariff window</p>
-              <h2 data-i18n="tariffTimeline">Electricity price timeline</h2>
-              <p id="tariffTimelineDetail" class="muted-copy">--</p>
+          <section class="panel tariff-timeline-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="tariffWindow">Tariff window</p>
+                <h2 data-i18n="tariffTimeline">Electricity price timeline</h2>
+                <p id="tariffTimelineDetail" class="muted-copy">--</p>
+              </div>
+              <div class="tariff-timeline-now">
+                <span data-i18n="currentTariff">Current tariff</span>
+                <strong id="tariffTimelineStatus">--</strong>
+              </div>
             </div>
-            <div class="tariff-timeline-now">
-              <span data-i18n="currentTariff">Current tariff</span>
-              <strong id="tariffTimelineStatus">--</strong>
+            <div class="tariff-timeline-track" aria-hidden="true">
+              <span id="tariffPeakSegmentA" class="tariff-peak-segment"></span>
+              <span id="tariffPeakSegmentB" class="tariff-peak-segment"></span>
+              <span id="tariffCurrentMarker" class="tariff-current-marker">
+                <b id="tariffCurrentMarkerLabel">--</b>
+              </span>
             </div>
-          </div>
-          <div class="tariff-timeline-track" aria-hidden="true">
-            <span id="tariffPeakSegmentA" class="tariff-peak-segment"></span>
-            <span id="tariffPeakSegmentB" class="tariff-peak-segment"></span>
-            <span id="tariffCurrentMarker" class="tariff-current-marker">
-              <b id="tariffCurrentMarkerLabel">--</b>
-            </span>
-          </div>
-          <div class="tariff-timeline-labels">
-            <span>00:00</span>
-            <span>06:00</span>
-            <span>12:00</span>
-            <span>18:00</span>
-            <span>24:00</span>
-          </div>
-          <div class="tariff-rate-grid">
-            <span><b data-i18n="peakRate">Peak rate</b> <strong id="tariffTimelinePeakRate">--</strong></span>
-            <span><b data-i18n="offPeakRate">Off-peak rate</b> <strong id="tariffTimelineOffPeakRate">--</strong></span>
-            <span><b data-i18n="feedInRate">Feed-in rate</b> <strong id="tariffTimelineFeedInRate">--</strong></span>
-          </div>
-        </section>
+            <div class="tariff-timeline-labels">
+              <span>00:00</span>
+              <span>06:00</span>
+              <span>12:00</span>
+              <span>18:00</span>
+              <span>24:00</span>
+            </div>
+            <div class="tariff-rate-grid">
+              <span><b data-i18n="peakRate">Peak rate</b> <strong id="tariffTimelinePeakRate">--</strong></span>
+              <span><b data-i18n="offPeakRate">Off-peak rate</b> <strong id="tariffTimelineOffPeakRate">--</strong></span>
+              <span><b data-i18n="feedInRate">Feed-in rate</b> <strong id="tariffTimelineFeedInRate">--</strong></span>
+            </div>
+          </section>
+        </div>
 
         <section class="panel savings-overview-panel" aria-live="polite">
           <div class="panel-heading compact-heading">
@@ -477,43 +483,81 @@
           </div>
         </section>
 
-        <section class="panel trend-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="todayVsRecent">Today vs recent days</p>
-              <h2 data-i18n="trendSnapshot">Energy trend snapshot</h2>
-              <p class="muted-copy" data-i18n="todayVsRecentHelp">
-                Compares today with the recent 7-day average, excluding today.
-              </p>
+        <div class="dashboard-report-grid operating-report-grid">
+          <section class="panel trend-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="todayVsRecent">Today vs recent days</p>
+                <h2 data-i18n="trendSnapshot">Energy trend snapshot</h2>
+                <p class="muted-copy" data-i18n="todayVsRecentHelp">
+                  Compares today with the recent 7-day average, excluding today.
+                </p>
+              </div>
             </div>
-          </div>
-          <div class="trend-grid">
-            <article class="trend-card trend-solar">
-              <span data-i18n="pvProduced">PV produced</span>
-              <strong id="trendSolarToday">--</strong>
-              <small id="trendSolarMeta">--</small>
-              <div class="trend-bar"><span id="trendSolarBar" style="width: 0%"></span></div>
-            </article>
-            <article class="trend-card trend-home">
-              <span data-i18n="homeUsage">Home usage</span>
-              <strong id="trendHomeToday">--</strong>
-              <small id="trendHomeMeta">--</small>
-              <div class="trend-bar"><span id="trendHomeBar" style="width: 0%"></span></div>
-            </article>
-            <article class="trend-card trend-export">
-              <span data-i18n="returnToGrid">Return to grid</span>
-              <strong id="trendExportToday">--</strong>
-              <small id="trendExportMeta">--</small>
-              <div class="trend-bar"><span id="trendExportBar" style="width: 0%"></span></div>
-            </article>
-            <article class="trend-card trend-import">
-              <span data-i18n="gridConsumption">Grid consumption</span>
-              <strong id="trendGridToday">--</strong>
-              <small id="trendGridMeta">--</small>
-              <div class="trend-bar"><span id="trendGridBar" style="width: 0%"></span></div>
-            </article>
-          </div>
-        </section>
+            <div class="trend-grid">
+              <article class="trend-card trend-solar">
+                <span data-i18n="pvProduced">PV produced</span>
+                <strong id="trendSolarToday">--</strong>
+                <small id="trendSolarMeta">--</small>
+                <div class="trend-bar"><span id="trendSolarBar" style="width: 0%"></span></div>
+              </article>
+              <article class="trend-card trend-home">
+                <span data-i18n="homeUsage">Home usage</span>
+                <strong id="trendHomeToday">--</strong>
+                <small id="trendHomeMeta">--</small>
+                <div class="trend-bar"><span id="trendHomeBar" style="width: 0%"></span></div>
+              </article>
+              <article class="trend-card trend-export">
+                <span data-i18n="returnToGrid">Return to grid</span>
+                <strong id="trendExportToday">--</strong>
+                <small id="trendExportMeta">--</small>
+                <div class="trend-bar"><span id="trendExportBar" style="width: 0%"></span></div>
+              </article>
+              <article class="trend-card trend-import">
+                <span data-i18n="gridConsumption">Grid consumption</span>
+                <strong id="trendGridToday">--</strong>
+                <small id="trendGridMeta">--</small>
+                <div class="trend-bar"><span id="trendGridBar" style="width: 0%"></span></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="panel energy-timeline-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="energyTimelineKicker">Energy timeline</p>
+                <h2 data-i18n="energyTimelineTitle">Today energy timeline</h2>
+                <p id="energyTimelineMeta" class="muted-copy">--</p>
+              </div>
+            </div>
+            <div id="energyTimelineTrack" class="energy-timeline-track"></div>
+            <div class="energy-timeline-legend" aria-label="Energy timeline color legend">
+              <span><i class="timeline-dot timeline-solar"></i><b data-i18n="timelineLegendSolar">Yellow: solar-led</b></span>
+              <span><i class="timeline-dot timeline-battery"></i><b data-i18n="timelineLegendBattery">Green: battery-led</b></span>
+              <span><i class="timeline-dot timeline-grid"></i><b data-i18n="timelineLegendGrid">Blue: grid import</b></span>
+              <span><i class="timeline-dot timeline-mixed"></i><b data-i18n="timelineLegendMixed">Purple: mixed</b></span>
+              <span><i class="timeline-dot timeline-idle"></i><b data-i18n="timelineLegendIdle">Grey: quiet</b></span>
+            </div>
+            <div class="energy-timeline-summary">
+              <article>
+                <span data-i18n="timelineSolarLed">Solar-led time</span>
+                <strong id="energyTimelineSolar">--</strong>
+              </article>
+              <article>
+                <span data-i18n="timelineBatteryLed">Battery-led time</span>
+                <strong id="energyTimelineBattery">--</strong>
+              </article>
+              <article>
+                <span data-i18n="timelineGridLed">Grid import time</span>
+                <strong id="energyTimelineGrid">--</strong>
+              </article>
+              <article>
+                <span data-i18n="timelineDominantMode">Dominant mode</span>
+                <strong id="energyTimelineDominant">--</strong>
+              </article>
+            </div>
+          </section>
+        </div>
 
         <section class="panel operational-heatmap-panel" aria-live="polite">
           <div class="panel-heading compact-heading">
@@ -534,67 +578,33 @@
           </div>
         </section>
 
-        <section class="panel energy-timeline-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="energyTimelineKicker">Energy timeline</p>
-              <h2 data-i18n="energyTimelineTitle">Today energy timeline</h2>
-              <p id="energyTimelineMeta" class="muted-copy">--</p>
+        <div class="dashboard-report-grid pattern-report-grid">
+          <section class="panel solar-calendar-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="monthlyPattern">Monthly pattern</p>
+                <h2 data-i18n="solarCalendar">Solar production calendar</h2>
+                <p id="solarCalendarMeta" class="muted-copy" data-i18n="solarCalendarHelp">
+                  Daily color intensity shows stronger solar production, with self-sufficiency shown inside each day.
+                </p>
+              </div>
             </div>
-          </div>
-          <div id="energyTimelineTrack" class="energy-timeline-track"></div>
-          <div class="energy-timeline-legend" aria-label="Energy timeline color legend">
-            <span><i class="timeline-dot timeline-solar"></i><b data-i18n="timelineLegendSolar">Yellow: solar-led</b></span>
-            <span><i class="timeline-dot timeline-battery"></i><b data-i18n="timelineLegendBattery">Green: battery-led</b></span>
-            <span><i class="timeline-dot timeline-grid"></i><b data-i18n="timelineLegendGrid">Blue: grid import</b></span>
-            <span><i class="timeline-dot timeline-mixed"></i><b data-i18n="timelineLegendMixed">Purple: mixed</b></span>
-            <span><i class="timeline-dot timeline-idle"></i><b data-i18n="timelineLegendIdle">Grey: quiet</b></span>
-          </div>
-          <div class="energy-timeline-summary">
-            <article>
-              <span data-i18n="timelineSolarLed">Solar-led time</span>
-              <strong id="energyTimelineSolar">--</strong>
-            </article>
-            <article>
-              <span data-i18n="timelineBatteryLed">Battery-led time</span>
-              <strong id="energyTimelineBattery">--</strong>
-            </article>
-            <article>
-              <span data-i18n="timelineGridLed">Grid import time</span>
-              <strong id="energyTimelineGrid">--</strong>
-            </article>
-            <article>
-              <span data-i18n="timelineDominantMode">Dominant mode</span>
-              <strong id="energyTimelineDominant">--</strong>
-            </article>
-          </div>
-        </section>
+            <div id="solarCalendarGrid" class="solar-calendar-grid"></div>
+          </section>
 
-        <section class="panel solar-calendar-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="monthlyPattern">Monthly pattern</p>
-              <h2 data-i18n="solarCalendar">Solar production calendar</h2>
-              <p id="solarCalendarMeta" class="muted-copy" data-i18n="solarCalendarHelp">
-                Daily color intensity shows stronger solar production, with self-sufficiency shown inside each day.
-              </p>
+          <section class="panel weekday-profile-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="weeklyRhythm">Weekly rhythm</p>
+                <h2 data-i18n="weekdayProfile">Weekday energy profile</h2>
+                <p id="weekdayProfileMeta" class="muted-copy" data-i18n="weekdayProfileHelp">
+                  Average daily solar, home use, and grid import grouped by weekday.
+                </p>
+              </div>
             </div>
-          </div>
-          <div id="solarCalendarGrid" class="solar-calendar-grid"></div>
-        </section>
-
-        <section class="panel weekday-profile-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="weeklyRhythm">Weekly rhythm</p>
-              <h2 data-i18n="weekdayProfile">Weekday energy profile</h2>
-              <p id="weekdayProfileMeta" class="muted-copy" data-i18n="weekdayProfileHelp">
-                Average daily solar, home use, and grid import grouped by weekday.
-              </p>
-            </div>
-          </div>
-          <div id="weekdayProfileGrid" class="weekday-profile-grid"></div>
-        </section>
+            <div id="weekdayProfileGrid" class="weekday-profile-grid"></div>
+          </section>
+        </div>
 
         <section class="panel peak-readiness-panel" aria-live="polite">
           <div class="panel-heading compact-heading">
@@ -883,64 +893,66 @@
           </article>
         </section>
 
-        <section id="sectionActions" class="panel action-board-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="actionBoardKicker">Priority board</p>
-              <h2 data-i18n="actionBoardTitle">What to do now</h2>
-              <p id="actionBoardDetail" class="muted-copy">--</p>
+        <div class="action-advice-grid">
+          <section id="sectionActions" class="panel action-board-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="actionBoardKicker">Priority board</p>
+                <h2 data-i18n="actionBoardTitle">What to do now</h2>
+                <p id="actionBoardDetail" class="muted-copy">--</p>
+              </div>
+              <strong id="actionBoardStatus" class="action-board-status">--</strong>
             </div>
-            <strong id="actionBoardStatus" class="action-board-status">--</strong>
-          </div>
-          <div class="action-board-grid">
-            <article id="actionBoardNowCard" class="action-board-card" data-tone="good">
-              <span data-i18n="actionBoardNow">Now</span>
-              <strong id="actionBoardNowStatus">--</strong>
-              <small id="actionBoardNowDetail">--</small>
-            </article>
-            <article id="actionBoardBatteryCard" class="action-board-card" data-tone="good">
-              <span data-i18n="actionBoardBattery">Battery</span>
-              <strong id="actionBoardBatteryStatus">--</strong>
-              <small id="actionBoardBatteryDetail">--</small>
-            </article>
-            <article id="actionBoardPeakCard" class="action-board-card" data-tone="good">
-              <span data-i18n="actionBoardPeak">Peak window</span>
-              <strong id="actionBoardPeakStatus">--</strong>
-              <small id="actionBoardPeakDetail">--</small>
-            </article>
-            <article id="actionBoardTomorrowCard" class="action-board-card" data-tone="good">
-              <span data-i18n="actionBoardTomorrow">Tomorrow</span>
-              <strong id="actionBoardTomorrowStatus">--</strong>
-              <small id="actionBoardTomorrowDetail">--</small>
-            </article>
-          </div>
-        </section>
+            <div class="action-board-grid">
+              <article id="actionBoardNowCard" class="action-board-card" data-tone="good">
+                <span data-i18n="actionBoardNow">Now</span>
+                <strong id="actionBoardNowStatus">--</strong>
+                <small id="actionBoardNowDetail">--</small>
+              </article>
+              <article id="actionBoardBatteryCard" class="action-board-card" data-tone="good">
+                <span data-i18n="actionBoardBattery">Battery</span>
+                <strong id="actionBoardBatteryStatus">--</strong>
+                <small id="actionBoardBatteryDetail">--</small>
+              </article>
+              <article id="actionBoardPeakCard" class="action-board-card" data-tone="good">
+                <span data-i18n="actionBoardPeak">Peak window</span>
+                <strong id="actionBoardPeakStatus">--</strong>
+                <small id="actionBoardPeakDetail">--</small>
+              </article>
+              <article id="actionBoardTomorrowCard" class="action-board-card" data-tone="good">
+                <span data-i18n="actionBoardTomorrow">Tomorrow</span>
+                <strong id="actionBoardTomorrowStatus">--</strong>
+                <small id="actionBoardTomorrowDetail">--</small>
+              </article>
+            </div>
+          </section>
 
-        <section class="panel energy-coach-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="energyCoachKicker">Energy coach</p>
-              <h2 data-i18n="energyCoachTitle">Actionable home energy tips</h2>
+          <section class="panel energy-coach-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="energyCoachKicker">Energy coach</p>
+                <h2 data-i18n="energyCoachTitle">Actionable home energy tips</h2>
+              </div>
             </div>
-          </div>
-          <div class="energy-coach-grid">
-            <article id="coachVerdictCard" class="energy-coach-card" data-tone="good">
-              <span data-i18n="coachVerdictLabel">Today verdict</span>
-              <strong id="coachVerdictStatus">--</strong>
-              <small id="coachVerdictDetail">--</small>
-            </article>
-            <article id="coachPeakCard" class="energy-coach-card" data-tone="good">
-              <span data-i18n="coachPeakLabel">Peak plan</span>
-              <strong id="coachPeakStatus">--</strong>
-              <small id="coachPeakDetail">--</small>
-            </article>
-            <article id="coachWeatherCard" class="energy-coach-card" data-tone="good">
-              <span data-i18n="coachWeatherLabel">Tomorrow solar</span>
-              <strong id="coachWeatherStatus">--</strong>
-              <small id="coachWeatherDetail">--</small>
-            </article>
-          </div>
-        </section>
+            <div class="energy-coach-grid">
+              <article id="coachVerdictCard" class="energy-coach-card" data-tone="good">
+                <span data-i18n="coachVerdictLabel">Today verdict</span>
+                <strong id="coachVerdictStatus">--</strong>
+                <small id="coachVerdictDetail">--</small>
+              </article>
+              <article id="coachPeakCard" class="energy-coach-card" data-tone="good">
+                <span data-i18n="coachPeakLabel">Peak plan</span>
+                <strong id="coachPeakStatus">--</strong>
+                <small id="coachPeakDetail">--</small>
+              </article>
+              <article id="coachWeatherCard" class="energy-coach-card" data-tone="good">
+                <span data-i18n="coachWeatherLabel">Tomorrow solar</span>
+                <strong id="coachWeatherStatus">--</strong>
+                <small id="coachWeatherDetail">--</small>
+              </article>
+            </div>
+          </section>
+        </div>
 
         <section class="balance-panel" aria-live="polite">
           <article class="balance-card">
@@ -1575,6 +1587,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js"></script>
+    <script src="/app.js?v=2026-06-01-dashboard-flow-3"></script>
   </body>
 </html>

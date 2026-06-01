@@ -681,10 +681,15 @@ const translations = {
     smartDecisionLogMeta: "Stored in this browser · latest {time}",
     smartDecisionLogMetaEmpty: "Stored in this browser",
     smartDecisionLogConfidence: "Confidence {value}",
+    smartDecisionLogChangedTo: "Switched to {status}",
+    smartDecisionLogStarted: "Baseline captured",
+    smartDecisionMetricReserve: "Reserve",
+    smartDecisionMetricPressure: "Grid",
+    smartDecisionMetricSurplus: "Surplus",
     smartDecisionLogSignals: "Reserve {reserve} · grid {pressure} · surplus {headroom}",
     smartDecisionTrendFirst: "Starting a local comparison trail. The next refresh will explain what changed.",
-    smartDecisionTrendChanged: "Changed from {previous} to {current}. Main move: {driver}.",
-    smartDecisionTrendSteady: "Still {current}. Main move since last refresh: {driver}.",
+    smartDecisionTrendChanged: "Recommendation changed: {previous} -> {current}. Main move: {driver}.",
+    smartDecisionTrendSteady: "Decision is steady. Main move since last refresh: {driver}.",
     smartDecisionDriverReserveUp: "battery reserve rose {value}",
     smartDecisionDriverReserveDown: "battery reserve fell {value}",
     smartDecisionDriverHeadroomUp: "solar surplus rose {value}",
@@ -1403,10 +1408,15 @@ const translations = {
     smartDecisionLogMeta: "仅保存在这个浏览器 · 最新 {time}",
     smartDecisionLogMetaEmpty: "仅保存在这个浏览器",
     smartDecisionLogConfidence: "可信度 {value}",
+    smartDecisionLogChangedTo: "切换为{status}",
+    smartDecisionLogStarted: "已记录基准",
+    smartDecisionMetricReserve: "余量",
+    smartDecisionMetricPressure: "电网",
+    smartDecisionMetricSurplus: "富余",
     smartDecisionLogSignals: "余量 {reserve} · 电网 {pressure} · 富余 {headroom}",
     smartDecisionTrendFirst: "已开始本地对比记录。下次刷新会说明主要变化来自哪里。",
-    smartDecisionTrendChanged: "建议从“{previous}”变为“{current}”。主要变化：{driver}。",
-    smartDecisionTrendSteady: "仍然建议“{current}”。上次刷新以来主要变化：{driver}。",
+    smartDecisionTrendChanged: "建议已切换：“{previous}” -> “{current}”。主要变化：{driver}。",
+    smartDecisionTrendSteady: "判断保持稳定。上次刷新以来主要变化：{driver}。",
     smartDecisionDriverReserveUp: "电池余量上升 {value}",
     smartDecisionDriverReserveDown: "电池余量下降 {value}",
     smartDecisionDriverHeadroomUp: "太阳富余增加 {value}",
@@ -2125,10 +2135,15 @@ const translations = {
     smartDecisionLogMeta: "เก็บในเบราว์เซอร์นี้ · ล่าสุด {time}",
     smartDecisionLogMetaEmpty: "เก็บในเบราว์เซอร์นี้",
     smartDecisionLogConfidence: "มั่นใจ {value}",
+    smartDecisionLogChangedTo: "เปลี่ยนเป็น {status}",
+    smartDecisionLogStarted: "บันทึกฐานแล้ว",
+    smartDecisionMetricReserve: "สำรอง",
+    smartDecisionMetricPressure: "กริด",
+    smartDecisionMetricSurplus: "ส่วนเกิน",
     smartDecisionLogSignals: "สำรอง {reserve} · กริด {pressure} · ส่วนเกิน {headroom}",
     smartDecisionTrendFirst: "เริ่มบันทึกเปรียบเทียบในเครื่องแล้ว รีเฟรชครั้งหน้าจะบอกว่าอะไรเปลี่ยน",
-    smartDecisionTrendChanged: "เปลี่ยนจาก {previous} เป็น {current} เหตุผลหลัก: {driver}",
-    smartDecisionTrendSteady: "ยังเป็น {current} เหตุผลหลักตั้งแต่รีเฟรชก่อน: {driver}",
+    smartDecisionTrendChanged: "คำแนะนำเปลี่ยน: {previous} -> {current} เหตุผลหลัก: {driver}",
+    smartDecisionTrendSteady: "การตัดสินใจยังนิ่ง เหตุผลหลักตั้งแต่รีเฟรชก่อน: {driver}",
     smartDecisionDriverReserveUp: "สำรองแบตเพิ่ม {value}",
     smartDecisionDriverReserveDown: "สำรองแบตลด {value}",
     smartDecisionDriverHeadroomUp: "โซลาร์ส่วนเกินเพิ่ม {value}",
@@ -3521,6 +3536,32 @@ function getSmartDecisionTrend(entries) {
   );
 }
 
+function getSmartDecisionLogSummary(current, previous) {
+  if (!previous) {
+    return t("smartDecisionLogStarted");
+  }
+
+  if (current.statusKey !== previous.statusKey) {
+    return interpolate(t("smartDecisionLogChangedTo"), {
+      status: t(current.statusKey),
+    });
+  }
+
+  return getSmartDecisionDriver(current, previous);
+}
+
+function createSmartDecisionMetric(labelKey, value) {
+  const metric = document.createElement("span");
+  const label = document.createElement("b");
+  const reading = document.createElement("strong");
+
+  label.textContent = t(labelKey);
+  reading.textContent = value;
+  metric.append(label, reading);
+
+  return metric;
+}
+
 function renderSmartDecisionLog(payload, decision, confidence) {
   if (!textFields.smartDecisionLogList) {
     return;
@@ -3540,27 +3581,31 @@ function renderSmartDecisionLog(payload, decision, confidence) {
     time: formatTimestamp(entries[0].generatedAt),
   });
   textFields.smartDecisionTrend.textContent = getSmartDecisionTrend(entries);
-  textFields.smartDecisionLogList.replaceChildren(...entries.map((item) => {
-    const card = document.createElement("article");
+  textFields.smartDecisionLogList.replaceChildren(...entries.slice(0, 4).map((item, index) => {
+    const previous = entries[index + 1];
+    const row = document.createElement("article");
     const time = document.createElement("span");
-    const title = document.createElement("strong");
-    const detail = document.createElement("small");
+    const summary = document.createElement("strong");
+    const metrics = document.createElement("div");
     const confidenceLabel = document.createElement("em");
 
-    card.dataset.tone = item.confidenceTone ?? "neutral";
-    time.textContent = formatTimestamp(item.generatedAt);
-    title.textContent = t(item.statusKey);
-    detail.textContent = interpolate(t("smartDecisionLogSignals"), {
-      reserve: item.reserve === null ? "--" : formatPercent(item.reserve),
-      pressure: formatPercent(item.pressure),
-      headroom: formatKw(item.headroomKw),
-    });
+    row.dataset.tone = item.confidenceTone ?? "neutral";
+    time.className = "smart-decision-log-time";
+    summary.className = "smart-decision-log-summary";
+    metrics.className = "smart-decision-log-metrics";
+    time.textContent = formatTimestampTime(item.generatedAt);
+    summary.textContent = getSmartDecisionLogSummary(item, previous);
+    metrics.append(
+      createSmartDecisionMetric("smartDecisionMetricReserve", item.reserve === null ? "--" : formatPercent(item.reserve)),
+      createSmartDecisionMetric("smartDecisionMetricPressure", formatPercent(item.pressure)),
+      createSmartDecisionMetric("smartDecisionMetricSurplus", formatKw(item.headroomKw)),
+    );
     confidenceLabel.textContent = interpolate(t("smartDecisionLogConfidence"), {
       value: `${Number(item.confidenceScore ?? 0).toFixed(0)}%`,
     });
-    card.append(time, title, detail, confidenceLabel);
+    row.append(time, summary, metrics, confidenceLabel);
 
-    return card;
+    return row;
   }));
 }
 
@@ -3687,6 +3732,7 @@ function renderSmartLoadAdvisor(decision) {
     const window = document.createElement("b");
 
     card.dataset.tone = advice.tone;
+    card.dataset.status = advice.statusKey;
     label.textContent = t(load.key);
     status.textContent = t(advice.statusKey);
     detail.textContent = interpolate(t(advice.detailKey), {
@@ -5259,6 +5305,29 @@ function formatTimestamp(value) {
   }
 
   return parsed.toLocaleString();
+}
+
+function formatTimestampTime(value) {
+  if (!value) {
+    return "--";
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  const locale = {
+    en: "en-AU",
+    zh: "zh-CN",
+    th: "th-TH",
+  }[currentLanguage] ?? "en-AU";
+
+  return parsed.toLocaleTimeString(locale, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 
 function formatCurrentDateTime() {

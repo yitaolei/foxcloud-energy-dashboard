@@ -40,6 +40,10 @@
 - Made the battery factor in the energy health score larger and color-coded by SOC level.
 - Expanded live data confidence warning text with the current response warning detail and generated timestamp.
 - Kept settings panels grouped near the bottom of the dashboard, with forecast location settings immediately before savings settings.
+- Reworked the smart decision log into a compact signal-change trail so repeated recommendations no longer dominate the smart energy panel.
+- Rebalanced the smart energy panel layout by turning decision basis into a lighter strip and grouping watchlist/history as secondary context.
+- Tightened the load advisor into a compact step strip and two-column load list, with full detail reserved for loads that need waiting or avoiding.
+- Grouped daily bill/score and data/tariff panels into compact dashboard rows, and turned savings plus action advice into lighter scanning sections.
 
 ### Fixed
 
