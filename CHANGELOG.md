@@ -31,6 +31,7 @@
 - Added a smart-hub confidence score that explains how reliable the current recommendation is based on live data age, warning count, sample coverage, and weather availability.
 - Added a browser-local smart decision log so recent smart-hub recommendations can be compared as conditions change.
 - Added a smart decision trend explanation that compares the latest recommendation with the previous browser-local entry and names the main changing signal.
+- Added a smart watchlist that ranks the top three live signals to monitor now across battery reserve, solar surplus, grid pressure, data confidence, and tomorrow's outlook.
 
 ### Changed
 

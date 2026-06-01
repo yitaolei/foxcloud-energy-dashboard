@@ -1627,6 +1627,98 @@ section[id] {
   color: #475569;
 }
 
+.smart-watchlist {
+  margin-top: 0.85rem;
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 0.75rem;
+}
+
+.smart-watchlist-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.62rem;
+}
+
+.smart-watchlist-head span {
+  color: #14352c;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.smart-watchlist-head small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.smart-watchlist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.smart-watchlist-grid article {
+  position: relative;
+  min-height: 104px;
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+  padding: 0.75rem 0.82rem 0.78rem 0.98rem;
+  overflow: hidden;
+}
+
+.smart-watchlist-grid article::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #64748b, #94a3b8);
+}
+
+.smart-watchlist-grid article[data-tone="good"]::before {
+  background: linear-gradient(180deg, #22c55e, #14b8a6);
+}
+
+.smart-watchlist-grid article[data-tone="watch"]::before {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+
+.smart-watchlist-grid article[data-tone="alert"]::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.smart-watchlist-grid span,
+.smart-watchlist-grid small {
+  display: block;
+}
+
+.smart-watchlist-grid span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 850;
+}
+
+.smart-watchlist-grid strong {
+  display: block;
+  margin-top: 0.22rem;
+  color: #14352c;
+  font-size: 1.18rem;
+  font-weight: 950;
+}
+
+.smart-watchlist-grid small {
+  margin-top: 0.3rem;
+  color: #45645a;
+  font-size: 0.77rem;
+  line-height: 1.32;
+}
+
 .smart-decision-log {
   margin-top: 0.85rem;
   border: 1px solid rgba(29, 43, 36, 0.08);
@@ -3779,6 +3871,7 @@ tbody tr:hover {
   .action-board-grid,
   .smart-hub-grid,
   .smart-hub-basis,
+  .smart-watchlist-grid,
   .smart-decision-log-list,
   .smart-plan-strip,
   .smart-load-grid,
@@ -4193,6 +4286,7 @@ tbody tr:hover {
   .smart-hub-head,
   .smart-hub-grid,
   .smart-hub-basis,
+  .smart-watchlist-grid,
   .smart-decision-log-list,
   .smart-plan-strip,
   .smart-load-grid,

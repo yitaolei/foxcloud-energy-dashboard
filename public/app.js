@@ -146,6 +146,7 @@ const textFields = {
   smartHubConfidenceDetail: document.getElementById("smartHubConfidenceDetail"),
   smartHubNarrative: document.getElementById("smartHubNarrative"),
   smartHubTags: document.getElementById("smartHubTags"),
+  smartWatchlistGrid: document.getElementById("smartWatchlistGrid"),
   smartDecisionLogMeta: document.getElementById("smartDecisionLogMeta"),
   smartDecisionTrend: document.getElementById("smartDecisionTrend"),
   smartDecisionLogList: document.getElementById("smartDecisionLogList"),
@@ -658,6 +659,23 @@ const translations = {
     smartHubTagOffPeak: "Off-peak",
     smartHubTagTomorrowGood: "Tomorrow solar OK",
     smartHubTagTomorrowWeak: "Tomorrow solar weak",
+    smartWatchlist: "Watchlist",
+    smartWatchlistMeta: "Top signals to monitor now",
+    smartWatchBattery: "Battery reserve",
+    smartWatchBatteryLow: "Protect reserve before running larger flexible loads.",
+    smartWatchBatteryHealthy: "Enough usable reserve for normal household rhythm.",
+    smartWatchSolar: "Solar surplus",
+    smartWatchSolarGood: "Use this window for deferrable loads while surplus is available.",
+    smartWatchSolarWeak: "Surplus is limited; wait for a stronger solar window.",
+    smartWatchGrid: "Grid pressure",
+    smartWatchGridHigh: "Avoid stacking heavy appliances while import pressure is high.",
+    smartWatchGridLow: "Grid pressure is low; no urgent import reduction needed.",
+    smartWatchData: "Data confidence",
+    smartWatchDataLow: "Recommendation may be less reliable; check data freshness and warnings.",
+    smartWatchDataHigh: "Live data and samples look reliable enough for automation hints.",
+    smartWatchWeather: "Tomorrow outlook",
+    smartWatchWeatherWeak: "Tomorrow solar may be weaker; finish flexible loads sooner if possible.",
+    smartWatchWeatherGood: "Tomorrow solar outlook supports delaying non-urgent loads.",
     smartDecisionLog: "Recent decisions",
     smartDecisionLogEmpty: "Waiting for smart decisions.",
     smartDecisionLogMeta: "Stored in this browser · latest {time}",
@@ -1363,6 +1381,23 @@ const translations = {
     smartHubTagOffPeak: "非高峰",
     smartHubTagTomorrowGood: "明天太阳能可用",
     smartHubTagTomorrowWeak: "明天太阳能偏弱",
+    smartWatchlist: "观察清单",
+    smartWatchlistMeta: "现在最值得盯的信号",
+    smartWatchBattery: "电池余量",
+    smartWatchBatteryLow: "运行大功率可推迟负载前，先保护电池余量。",
+    smartWatchBatteryHealthy: "可用余量足够，家庭用电节奏可以保持正常。",
+    smartWatchSolar: "太阳富余",
+    smartWatchSolarGood: "趁富余还在，适合安排可推迟负载。",
+    smartWatchSolarWeak: "富余有限，建议等更强的太阳窗口。",
+    smartWatchGrid: "电网压力",
+    smartWatchGridHigh: "取电压力偏高，避免多个大功率电器叠加。",
+    smartWatchGridLow: "电网压力较低，暂时不需要特别减少取电。",
+    smartWatchData: "数据可信度",
+    smartWatchDataLow: "当前建议可信度偏低，建议检查数据新鲜度和警告。",
+    smartWatchDataHigh: "实时数据和采样看起来足够可靠，可用于当前建议。",
+    smartWatchWeather: "明天预报",
+    smartWatchWeatherWeak: "明天太阳能可能偏弱，可推迟负载尽量提前完成。",
+    smartWatchWeatherGood: "明天太阳能预报可用，非紧急负载可以考虑延后。",
     smartDecisionLog: "最近判断",
     smartDecisionLogEmpty: "等待智能判断记录。",
     smartDecisionLogMeta: "仅保存在这个浏览器 · 最新 {time}",
@@ -2068,6 +2103,23 @@ const translations = {
     smartHubTagOffPeak: "นอกพีค",
     smartHubTagTomorrowGood: "โซลาร์พรุ่งนี้ดี",
     smartHubTagTomorrowWeak: "โซลาร์พรุ่งนี้อ่อน",
+    smartWatchlist: "รายการเฝ้าดู",
+    smartWatchlistMeta: "สัญญาณสำคัญตอนนี้",
+    smartWatchBattery: "สำรองแบต",
+    smartWatchBatteryLow: "รักษาสำรองก่อนเปิดโหลดใหญ่ที่เลื่อนได้",
+    smartWatchBatteryHealthy: "สำรองพอสำหรับจังหวะใช้งานปกติ",
+    smartWatchSolar: "โซลาร์ส่วนเกิน",
+    smartWatchSolarGood: "ใช้ช่วงนี้กับโหลดที่เลื่อนได้ขณะยังมีไฟส่วนเกิน",
+    smartWatchSolarWeak: "ไฟส่วนเกินจำกัด รอหน้าต่างโซลาร์ที่แรงกว่า",
+    smartWatchGrid: "แรงกดดันกริด",
+    smartWatchGridHigh: "อย่าเปิดเครื่องใช้ไฟแรงหลายตัวพร้อมกัน",
+    smartWatchGridLow: "แรงกดดันกริดต่ำ ยังไม่ต้องลดนำเข้าเร่งด่วน",
+    smartWatchData: "ความมั่นใจข้อมูล",
+    smartWatchDataLow: "คำแนะนำอาจน่าเชื่อน้อยลง ตรวจอายุข้อมูลและคำเตือน",
+    smartWatchDataHigh: "ข้อมูลสดและตัวอย่างเพียงพอสำหรับคำแนะนำตอนนี้",
+    smartWatchWeather: "พยากรณ์พรุ่งนี้",
+    smartWatchWeatherWeak: "โซลาร์พรุ่งนี้อาจอ่อน ควรจบโหลดที่เลื่อนได้เร็วขึ้น",
+    smartWatchWeatherGood: "พยากรณ์โซลาร์ดี โหลดไม่ด่วนอาจเลื่อนไปได้",
     smartDecisionLog: "การตัดสินใจล่าสุด",
     smartDecisionLogEmpty: "กำลังรอการตัดสินใจอัจฉริยะ",
     smartDecisionLogMeta: "เก็บในเบราว์เซอร์นี้ · ล่าสุด {time}",
@@ -3300,6 +3352,69 @@ function renderSmartHubConfidence(payload, weatherPayload = lastWeatherPayload) 
   });
 }
 
+function getSmartWatchlistItems(decision, confidence) {
+  const items = [
+    {
+      labelKey: "smartWatchBattery",
+      value: decision.reserve === null ? "--" : formatPercent(decision.reserve),
+      detailKey: decision.reserve !== null && decision.reserve < 35 ? "smartWatchBatteryLow" : "smartWatchBatteryHealthy",
+      tone: decision.reserve !== null && decision.reserve < 35 ? "alert" : decision.reserve !== null && decision.reserve < 50 ? "watch" : "good",
+      priority: decision.reserve === null ? 20 : decision.reserve < 25 ? 95 : decision.reserve < 35 ? 78 : 34,
+    },
+    {
+      labelKey: "smartWatchSolar",
+      value: formatKw(decision.headroomKw),
+      detailKey: decision.headroomKw >= 0.8 ? "smartWatchSolarGood" : "smartWatchSolarWeak",
+      tone: decision.headroomKw >= 0.8 ? "good" : decision.headroomKw >= 0.25 ? "watch" : "neutral",
+      priority: decision.headroomKw >= 0.8 ? 82 : decision.headroomKw >= 0.25 ? 42 : 20,
+    },
+    {
+      labelKey: "smartWatchGrid",
+      value: formatPercent(decision.pressure),
+      detailKey: decision.pressure >= 55 ? "smartWatchGridHigh" : "smartWatchGridLow",
+      tone: decision.pressure >= 65 ? "alert" : decision.pressure >= 35 ? "watch" : "good",
+      priority: decision.pressure >= 65 ? 92 : decision.pressure >= 35 ? 68 : 28,
+    },
+    {
+      labelKey: "smartWatchData",
+      value: `${confidence.score}%`,
+      detailKey: confidence.score < 70 ? "smartWatchDataLow" : "smartWatchDataHigh",
+      tone: confidence.tone,
+      priority: confidence.score < 58 ? 90 : confidence.score < 82 ? 60 : 26,
+    },
+    {
+      labelKey: "smartWatchWeather",
+      value: t(decision.tomorrowOutlookKey),
+      detailKey: decision.tomorrowOutlookKey === "poor" ? "smartWatchWeatherWeak" : "smartWatchWeatherGood",
+      tone: decision.tomorrowOutlookKey === "poor" ? "alert" : decision.tomorrowOutlookKey === "unknown" ? "watch" : "good",
+      priority: decision.tomorrowOutlookKey === "poor" ? 74 : decision.tomorrowOutlookKey === "unknown" ? 46 : 25,
+    },
+  ];
+
+  return items.sort((left, right) => right.priority - left.priority).slice(0, 3);
+}
+
+function renderSmartWatchlist(decision, confidence) {
+  if (!textFields.smartWatchlistGrid) {
+    return;
+  }
+
+  textFields.smartWatchlistGrid.replaceChildren(...getSmartWatchlistItems(decision, confidence).map((item) => {
+    const card = document.createElement("article");
+    const label = document.createElement("span");
+    const value = document.createElement("strong");
+    const detail = document.createElement("small");
+
+    card.dataset.tone = item.tone;
+    label.textContent = t(item.labelKey);
+    value.textContent = item.value;
+    detail.textContent = t(item.detailKey);
+    card.append(label, value, detail);
+
+    return card;
+  }));
+}
+
 function getSmartDecisionLog() {
   const entries = getStoredJson(storageKeys.smartDecisionLog, []);
 
@@ -3671,6 +3786,7 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
     tag.textContent = t(key);
     return tag;
   }));
+  renderSmartWatchlist(decision, confidence);
 
   const nowTone = decision.nowStatusKey === "smartHubNowUseSolar"
     ? "good"
