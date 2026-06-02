@@ -177,6 +177,24 @@ const textFields = {
   smartLoadPriorityTitle: document.getElementById("smartLoadPriorityTitle"),
   smartLoadPriorityDetail: document.getElementById("smartLoadPriorityDetail"),
   smartLoadGrid: document.getElementById("smartLoadGrid"),
+  nightOpsStatus: document.getElementById("nightOpsStatus"),
+  nightOpsDetail: document.getElementById("nightOpsDetail"),
+  nightOpsTimeline: document.getElementById("nightOpsTimeline"),
+  nightOpsFocusCard: document.getElementById("nightOpsFocusCard"),
+  nightOpsFocus: document.getElementById("nightOpsFocus"),
+  nightOpsFocusDetail: document.getElementById("nightOpsFocusDetail"),
+  nightOpsReserveCard: document.getElementById("nightOpsReserveCard"),
+  nightOpsReserveValue: document.getElementById("nightOpsReserveValue"),
+  nightOpsReserveDetail: document.getElementById("nightOpsReserveDetail"),
+  nightOpsPeakCard: document.getElementById("nightOpsPeakCard"),
+  nightOpsPeakValue: document.getElementById("nightOpsPeakValue"),
+  nightOpsPeakDetail: document.getElementById("nightOpsPeakDetail"),
+  nightOpsGridCard: document.getElementById("nightOpsGridCard"),
+  nightOpsGridValue: document.getElementById("nightOpsGridValue"),
+  nightOpsGridDetail: document.getElementById("nightOpsGridDetail"),
+  nightOpsTomorrowCard: document.getElementById("nightOpsTomorrowCard"),
+  nightOpsTomorrowValue: document.getElementById("nightOpsTomorrowValue"),
+  nightOpsTomorrowDetail: document.getElementById("nightOpsTomorrowDetail"),
   todayBillImpactDetail: document.getElementById("todayBillImpactDetail"),
   energyScoreRing: document.getElementById("energyScoreRing"),
   energyScoreStatus: document.getElementById("energyScoreStatus"),
@@ -736,6 +754,49 @@ const translations = {
     smartLoadPriorityWait: "Wait before starting loads",
     smartLoadPriorityDetailRun: "{load} has the lightest impact now. Put {defer} later.",
     smartLoadPriorityDetailWait: "No flexible load fits well now. Best next move: {window}.",
+    nightOpsKicker: "Tonight plan",
+    nightOpsTitle: "Evening operating plan",
+    nightOpsFocus: "Tonight focus",
+    nightOpsReserve: "Reserve",
+    nightOpsPeak: "Peak",
+    nightOpsGrid: "Grid",
+    nightOpsTomorrow: "Tomorrow",
+    nightOpsStatusUseWindow: "Use the current window",
+    nightOpsStatusReduceImport: "Reduce import now",
+    nightOpsStatusSaveBattery: "Hold battery reserve",
+    nightOpsStatusPrepareTomorrow: "Prepare for weak solar",
+    nightOpsStatusSteady: "Steady evening",
+    nightOpsDetail: "Live plan from {tariff}, battery reserve {reserve}, grid pressure {pressure}, tomorrow {tomorrow}.",
+    nightOpsStepNow: "Now",
+    nightOpsStepPeak: "Peak window",
+    nightOpsStepNight: "Overnight",
+    nightOpsStepTomorrow: "Tomorrow",
+    nightOpsNowRun: "Run flexible loads",
+    nightOpsNowRunDetail: "Headroom {headroom} is available. Prioritise the lightest deferrable load before exports are wasted.",
+    nightOpsNowReduce: "Cut heavy loads",
+    nightOpsNowReduceDetail: "Grid pressure is {pressure}; avoid stacking dryer, EV, or cooking loads.",
+    nightOpsNowHold: "Keep loads light",
+    nightOpsNowHoldDetail: "No strong surplus right now. Wait for off-peak or a clearer solar window.",
+    nightOpsPeakActive: "Peak is active",
+    nightOpsPeakActiveDetail: "Peak {peakWindow} is running now. Let the battery cover essentials and avoid avoidable import.",
+    nightOpsPeakSoon: "Peak starts in {time}",
+    nightOpsPeakSoonDetail: "Finish flexible loads before {peakWindow}; battery readiness is {score}.",
+    nightOpsPeakClear: "Peak is later",
+    nightOpsPeakClearDetail: "Peak {peakWindow}; no immediate pressure, but keep reserve above the 20% floor.",
+    nightOpsNightSave: "Protect overnight reserve",
+    nightOpsNightSaveDetail: "Runway risk is {risk}; reserve {reserve}. Keep late discretionary loads small.",
+    nightOpsNightNormal: "Normal overnight rhythm",
+    nightOpsNightNormalDetail: "Runway risk is {risk}; reserve {reserve}. Normal household load should be fine.",
+    nightOpsTomorrowSolar: "Use tomorrow solar",
+    nightOpsTomorrowSolarDetail: "Tomorrow outlook {outlook}. Best window: {tomorrowWindow}.",
+    nightOpsTomorrowConserve: "Bring loads forward",
+    nightOpsTomorrowConserveDetail: "Tomorrow outlook {outlook}; finish optional loads tonight if reserve allows.",
+    nightOpsTomorrowWait: "Wait for forecast",
+    nightOpsTomorrowWaitDetail: "Weather is missing. Refresh forecast before planning daytime loads.",
+    nightOpsReserveDetail: "Runway {risk}",
+    nightOpsPeakDetail: "{peakWindow}",
+    nightOpsGridDetail: "{flow}",
+    nightOpsTomorrowDetail: "{tomorrowWindow}",
     operatingSolarDay: "Solar-led day",
     operatingBalancedDay: "Balanced day",
     operatingGridDay: "Grid-heavy day",
@@ -1463,6 +1524,49 @@ const translations = {
     smartLoadPriorityWait: "先不要启动负载",
     smartLoadPriorityDetailRun: "{load} 现在影响最小。{defer} 可以排到后面。",
     smartLoadPriorityDetailWait: "现在没有特别合适的可推迟负载。下一步建议：{window}。",
+    nightOpsKicker: "晚间计划",
+    nightOpsTitle: "晚间运行计划",
+    nightOpsFocus: "今晚重点",
+    nightOpsReserve: "电池",
+    nightOpsPeak: "高峰",
+    nightOpsGrid: "电网",
+    nightOpsTomorrow: "明天",
+    nightOpsStatusUseWindow: "利用当前窗口",
+    nightOpsStatusReduceImport: "现在减少取电",
+    nightOpsStatusSaveBattery: "保住电池余量",
+    nightOpsStatusPrepareTomorrow: "为弱太阳能做准备",
+    nightOpsStatusSteady: "晚间平稳",
+    nightOpsDetail: "根据 {tariff}、电池余量 {reserve}、电网压力 {pressure}、明天 {tomorrow} 生成。",
+    nightOpsStepNow: "现在",
+    nightOpsStepPeak: "高峰窗口",
+    nightOpsStepNight: "夜间",
+    nightOpsStepTomorrow: "明天",
+    nightOpsNowRun: "运行可推迟负载",
+    nightOpsNowRunDetail: "当前有 {headroom} 富余。优先安排影响最小的可推迟负载，少把富余电白白回馈出去。",
+    nightOpsNowReduce: "减少大功率负载",
+    nightOpsNowReduceDetail: "电网压力 {pressure}；避免烘干机、EV 补电、做饭等大负载叠加。",
+    nightOpsNowHold: "保持轻负载",
+    nightOpsNowHoldDetail: "现在没有明显富余。等非高峰，或等更清晰的太阳能窗口。",
+    nightOpsPeakActive: "高峰正在进行",
+    nightOpsPeakActiveDetail: "当前处于 {peakWindow} 高峰窗口。让电池覆盖基础负载，避免不必要取电。",
+    nightOpsPeakSoon: "{time} 后进入高峰",
+    nightOpsPeakSoonDetail: "尽量在 {peakWindow} 前完成可推迟负载；电池准备度 {score}。",
+    nightOpsPeakClear: "高峰还早",
+    nightOpsPeakClearDetail: "高峰 {peakWindow}；当前压力不急，但保持电池高于 20% 保留线。",
+    nightOpsNightSave: "保护夜间余量",
+    nightOpsNightSaveDetail: "续航风险 {risk}；余量 {reserve}。夜里可选负载尽量小一点。",
+    nightOpsNightNormal: "正常夜间节奏",
+    nightOpsNightNormalDetail: "续航风险 {risk}；余量 {reserve}。普通家庭负载问题不大。",
+    nightOpsTomorrowSolar: "利用明天太阳能",
+    nightOpsTomorrowSolarDetail: "明天预报 {outlook}。最佳窗口：{tomorrowWindow}。",
+    nightOpsTomorrowConserve: "把负载提前",
+    nightOpsTomorrowConserveDetail: "明天预报 {outlook}；如果电池允许，非必要负载尽量今晚完成。",
+    nightOpsTomorrowWait: "等待天气预报",
+    nightOpsTomorrowWaitDetail: "天气数据缺失。安排日间负载前先刷新预报。",
+    nightOpsReserveDetail: "续航 {risk}",
+    nightOpsPeakDetail: "{peakWindow}",
+    nightOpsGridDetail: "{flow}",
+    nightOpsTomorrowDetail: "{tomorrowWindow}",
     operatingSolarDay: "太阳能主导日",
     operatingBalancedDay: "运行均衡",
     operatingGridDay: "电网依赖偏高",
@@ -2190,6 +2294,49 @@ const translations = {
     smartLoadPriorityWait: "รอก่อนเริ่มโหลด",
     smartLoadPriorityDetailRun: "{load} กระทบน้อยที่สุดตอนนี้ เลื่อน {defer} ไว้ทีหลัง",
     smartLoadPriorityDetailWait: "ตอนนี้ยังไม่มีโหลดที่เหมาะมาก ขั้นต่อไป: {window}",
+    nightOpsKicker: "แผนคืนนี้",
+    nightOpsTitle: "แผนเดินระบบตอนเย็น",
+    nightOpsFocus: "จุดเน้นคืนนี้",
+    nightOpsReserve: "สำรอง",
+    nightOpsPeak: "พีค",
+    nightOpsGrid: "กริด",
+    nightOpsTomorrow: "พรุ่งนี้",
+    nightOpsStatusUseWindow: "ใช้ช่วงนี้",
+    nightOpsStatusReduceImport: "ลดนำเข้าตอนนี้",
+    nightOpsStatusSaveBattery: "รักษาแบตสำรอง",
+    nightOpsStatusPrepareTomorrow: "เตรียมโซลาร์อ่อน",
+    nightOpsStatusSteady: "เย็นนี้นิ่ง",
+    nightOpsDetail: "แผนสดจาก {tariff}, สำรองแบต {reserve}, แรงกดกริด {pressure}, พรุ่งนี้ {tomorrow}",
+    nightOpsStepNow: "ตอนนี้",
+    nightOpsStepPeak: "ช่วงพีค",
+    nightOpsStepNight: "ข้ามคืน",
+    nightOpsStepTomorrow: "พรุ่งนี้",
+    nightOpsNowRun: "เปิดโหลดที่เลื่อนได้",
+    nightOpsNowRunDetail: "มีไฟเหลือ {headroom} ให้ใช้โหลดที่เลื่อนได้เบาสุดก่อนส่งออกทิ้ง",
+    nightOpsNowReduce: "ลดโหลดหนัก",
+    nightOpsNowReduceDetail: "แรงกดกริด {pressure}; เลี่ยงเครื่องอบผ้า EV หรือทำอาหารพร้อมกัน",
+    nightOpsNowHold: "ใช้โหลดเบา",
+    nightOpsNowHoldDetail: "ตอนนี้ส่วนเกินยังไม่ชัด รอนอกพีคหรือหน้าต่างโซลาร์ที่ดีกว่า",
+    nightOpsPeakActive: "พีคกำลังทำงาน",
+    nightOpsPeakActiveDetail: "ช่วงพีค {peakWindow} กำลังทำงาน ให้แบตรองรับโหลดจำเป็นและเลี่ยงนำเข้า",
+    nightOpsPeakSoon: "พีคเริ่มใน {time}",
+    nightOpsPeakSoonDetail: "จบโหลดที่เลื่อนได้ก่อน {peakWindow}; ความพร้อมแบต {score}",
+    nightOpsPeakClear: "พีคยังอีกไกล",
+    nightOpsPeakClearDetail: "พีค {peakWindow}; ยังไม่กดดัน แต่รักษาสำรองเหนือเส้น 20%",
+    nightOpsNightSave: "ป้องกันสำรองข้ามคืน",
+    nightOpsNightSaveDetail: "ความเสี่ยงรันเวย์ {risk}; สำรอง {reserve}. ลดโหลดเสริมตอนดึก",
+    nightOpsNightNormal: "จังหวะข้ามคืนปกติ",
+    nightOpsNightNormalDetail: "ความเสี่ยงรันเวย์ {risk}; สำรอง {reserve}. โหลดบ้านปกติน่าจะพอ",
+    nightOpsTomorrowSolar: "ใช้โซลาร์พรุ่งนี้",
+    nightOpsTomorrowSolarDetail: "แนวโน้มพรุ่งนี้ {outlook}. ช่วงดีที่สุด: {tomorrowWindow}",
+    nightOpsTomorrowConserve: "เลื่อนโหลดมาเร็วขึ้น",
+    nightOpsTomorrowConserveDetail: "แนวโน้มพรุ่งนี้ {outlook}; ถ้าแบตพอ จบโหลดเสริมคืนนี้",
+    nightOpsTomorrowWait: "รอพยากรณ์",
+    nightOpsTomorrowWaitDetail: "ไม่มีข้อมูลอากาศ รีเฟรชพยากรณ์ก่อนวางแผนโหลดกลางวัน",
+    nightOpsReserveDetail: "รันเวย์ {risk}",
+    nightOpsPeakDetail: "{peakWindow}",
+    nightOpsGridDetail: "{flow}",
+    nightOpsTomorrowDetail: "{tomorrowWindow}",
     operatingSolarDay: "วันที่โซลาร์นำ",
     operatingBalancedDay: "สมดุล",
     operatingGridDay: "พึ่งกริดมาก",
@@ -3933,6 +4080,235 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
   renderSmartDecisionLog(payload, decision, confidence);
 }
 
+function createNightOpsTimelineStep(step, values) {
+  const item = document.createElement("article");
+  const label = document.createElement("span");
+  const title = document.createElement("strong");
+  const detail = document.createElement("small");
+
+  item.dataset.tone = step.tone;
+  label.textContent = t(step.labelKey);
+  title.textContent = interpolate(t(step.titleKey), values);
+  detail.textContent = interpolate(t(step.detailKey), values);
+  item.append(label, title, detail);
+
+  return item;
+}
+
+function setNightOpsCheck(card, valueElement, detailElement, tone, value, detail) {
+  card.dataset.tone = tone;
+  valueElement.textContent = value;
+  detailElement.textContent = detail;
+}
+
+function getNightOpsPlan(payload, weatherPayload = lastWeatherPayload) {
+  const flexibleLoad = getFlexibleLoadPlan(payload);
+  const batteryRunway = getBatteryRunwayPlan(payload);
+  const gridForecast = getGridImportForecast(payload);
+  const tomorrowPrep = getTomorrowPrepPlan(payload, weatherPayload);
+  const peakReadiness = getPeakReadiness(payload);
+  const tariff = gridForecast.tariff;
+  const reserve = batteryRunway.reservePercent;
+  const shouldReduceImport = gridForecast.importPressure >= 65
+    || (tariff.isPeak && gridForecast.importPressure >= 35);
+  const shouldSaveBattery = batteryRunway.riskKey === "runwayRiskHigh"
+    || (reserve !== null && reserve < 25);
+  const hasUsableWindow = flexibleLoad.headroomKw >= 0.8
+    && gridForecast.importPressure < 45
+    && !tariff.isPeak;
+  const tomorrowWaiting = tomorrowPrep.statusKey === "tomorrowPrepWaiting";
+  const tomorrowWeak = tomorrowPrep.statusKey === "tomorrowPrepLimited"
+    || tomorrowPrep.outlookKey === "poor";
+  const statusKey = shouldReduceImport
+    ? "nightOpsStatusReduceImport"
+    : shouldSaveBattery
+      ? "nightOpsStatusSaveBattery"
+      : hasUsableWindow
+        ? "nightOpsStatusUseWindow"
+        : tomorrowWeak
+          ? "nightOpsStatusPrepareTomorrow"
+          : "nightOpsStatusSteady";
+  const statusTone = shouldReduceImport || shouldSaveBattery || tomorrowWeak
+    ? "alert"
+    : hasUsableWindow
+      ? "good"
+      : "neutral";
+  const nowStep = shouldReduceImport
+    ? {
+      labelKey: "nightOpsStepNow",
+      titleKey: "nightOpsNowReduce",
+      detailKey: "nightOpsNowReduceDetail",
+      tone: "alert",
+    }
+    : hasUsableWindow
+      ? {
+        labelKey: "nightOpsStepNow",
+        titleKey: "nightOpsNowRun",
+        detailKey: "nightOpsNowRunDetail",
+        tone: "good",
+      }
+      : {
+        labelKey: "nightOpsStepNow",
+        titleKey: "nightOpsNowHold",
+        detailKey: "nightOpsNowHoldDetail",
+        tone: "neutral",
+      };
+  const peakStep = tariff.isPeak
+    ? {
+      labelKey: "nightOpsStepPeak",
+      titleKey: "nightOpsPeakActive",
+      detailKey: "nightOpsPeakActiveDetail",
+      tone: shouldReduceImport ? "alert" : "watch",
+    }
+    : tariff.detailMinutes <= 180
+      ? {
+        labelKey: "nightOpsStepPeak",
+        titleKey: "nightOpsPeakSoon",
+        detailKey: "nightOpsPeakSoonDetail",
+        tone: peakReadiness.score >= 70 ? "good" : "watch",
+      }
+      : {
+        labelKey: "nightOpsStepPeak",
+        titleKey: "nightOpsPeakClear",
+        detailKey: "nightOpsPeakClearDetail",
+        tone: "good",
+      };
+  const nightStep = shouldSaveBattery
+    ? {
+      labelKey: "nightOpsStepNight",
+      titleKey: "nightOpsNightSave",
+      detailKey: "nightOpsNightSaveDetail",
+      tone: "alert",
+    }
+    : {
+      labelKey: "nightOpsStepNight",
+      titleKey: "nightOpsNightNormal",
+      detailKey: "nightOpsNightNormalDetail",
+      tone: batteryRunway.riskKey === "runwayRiskMedium" ? "watch" : "good",
+    };
+  const tomorrowStep = tomorrowWaiting
+    ? {
+      labelKey: "nightOpsStepTomorrow",
+      titleKey: "nightOpsTomorrowWait",
+      detailKey: "nightOpsTomorrowWaitDetail",
+      tone: "watch",
+    }
+    : tomorrowWeak
+      ? {
+        labelKey: "nightOpsStepTomorrow",
+        titleKey: "nightOpsTomorrowConserve",
+        detailKey: "nightOpsTomorrowConserveDetail",
+        tone: "alert",
+      }
+      : {
+        labelKey: "nightOpsStepTomorrow",
+        titleKey: "nightOpsTomorrowSolar",
+        detailKey: "nightOpsTomorrowSolarDetail",
+        tone: "good",
+      };
+
+  return {
+    statusKey,
+    statusTone,
+    focusStep: [nowStep, peakStep, nightStep, tomorrowStep].find((step) => step.tone === "alert") ?? nowStep,
+    steps: [nowStep, peakStep, nightStep, tomorrowStep],
+    flexibleLoad,
+    batteryRunway,
+    gridForecast,
+    tomorrowPrep,
+    peakReadiness,
+  };
+}
+
+function renderNightOpsPlan(payload, weatherPayload = lastWeatherPayload) {
+  if (!payload?.live || !textFields.nightOpsTimeline) {
+    return;
+  }
+
+  const plan = getNightOpsPlan(payload, weatherPayload);
+  const reserveText = plan.batteryRunway.reservePercent === null
+    ? "--"
+    : formatPercent(plan.batteryRunway.reservePercent);
+  const peakScoreText = interpolate(t("peakReadinessScore"), {
+    score: plan.peakReadiness.score,
+  });
+  const values = {
+    tariff: plan.gridForecast.tariff.isPeak ? t("peakNow") : t("offPeakNow"),
+    reserve: reserveText,
+    pressure: formatPercent(plan.gridForecast.importPressure),
+    tomorrow: t(plan.tomorrowPrep.statusKey),
+    headroom: formatKw(plan.flexibleLoad.headroomKw),
+    peakWindow: plan.gridForecast.tariff.peakWindow,
+    tomorrowWindow: t(plan.tomorrowPrep.windowKey),
+    time: formatDurationMinutes(plan.gridForecast.tariff.detailMinutes),
+    score: peakScoreText,
+    risk: t(plan.batteryRunway.riskKey),
+    outlook: t(plan.tomorrowPrep.outlookKey),
+    flow: plan.gridForecast.gridFlow,
+  };
+  const reserveTone = plan.batteryRunway.riskKey === "runwayRiskHigh"
+    ? "alert"
+    : plan.batteryRunway.riskKey === "runwayRiskMedium"
+      ? "watch"
+      : "good";
+  const peakTone = plan.peakReadiness.score >= 75
+    ? "good"
+    : plan.peakReadiness.score >= 50
+      ? "watch"
+      : "alert";
+  const gridTone = plan.gridForecast.importPressure >= 65
+    ? "alert"
+    : plan.gridForecast.importPressure >= 35
+      ? "watch"
+      : "good";
+  const tomorrowTone = plan.tomorrowPrep.statusKey === "tomorrowPrepWaiting"
+    ? "watch"
+    : plan.tomorrowPrep.statusKey === "tomorrowPrepLimited"
+      ? "alert"
+      : "good";
+
+  textFields.nightOpsStatus.dataset.tone = plan.statusTone;
+  textFields.nightOpsStatus.textContent = t(plan.statusKey);
+  textFields.nightOpsDetail.textContent = interpolate(t("nightOpsDetail"), values);
+  textFields.nightOpsFocusCard.dataset.tone = plan.focusStep.tone;
+  textFields.nightOpsFocus.textContent = interpolate(t(plan.focusStep.titleKey), values);
+  textFields.nightOpsFocusDetail.textContent = interpolate(t(plan.focusStep.detailKey), values);
+  textFields.nightOpsTimeline.replaceChildren(...plan.steps.map((step) => createNightOpsTimelineStep(step, values)));
+
+  setNightOpsCheck(
+    textFields.nightOpsReserveCard,
+    textFields.nightOpsReserveValue,
+    textFields.nightOpsReserveDetail,
+    reserveTone,
+    reserveText,
+    interpolate(t("nightOpsReserveDetail"), values),
+  );
+  setNightOpsCheck(
+    textFields.nightOpsPeakCard,
+    textFields.nightOpsPeakValue,
+    textFields.nightOpsPeakDetail,
+    peakTone,
+    peakScoreText,
+    interpolate(t("nightOpsPeakDetail"), values),
+  );
+  setNightOpsCheck(
+    textFields.nightOpsGridCard,
+    textFields.nightOpsGridValue,
+    textFields.nightOpsGridDetail,
+    gridTone,
+    formatPercent(plan.gridForecast.importPressure),
+    interpolate(t("nightOpsGridDetail"), values),
+  );
+  setNightOpsCheck(
+    textFields.nightOpsTomorrowCard,
+    textFields.nightOpsTomorrowValue,
+    textFields.nightOpsTomorrowDetail,
+    tomorrowTone,
+    t(plan.tomorrowPrep.outlookKey),
+    interpolate(t("nightOpsTomorrowDetail"), values),
+  );
+}
+
 function getTodayBillImpact(payload) {
   const today = payload?.today ?? {};
   const savings = payload?.todaySavings ?? {};
@@ -5570,6 +5946,7 @@ function renderWeather(payload) {
   renderEnergyCoach(lastPayload, payload);
   renderTomorrowPrep(lastPayload, payload);
   renderSmartHub(lastPayload, payload);
+  renderNightOpsPlan(lastPayload, payload);
   renderActionBoard(lastPayload, payload);
 }
 
@@ -6926,6 +7303,7 @@ function renderMetrics(payload) {
   renderVisualKpis(payload);
   renderOperatingSummary(payload);
   renderSmartHub(payload);
+  renderNightOpsPlan(payload);
   renderTodayBillImpact(payload);
   renderEnergyScore(payload);
   renderTariffTimeline(payload.todaySavings);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-01-dashboard-flow-3" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-02-night-ops" />
   </head>
   <body>
     <div class="page-shell">
@@ -315,6 +315,49 @@
               <small id="smartLoadPriorityDetail">--</small>
             </div>
             <div id="smartLoadGrid" class="smart-load-grid"></div>
+          </div>
+        </section>
+
+        <section class="panel night-ops-panel" aria-live="polite">
+          <div class="panel-heading compact-heading night-ops-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="nightOpsKicker">Tonight plan</p>
+              <h2 data-i18n="nightOpsTitle">Evening operating plan</h2>
+              <p id="nightOpsDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="nightOpsStatus" class="night-ops-status">--</strong>
+          </div>
+          <div class="night-ops-layout">
+            <div id="nightOpsTimeline" class="night-ops-timeline"></div>
+            <div class="night-ops-command">
+              <div id="nightOpsFocusCard" class="night-ops-focus" data-tone="neutral">
+                <span data-i18n="nightOpsFocus">Tonight focus</span>
+                <strong id="nightOpsFocus">--</strong>
+                <small id="nightOpsFocusDetail">--</small>
+              </div>
+              <div class="night-ops-check-grid">
+                <article id="nightOpsReserveCard" data-tone="neutral">
+                  <span data-i18n="nightOpsReserve">Reserve</span>
+                  <strong id="nightOpsReserveValue">--</strong>
+                  <small id="nightOpsReserveDetail">--</small>
+                </article>
+                <article id="nightOpsPeakCard" data-tone="neutral">
+                  <span data-i18n="nightOpsPeak">Peak</span>
+                  <strong id="nightOpsPeakValue">--</strong>
+                  <small id="nightOpsPeakDetail">--</small>
+                </article>
+                <article id="nightOpsGridCard" data-tone="neutral">
+                  <span data-i18n="nightOpsGrid">Grid</span>
+                  <strong id="nightOpsGridValue">--</strong>
+                  <small id="nightOpsGridDetail">--</small>
+                </article>
+                <article id="nightOpsTomorrowCard" data-tone="neutral">
+                  <span data-i18n="nightOpsTomorrow">Tomorrow</span>
+                  <strong id="nightOpsTomorrowValue">--</strong>
+                  <small id="nightOpsTomorrowDetail">--</small>
+                </article>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -1587,6 +1630,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-01-dashboard-flow-3"></script>
+    <script src="/app.js?v=2026-06-02-night-ops"></script>
   </body>
 </html>

@@ -32,6 +32,7 @@
 - Added a browser-local smart decision log so recent smart-hub recommendations can be compared as conditions change.
 - Added a smart decision trend explanation that compares the latest recommendation with the previous browser-local entry and names the main changing signal.
 - Added a smart watchlist that ranks the top three live signals to monitor now across battery reserve, solar surplus, grid pressure, data confidence, and tomorrow's outlook.
+- Added a tonight operating plan that turns live load headroom, peak timing, battery runway, grid pressure, and tomorrow's forecast into a four-stage evening timeline.
 
 ### Changed
 
