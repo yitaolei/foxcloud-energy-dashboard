@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-02-night-ops" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-02-load-queue" />
   </head>
   <body>
     <div class="page-shell">
@@ -313,6 +313,13 @@
               <span data-i18n="smartLoadPriority">Priority</span>
               <strong id="smartLoadPriorityTitle">--</strong>
               <small id="smartLoadPriorityDetail">--</small>
+            </div>
+            <div class="smart-load-queue">
+              <div class="smart-load-queue-head">
+                <span data-i18n="smartLoadQueue">Load queue</span>
+                <small data-i18n="smartLoadQueueMeta">Grouped by what to run now, delay, or avoid.</small>
+              </div>
+              <div id="smartLoadQueueGrid" class="smart-load-queue-grid"></div>
             </div>
             <div id="smartLoadGrid" class="smart-load-grid"></div>
           </div>
@@ -1630,6 +1637,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-02-night-ops"></script>
+    <script src="/app.js?v=2026-06-02-load-queue"></script>
   </body>
 </html>

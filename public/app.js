@@ -176,6 +176,7 @@ const textFields = {
   smartLoadPriority: document.getElementById("smartLoadPriority"),
   smartLoadPriorityTitle: document.getElementById("smartLoadPriorityTitle"),
   smartLoadPriorityDetail: document.getElementById("smartLoadPriorityDetail"),
+  smartLoadQueueGrid: document.getElementById("smartLoadQueueGrid"),
   smartLoadGrid: document.getElementById("smartLoadGrid"),
   nightOpsStatus: document.getElementById("nightOpsStatus"),
   nightOpsDetail: document.getElementById("nightOpsDetail"),
@@ -754,6 +755,13 @@ const translations = {
     smartLoadPriorityWait: "Wait before starting loads",
     smartLoadPriorityDetailRun: "{load} has the lightest impact now. Put {defer} later.",
     smartLoadPriorityDetailWait: "No flexible load fits well now. Best next move: {window}.",
+    smartLoadQueue: "Load queue",
+    smartLoadQueueMeta: "Grouped by what to run now, delay, or avoid.",
+    smartLoadLaneNow: "Run now",
+    smartLoadLaneLater: "Delay",
+    smartLoadLaneAvoid: "Avoid now",
+    smartLoadLaneEmpty: "No loads",
+    smartLoadQueueGridNeed: "Extra grid {grid}",
     nightOpsKicker: "Tonight plan",
     nightOpsTitle: "Evening operating plan",
     nightOpsFocus: "Tonight focus",
@@ -1524,6 +1532,13 @@ const translations = {
     smartLoadPriorityWait: "先不要启动负载",
     smartLoadPriorityDetailRun: "{load} 现在影响最小。{defer} 可以排到后面。",
     smartLoadPriorityDetailWait: "现在没有特别合适的可推迟负载。下一步建议：{window}。",
+    smartLoadQueue: "负载队列",
+    smartLoadQueueMeta: "按现在运行、稍后再跑、现在避免分组。",
+    smartLoadLaneNow: "现在可跑",
+    smartLoadLaneLater: "稍后再跑",
+    smartLoadLaneAvoid: "现在避免",
+    smartLoadLaneEmpty: "暂无负载",
+    smartLoadQueueGridNeed: "额外电网 {grid}",
     nightOpsKicker: "晚间计划",
     nightOpsTitle: "晚间运行计划",
     nightOpsFocus: "今晚重点",
@@ -2294,6 +2309,13 @@ const translations = {
     smartLoadPriorityWait: "รอก่อนเริ่มโหลด",
     smartLoadPriorityDetailRun: "{load} กระทบน้อยที่สุดตอนนี้ เลื่อน {defer} ไว้ทีหลัง",
     smartLoadPriorityDetailWait: "ตอนนี้ยังไม่มีโหลดที่เหมาะมาก ขั้นต่อไป: {window}",
+    smartLoadQueue: "คิวโหลด",
+    smartLoadQueueMeta: "จัดกลุ่มเป็นเปิดตอนนี้ รอก่อน หรือเลี่ยงตอนนี้",
+    smartLoadLaneNow: "เปิดตอนนี้",
+    smartLoadLaneLater: "รอก่อน",
+    smartLoadLaneAvoid: "เลี่ยงตอนนี้",
+    smartLoadLaneEmpty: "ไม่มีโหลด",
+    smartLoadQueueGridNeed: "ใช้กริดเพิ่ม {grid}",
     nightOpsKicker: "แผนคืนนี้",
     nightOpsTitle: "แผนเดินระบบตอนเย็น",
     nightOpsFocus: "จุดเน้นคืนนี้",
@@ -3830,6 +3852,91 @@ function getSmartLoadRank(load, advice) {
   return statusPenalty + advice.extraGridKw * 18 + load.kw * 2;
 }
 
+const smartLoadQueueLanes = [
+  {
+    key: "now",
+    labelKey: "smartLoadLaneNow",
+    tone: "good",
+  },
+  {
+    key: "later",
+    labelKey: "smartLoadLaneLater",
+    tone: "watch",
+  },
+  {
+    key: "avoid",
+    labelKey: "smartLoadLaneAvoid",
+    tone: "alert",
+  },
+];
+
+function getSmartLoadLaneKey(advice) {
+  if (advice.statusKey === "smartLoadGood") return "now";
+  if (advice.statusKey === "smartLoadWatch") return "later";
+  return "avoid";
+}
+
+function getSmartLoadWindowText(advice, decision) {
+  return interpolate(t(advice.windowKey), {
+    time: formatDurationMinutes(decision.tariff.detailMinutes),
+    window: t(decision.tomorrowWindowKey),
+  });
+}
+
+function renderSmartLoadQueue(loadPlans, decision) {
+  if (!textFields.smartLoadQueueGrid) return;
+
+  const groupedPlans = {
+    now: [],
+    later: [],
+    avoid: [],
+  };
+  loadPlans.forEach((plan) => {
+    groupedPlans[getSmartLoadLaneKey(plan.advice)].push(plan);
+  });
+
+  textFields.smartLoadQueueGrid.replaceChildren(...smartLoadQueueLanes.map((lane) => {
+    const section = document.createElement("section");
+    const header = document.createElement("header");
+    const label = document.createElement("span");
+    const count = document.createElement("strong");
+    const body = document.createElement("div");
+    const lanePlans = groupedPlans[lane.key];
+
+    section.dataset.tone = lane.tone;
+    label.textContent = t(lane.labelKey);
+    count.textContent = String(lanePlans.length);
+    header.append(label, count);
+
+    if (!lanePlans.length) {
+      const empty = document.createElement("p");
+      empty.textContent = t("smartLoadLaneEmpty");
+      body.append(empty);
+    } else {
+      body.append(...lanePlans.map(({ load, advice }) => {
+        const item = document.createElement("article");
+        const name = document.createElement("strong");
+        const status = document.createElement("span");
+        const gridNeed = document.createElement("small");
+        const window = document.createElement("em");
+
+        item.dataset.tone = advice.tone;
+        name.textContent = t(load.key);
+        status.textContent = t(advice.statusKey);
+        gridNeed.textContent = interpolate(t("smartLoadQueueGridNeed"), {
+          grid: formatKw(advice.extraGridKw),
+        });
+        window.textContent = getSmartLoadWindowText(advice, decision);
+        item.append(name, status, gridNeed, window);
+        return item;
+      }));
+    }
+
+    section.append(header, body);
+    return section;
+  }));
+}
+
 function renderSmartLoadPriority(loadPlans, decision) {
   const bestPlan = loadPlans[0];
   const shouldWait = !bestPlan || bestPlan.advice.statusKey === "smartLoadAvoid";
@@ -3839,10 +3946,7 @@ function renderSmartLoadPriority(loadPlans, decision) {
     .map((plan) => t(plan.load.key))
     .slice(0, 2)
     .join(" / ");
-  const windowText = interpolate(t(bestPlan?.advice.windowKey ?? "smartLoadWindowTomorrow"), {
-    time: formatDurationMinutes(decision.tariff.detailMinutes),
-    window: t(decision.tomorrowWindowKey),
-  });
+  const windowText = getSmartLoadWindowText(bestPlan?.advice ?? { windowKey: "smartLoadWindowTomorrow" }, decision);
 
   textFields.smartLoadPriority.dataset.tone = shouldWait ? "watch" : bestPlan.advice.tone;
   textFields.smartLoadPriorityTitle.textContent = shouldWait
@@ -3870,6 +3974,7 @@ function renderSmartLoadAdvisor(decision) {
     .sort((left, right) => getSmartLoadRank(left.load, left.advice) - getSmartLoadRank(right.load, right.advice));
 
   renderSmartLoadPriority(loadPlans, decision);
+  renderSmartLoadQueue(loadPlans, decision);
   textFields.smartLoadGrid.replaceChildren(...loadPlans.map(({ load, advice }) => {
     const card = document.createElement("article");
     const label = document.createElement("span");
@@ -3887,10 +3992,7 @@ function renderSmartLoadAdvisor(decision) {
       grid: formatKw(advice.extraGridKw),
     });
     meta.textContent = `${formatKw(load.kw)} · ${formatDurationMinutes(load.durationMinutes)} · ${t(advice.guardKey)}`;
-    window.textContent = interpolate(t(advice.windowKey), {
-      time: formatDurationMinutes(decision.tariff.detailMinutes),
-      window: t(decision.tomorrowWindowKey),
-    });
+    window.textContent = getSmartLoadWindowText(advice, decision);
     card.append(label, status, detail, meta, window);
 
     return card;

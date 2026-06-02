@@ -2172,6 +2172,183 @@ section[id] {
   line-height: 1.35;
 }
 
+.smart-load-queue {
+  margin-bottom: 0.85rem;
+}
+
+.smart-load-queue-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+.smart-load-queue-head span {
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.smart-load-queue-head small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 850;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.smart-load-queue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 0.55rem;
+}
+
+.smart-load-queue-grid section {
+  position: relative;
+  min-width: 0;
+  border: 1px solid rgba(29, 43, 36, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.62);
+  padding: 0.62rem 0.66rem 0.66rem 0.86rem;
+  overflow: hidden;
+}
+
+.smart-load-queue-grid section::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #22c55e, #14b8a6);
+}
+
+.smart-load-queue-grid section[data-tone="watch"]::before {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+
+.smart-load-queue-grid section[data-tone="alert"]::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.smart-load-queue-grid header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.45rem;
+}
+
+.smart-load-queue-grid header span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.smart-load-queue-grid header strong {
+  display: grid;
+  place-items: center;
+  min-width: 1.6rem;
+  min-height: 1.6rem;
+  border-radius: 999px;
+  background: rgba(31, 111, 90, 0.08);
+  color: #174f40;
+  font-size: 0.8rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.smart-load-queue-grid section[data-tone="watch"] header strong {
+  background: rgba(245, 158, 11, 0.14);
+  color: #92400e;
+}
+
+.smart-load-queue-grid section[data-tone="alert"] header strong {
+  background: rgba(239, 68, 68, 0.12);
+  color: #991b1b;
+}
+
+.smart-load-queue-grid section > div {
+  display: grid;
+  gap: 0.42rem;
+}
+
+.smart-load-queue-grid article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name status"
+    "need need"
+    "window window";
+  gap: 0.25rem 0.44rem;
+  min-width: 0;
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.78);
+  padding: 0.48rem 0.52rem;
+}
+
+.smart-load-queue-grid article strong {
+  grid-area: name;
+  min-width: 0;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 950;
+  line-height: 1.15;
+}
+
+.smart-load-queue-grid article span {
+  grid-area: status;
+  justify-self: end;
+  align-self: start;
+  border-radius: 999px;
+  background: rgba(31, 111, 90, 0.08);
+  color: #16634f;
+  padding: 0.15rem 0.42rem;
+  font-size: 0.66rem;
+  font-weight: 950;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.smart-load-queue-grid article[data-tone="watch"] span {
+  background: rgba(245, 158, 11, 0.15);
+  color: #92400e;
+}
+
+.smart-load-queue-grid article[data-tone="alert"] span {
+  background: rgba(239, 68, 68, 0.13);
+  color: #991b1b;
+}
+
+.smart-load-queue-grid article small {
+  grid-area: need;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.smart-load-queue-grid article em {
+  grid-area: window;
+  color: #1f6f5a;
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.smart-load-queue-grid p {
+  margin: 0;
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.64);
+  color: var(--muted);
+  padding: 0.7rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
 .smart-load-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4279,6 +4456,7 @@ tbody tr:hover {
   .smart-watchlist-grid,
   .smart-decision-log-list,
   .smart-plan-strip,
+  .smart-load-queue-grid,
   .smart-load-grid,
   .night-ops-check-grid,
   .metrics-grid,
@@ -4714,6 +4892,7 @@ tbody tr:hover {
   .smart-watchlist-grid,
   .smart-decision-log-list,
   .smart-plan-strip,
+  .smart-load-queue-grid,
   .smart-load-grid,
   .night-ops-check-grid,
   .operating-summary-head,
