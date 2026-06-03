@@ -140,6 +140,18 @@ const textFields = {
   operatingSummaryGrid: document.getElementById("operatingSummaryGrid"),
   operatingSummaryReserve: document.getElementById("operatingSummaryReserve"),
   operatingSummaryAction: document.getElementById("operatingSummaryAction"),
+  commandBriefDetail: document.getElementById("commandBriefDetail"),
+  commandBriefMode: document.getElementById("commandBriefMode"),
+  commandBriefNowCard: document.getElementById("commandBriefNowCard"),
+  commandBriefNow: document.getElementById("commandBriefNow"),
+  commandBriefNowDetail: document.getElementById("commandBriefNowDetail"),
+  commandBriefNextCard: document.getElementById("commandBriefNextCard"),
+  commandBriefNext: document.getElementById("commandBriefNext"),
+  commandBriefNextDetail: document.getElementById("commandBriefNextDetail"),
+  commandBriefRiskCard: document.getElementById("commandBriefRiskCard"),
+  commandBriefRisk: document.getElementById("commandBriefRisk"),
+  commandBriefRiskDetail: document.getElementById("commandBriefRiskDetail"),
+  commandBriefSignals: document.getElementById("commandBriefSignals"),
   phasePlanStatus: document.getElementById("phasePlanStatus"),
   phasePlanDetail: document.getElementById("phasePlanDetail"),
   phasePlanProgressLabel: document.getElementById("phasePlanProgressLabel"),
@@ -631,6 +643,23 @@ const translations = {
     operatingNetImport: "Net import {value}",
     operatingSummaryReserve: "Reserve above 20%",
     operatingSummaryAction: "Next action",
+    commandBriefKicker: "Smart command",
+    commandBriefTitle: "Next best moves",
+    commandBriefDetail: "{mode}. Confidence {confidence}; next checkpoint {checkpoint}.",
+    commandBriefMode: "Mode",
+    commandBriefNow: "Now",
+    commandBriefNext: "Next handoff",
+    commandBriefRisk: "Watch",
+    commandBriefSignals: "Decision signals",
+    commandBriefSignalConfidence: "Confidence",
+    commandBriefSignalPhase: "Phase",
+    commandBriefSignalSurplus: "Solar surplus",
+    commandBriefSignalGrid: "Grid pressure",
+    commandBriefPhaseDetail: "{progress} through · {remaining} left",
+    commandBriefSurplusGood: "Usable headroom is available.",
+    commandBriefSurplusWeak: "Headroom is limited.",
+    commandBriefGridPeak: "Peak window active.",
+    commandBriefGridOffPeak: "Peak starts in {time}.",
     phasePlanKicker: "Day phase",
     phasePlanTitle: "Operating rhythm",
     phasePlanDetail: "Now {time}. {phase} is active; next checkpoint: {next}.",
@@ -1465,6 +1494,23 @@ const translations = {
     operatingNetImport: "净取电 {value}",
     operatingSummaryReserve: "高于 20% 的余量",
     operatingSummaryAction: "下一步建议",
+    commandBriefKicker: "智能指挥",
+    commandBriefTitle: "下一步行动简报",
+    commandBriefDetail: "{mode}。可信度 {confidence}；下一检查点：{checkpoint}。",
+    commandBriefMode: "模式",
+    commandBriefNow: "现在",
+    commandBriefNext: "下一交接",
+    commandBriefRisk: "需要注意",
+    commandBriefSignals: "判断信号",
+    commandBriefSignalConfidence: "可信度",
+    commandBriefSignalPhase: "当前阶段",
+    commandBriefSignalSurplus: "太阳富余",
+    commandBriefSignalGrid: "电网压力",
+    commandBriefPhaseDetail: "已过 {progress} · 剩余 {remaining}",
+    commandBriefSurplusGood: "当前有可用太阳富余。",
+    commandBriefSurplusWeak: "当前可用富余有限。",
+    commandBriefGridPeak: "高峰窗口正在进行。",
+    commandBriefGridOffPeak: "距高峰开始 {time}。",
     phasePlanKicker: "运行阶段",
     phasePlanTitle: "今日运行节奏",
     phasePlanDetail: "现在 {time}。当前处于“{phase}”；下一检查点：{next}。",
@@ -2299,6 +2345,23 @@ const translations = {
     operatingNetImport: "นำเข้าสุทธิ {value}",
     operatingSummaryReserve: "สำรองเหนือ 20%",
     operatingSummaryAction: "ขั้นต่อไป",
+    commandBriefKicker: "คำสั่งอัจฉริยะ",
+    commandBriefTitle: "สิ่งที่ควรทำถัดไป",
+    commandBriefDetail: "{mode} ความมั่นใจ {confidence}; จุดตรวจถัดไป {checkpoint}",
+    commandBriefMode: "โหมด",
+    commandBriefNow: "ตอนนี้",
+    commandBriefNext: "ส่งต่อถัดไป",
+    commandBriefRisk: "เฝ้าดู",
+    commandBriefSignals: "สัญญาณตัดสินใจ",
+    commandBriefSignalConfidence: "ความมั่นใจ",
+    commandBriefSignalPhase: "ช่วง",
+    commandBriefSignalSurplus: "โซลาร์เหลือ",
+    commandBriefSignalGrid: "แรงกดกริด",
+    commandBriefPhaseDetail: "ผ่านแล้ว {progress} · เหลือ {remaining}",
+    commandBriefSurplusGood: "มีไฟส่วนเกินใช้งานได้",
+    commandBriefSurplusWeak: "ไฟส่วนเกินจำกัด",
+    commandBriefGridPeak: "อยู่ในช่วงพีค",
+    commandBriefGridOffPeak: "ช่วงพีคเริ่มใน {time}",
     phasePlanKicker: "ช่วงของวัน",
     phasePlanTitle: "จังหวะการทำงานวันนี้",
     phasePlanDetail: "ตอนนี้ {time}. ช่วง {phase} กำลังทำงาน; จุดตรวจถัดไป: {next}",
@@ -3545,6 +3608,172 @@ function renderOperatingSummary(payload) {
     ? "--"
     : formatPercent(summary.batteryReserve);
   textFields.operatingSummaryAction.textContent = t(summary.actionKey);
+}
+
+function getDecisionTone(statusKey) {
+  if (statusKey === "smartHubStatusSolar") return "good";
+  if (statusKey === "smartHubStatusBattery" || statusKey === "smartHubStatusPeak") return "alert";
+  return "neutral";
+}
+
+function getNowTone(statusKey) {
+  if (statusKey === "smartHubNowUseSolar") return "good";
+  if (statusKey === "smartHubNowSteady") return "neutral";
+  return "alert";
+}
+
+function getWatchTone(statusKey) {
+  if (statusKey === "smartHubWatchGrid") return "neutral";
+  if (statusKey === "smartHubWatchData" || statusKey === "smartHubWatchBattery") return "alert";
+  return "watch";
+}
+
+function setCommandBriefCard(card, titleElement, detailElement, tone, title, detail) {
+  card.dataset.tone = tone;
+  titleElement.textContent = title;
+  detailElement.textContent = detail;
+}
+
+function createCommandBriefSignal(signal) {
+  const item = document.createElement("article");
+  const label = document.createElement("span");
+  const value = document.createElement("strong");
+  const detail = document.createElement("small");
+
+  item.dataset.tone = signal.tone;
+  label.textContent = t(signal.labelKey);
+  value.textContent = signal.value;
+  detail.textContent = signal.detail;
+  item.append(label, value, detail);
+
+  return item;
+}
+
+function getCommandBrief(payload, weatherPayload = lastWeatherPayload) {
+  const decision = getSmartHubDecision(payload, weatherPayload);
+  const confidence = getSmartHubConfidence(payload, weatherPayload);
+  const phasePlan = getPhasePlan(payload);
+  const nightPlan = getNightOpsPlan(payload, weatherPayload);
+  const nightAlert = nightPlan.steps.find((step) => step.tone === "alert");
+  const values = {
+    self: formatOptionalPercent(decision.selfSufficiency),
+    headroom: formatKw(decision.headroomKw),
+    reserve: decision.reserve === null ? "--" : formatPercent(decision.reserve),
+    soc: decision.batterySoc === null ? "--" : formatPercent(decision.batterySoc),
+    pressure: formatPercent(decision.pressure),
+    window: decision.tariff.peakWindow,
+    time: formatDurationMinutes(decision.tariff.detailMinutes),
+    risk: t(decision.runwayRiskKey),
+    outlook: t(decision.tomorrowOutlookKey),
+    grid: decision.gridFlow,
+    exportKw: formatKw(decision.solarExportKw),
+    homeKw: formatKw(decision.homeUsageKw),
+    tariff: decision.tariff.isPeak ? t("peakNow") : t("offPeakNow"),
+    count: String(decision.warningsCount),
+    peakWindow: decision.tariff.peakWindow,
+    tomorrowWindow: t(decision.tomorrowWindowKey),
+    score: interpolate(t("peakReadinessScore"), { score: getPeakReadiness(payload).score }),
+    flow: decision.gridFlow,
+    checkpoint: `${t(phasePlan.nextPhase.labelKey)} ${phasePlan.checkpointTime}`,
+    confidence: `${confidence.score}%`,
+    mode: t(decision.statusKey),
+  };
+  const risk = nightAlert
+    ? {
+      tone: "alert",
+      title: interpolate(t(nightAlert.titleKey), values),
+      detail: interpolate(t(nightAlert.detailKey), values),
+    }
+    : {
+      tone: getWatchTone(decision.watchStatusKey),
+      title: t(decision.watchStatusKey),
+      detail: interpolate(t(decision.watchDetailKey), values),
+    };
+
+  return {
+    modeTone: getDecisionTone(decision.statusKey),
+    mode: t(decision.statusKey),
+    detail: interpolate(t("commandBriefDetail"), values),
+    now: {
+      tone: getNowTone(decision.nowStatusKey),
+      title: t(decision.nowStatusKey),
+      detail: interpolate(t(decision.nowDetailKey), values),
+    },
+    next: {
+      tone: phasePlan.handoff.tone,
+      title: t(phasePlan.handoff.key),
+      detail: interpolate(t(phasePlan.handoff.detailKey), { time: phasePlan.handoff.time }),
+    },
+    risk,
+    signals: [
+      {
+        labelKey: "commandBriefSignalConfidence",
+        tone: confidence.tone,
+        value: `${confidence.score}%`,
+        detail: t(confidence.levelKey),
+      },
+      {
+        labelKey: "commandBriefSignalPhase",
+        tone: phasePlan.activePhase.tone,
+        value: t(phasePlan.activePhase.labelKey),
+        detail: interpolate(t("commandBriefPhaseDetail"), {
+          progress: formatPercent(phasePlan.progressPercent),
+          remaining: formatDurationMinutes(phasePlan.remainingMinutes),
+        }),
+      },
+      {
+        labelKey: "commandBriefSignalSurplus",
+        tone: decision.headroomKw >= 0.8 ? "good" : decision.headroomKw >= 0.25 ? "watch" : "neutral",
+        value: formatKw(decision.headroomKw),
+        detail: t(decision.headroomKw >= 0.8 ? "commandBriefSurplusGood" : "commandBriefSurplusWeak"),
+      },
+      {
+        labelKey: "commandBriefSignalGrid",
+        tone: decision.pressure >= 65 ? "alert" : decision.pressure >= 35 ? "watch" : "good",
+        value: formatPercent(decision.pressure),
+        detail: interpolate(t(decision.tariff.isPeak ? "commandBriefGridPeak" : "commandBriefGridOffPeak"), {
+          time: formatDurationMinutes(decision.tariff.detailMinutes),
+        }),
+      },
+    ],
+  };
+}
+
+function renderCommandBrief(payload, weatherPayload = lastWeatherPayload) {
+  if (!payload?.live || !payload?.today || !textFields.commandBriefSignals) {
+    return;
+  }
+
+  const brief = getCommandBrief(payload, weatherPayload);
+
+  textFields.commandBriefMode.parentElement.dataset.tone = brief.modeTone;
+  textFields.commandBriefMode.textContent = brief.mode;
+  textFields.commandBriefDetail.textContent = brief.detail;
+  setCommandBriefCard(
+    textFields.commandBriefNowCard,
+    textFields.commandBriefNow,
+    textFields.commandBriefNowDetail,
+    brief.now.tone,
+    brief.now.title,
+    brief.now.detail,
+  );
+  setCommandBriefCard(
+    textFields.commandBriefNextCard,
+    textFields.commandBriefNext,
+    textFields.commandBriefNextDetail,
+    brief.next.tone,
+    brief.next.title,
+    brief.next.detail,
+  );
+  setCommandBriefCard(
+    textFields.commandBriefRiskCard,
+    textFields.commandBriefRisk,
+    textFields.commandBriefRiskDetail,
+    brief.risk.tone,
+    brief.risk.title,
+    brief.risk.detail,
+  );
+  textFields.commandBriefSignals.replaceChildren(...brief.signals.map(createCommandBriefSignal));
 }
 
 function formatClockMinutes(minutes) {
@@ -6596,6 +6825,7 @@ function renderWeather(payload) {
   renderTomorrowPrep(lastPayload, payload);
   renderSmartHub(lastPayload, payload);
   renderNightOpsPlan(lastPayload, payload);
+  renderCommandBrief(lastPayload, payload);
   renderActionBoard(lastPayload, payload);
 }
 
@@ -7951,6 +8181,7 @@ function renderMetrics(payload) {
   renderDataQuality(payload);
   renderVisualKpis(payload);
   renderOperatingSummary(payload);
+  renderCommandBrief(payload);
   renderPhasePlan(payload);
   renderSmartHub(payload);
   renderNightOpsPlan(payload);

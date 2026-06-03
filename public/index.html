@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-03-phase-handoff" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-03-command-brief" />
   </head>
   <body>
     <div class="page-shell">
@@ -224,6 +224,45 @@
               <span data-i18n="operatingSummaryAction">Next action</span>
               <strong id="operatingSummaryAction">--</strong>
             </article>
+          </div>
+        </section>
+
+        <section class="panel command-brief-panel" aria-live="polite">
+          <div class="command-brief-head">
+            <div>
+              <p class="panel-kicker" data-i18n="commandBriefKicker">Smart command</p>
+              <h2 data-i18n="commandBriefTitle">Next best moves</h2>
+              <p id="commandBriefDetail" class="muted-copy">--</p>
+            </div>
+            <div class="command-brief-mode">
+              <span data-i18n="commandBriefMode">Mode</span>
+              <strong id="commandBriefMode">--</strong>
+            </div>
+          </div>
+          <div class="command-brief-layout">
+            <div class="command-brief-actions">
+              <article id="commandBriefNowCard" data-tone="neutral">
+                <span data-i18n="commandBriefNow">Now</span>
+                <strong id="commandBriefNow">--</strong>
+                <small id="commandBriefNowDetail">--</small>
+              </article>
+              <article id="commandBriefNextCard" data-tone="neutral">
+                <span data-i18n="commandBriefNext">Next handoff</span>
+                <strong id="commandBriefNext">--</strong>
+                <small id="commandBriefNextDetail">--</small>
+              </article>
+              <article id="commandBriefRiskCard" data-tone="neutral">
+                <span data-i18n="commandBriefRisk">Watch</span>
+                <strong id="commandBriefRisk">--</strong>
+                <small id="commandBriefRiskDetail">--</small>
+              </article>
+            </div>
+            <div>
+              <div class="command-brief-signals-head">
+                <span data-i18n="commandBriefSignals">Decision signals</span>
+              </div>
+              <div id="commandBriefSignals" class="command-brief-signals"></div>
+            </div>
           </div>
         </section>
 
@@ -1682,6 +1721,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-03-phase-handoff"></script>
+    <script src="/app.js?v=2026-06-03-command-brief"></script>
   </body>
 </html>
