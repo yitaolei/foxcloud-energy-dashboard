@@ -150,6 +150,9 @@ const textFields = {
   phasePlanActionCard: document.getElementById("phasePlanActionCard"),
   phasePlanAction: document.getElementById("phasePlanAction"),
   phasePlanActionDetail: document.getElementById("phasePlanActionDetail"),
+  phasePlanHandoffCard: document.getElementById("phasePlanHandoffCard"),
+  phasePlanHandoff: document.getElementById("phasePlanHandoff"),
+  phasePlanHandoffDetail: document.getElementById("phasePlanHandoffDetail"),
   phasePlanGrid: document.getElementById("phasePlanGrid"),
   smartHubStatus: document.getElementById("smartHubStatus"),
   smartHubConfidence: document.getElementById("smartHubConfidence"),
@@ -656,6 +659,19 @@ const translations = {
     phasePlanCheckpointDetail: "Switches to {phase} at {time}.",
     phasePlanBestAction: "Best action",
     phasePlanActionDetail: "Based on live surplus, reserve, tariff, and forecast.",
+    phasePlanHandoff: "Handoff cue",
+    phaseHandoffStageLoads: "Stage loads",
+    phaseHandoffStageLoadsDetail: "Hold heavy loads until solar headroom is visible.",
+    phaseHandoffFinishLoads: "Finish deferrables",
+    phaseHandoffFinishLoadsDetail: "Use surplus before the peak window at {time}.",
+    phaseHandoffHoldLoads: "Hold heavy loads",
+    phaseHandoffHoldLoadsDetail: "Wait for cleaner surplus before the peak window at {time}.",
+    phaseHandoffHoldLine: "Hold the line",
+    phaseHandoffHoldLineDetail: "Avoid flexible import until the peak guard ends at {time}.",
+    phaseHandoffProtectReserve: "Protect reserve",
+    phaseHandoffProtectReserveDetail: "Keep battery headroom for overnight base load.",
+    phaseHandoffResetMorning: "Reset for morning",
+    phaseHandoffResetMorningDetail: "Review reserve before the morning ramp at {time}.",
     smartHubKicker: "Smart energy pilot",
     smartHubTitle: "Today's energy decision",
     smartHubNow: "Now",
@@ -1477,6 +1493,19 @@ const translations = {
     phasePlanCheckpointDetail: "{time} 切换到“{phase}”。",
     phasePlanBestAction: "最佳动作",
     phasePlanActionDetail: "根据实时富余、电池余量、电价和天气预报综合判断。",
+    phasePlanHandoff: "交接提示",
+    phaseHandoffStageLoads: "预备可推迟负载",
+    phaseHandoffStageLoadsDetail: "等太阳富余明确后，再启动大功率负载。",
+    phaseHandoffFinishLoads: "完成可推迟负载",
+    phaseHandoffFinishLoadsDetail: "尽量在 {time} 高峰窗口前用掉太阳富余。",
+    phaseHandoffHoldLoads: "暂缓大功率负载",
+    phaseHandoffHoldLoadsDetail: "等更干净的太阳富余出现，再赶在 {time} 高峰前处理。",
+    phaseHandoffHoldLine: "守住高峰线",
+    phaseHandoffHoldLineDetail: "高峰防守到 {time} 前，尽量避免可推迟取电。",
+    phaseHandoffProtectReserve: "保护夜间余量",
+    phaseHandoffProtectReserveDetail: "保留电池余量给夜间家庭基础负载。",
+    phaseHandoffResetMorning: "准备明早节奏",
+    phaseHandoffResetMorningDetail: "在 {time} 早晨蓄势前，再看一次电池余量。",
     smartHubKicker: "智能能源驾驶舱",
     smartHubTitle: "今日能源判断",
     smartHubNow: "现在",
@@ -2298,6 +2327,19 @@ const translations = {
     phasePlanCheckpointDetail: "เปลี่ยนเป็น {phase} เวลา {time}",
     phasePlanBestAction: "การทำงานที่เหมาะสุด",
     phasePlanActionDetail: "อิงจากส่วนเกิน แบต ค่าไฟ และพยากรณ์ล่าสุด",
+    phasePlanHandoff: "สัญญาณส่งต่อ",
+    phaseHandoffStageLoads: "เตรียมโหลด",
+    phaseHandoffStageLoadsDetail: "รอให้มีไฟโซลาร์ส่วนเกินชัดเจนก่อนเปิดโหลดหนัก",
+    phaseHandoffFinishLoads: "ใช้โหลดที่เลื่อนได้",
+    phaseHandoffFinishLoadsDetail: "ใช้ไฟส่วนเกินก่อนช่วงพีคที่ {time}",
+    phaseHandoffHoldLoads: "พักโหลดหนัก",
+    phaseHandoffHoldLoadsDetail: "รอไฟส่วนเกินที่สะอาดกว่าก่อนช่วงพีคที่ {time}",
+    phaseHandoffHoldLine: "คุมช่วงพีค",
+    phaseHandoffHoldLineDetail: "เลี่ยงโหลดที่ทำให้นำเข้าจนช่วงพีคจบที่ {time}",
+    phaseHandoffProtectReserve: "ป้องกันแบตสำรอง",
+    phaseHandoffProtectReserveDetail: "เก็บแบตไว้สำหรับโหลดพื้นฐานข้ามคืน",
+    phaseHandoffResetMorning: "เตรียมเช้าวันใหม่",
+    phaseHandoffResetMorningDetail: "เช็กแบตก่อนช่วงเช้าที่ {time}",
     smartHubKicker: "ผู้ช่วยพลังงานอัจฉริยะ",
     smartHubTitle: "การตัดสินใจพลังงานวันนี้",
     smartHubNow: "ตอนนี้",
@@ -3607,6 +3649,33 @@ function getPhasePlan(payload) {
     peak: "night",
     night: "morning",
   }[activeKey];
+  const handoff = activeKey === "morning"
+    ? {
+      key: "phaseHandoffStageLoads",
+      detailKey: "phaseHandoffStageLoadsDetail",
+      time: formatClockMinutes(solarStart),
+      tone: "watch",
+    }
+    : activeKey === "solar"
+      ? {
+        key: hasSurplus ? "phaseHandoffFinishLoads" : "phaseHandoffHoldLoads",
+        detailKey: hasSurplus ? "phaseHandoffFinishLoadsDetail" : "phaseHandoffHoldLoadsDetail",
+        time: formatClockMinutes(peakStart),
+        tone: hasSurplus ? "good" : "watch",
+      }
+      : activeKey === "peak"
+        ? {
+          key: "phaseHandoffHoldLine",
+          detailKey: "phaseHandoffHoldLineDetail",
+          time: formatClockMinutes(peakEnd + 1),
+          tone: "alert",
+        }
+        : {
+          key: reserve !== null && reserve < 35 ? "phaseHandoffProtectReserve" : "phaseHandoffResetMorning",
+          detailKey: reserve !== null && reserve < 35 ? "phaseHandoffProtectReserveDetail" : "phaseHandoffResetMorningDetail",
+          time: formatClockMinutes(morningStart),
+          tone: reserve !== null && reserve < 35 ? "watch" : "neutral",
+        };
   const timing = getPhaseTiming(activeKey, current, {
     morningStart,
     solarStart,
@@ -3629,6 +3698,7 @@ function getPhasePlan(payload) {
     checkpointTime: formatClockMinutes(timing.checkpointMinutes),
     progressPercent: timing.progressPercent,
     remainingMinutes: timing.remainingMinutes,
+    handoff,
     phases: plannedPhases,
     values: {
       peakWindow: tariff.peakWindow,
@@ -3671,6 +3741,13 @@ function renderPhasePlan(payload) {
     textFields.phasePlanActionCard.dataset.tone = plan.activePhase.tone;
     textFields.phasePlanAction.textContent = t(plan.activePhase.actionKey);
     textFields.phasePlanActionDetail.textContent = t("phasePlanActionDetail");
+  }
+  if (textFields.phasePlanHandoff) {
+    textFields.phasePlanHandoffCard.dataset.tone = plan.handoff.tone;
+    textFields.phasePlanHandoff.textContent = t(plan.handoff.key);
+    textFields.phasePlanHandoffDetail.textContent = interpolate(t(plan.handoff.detailKey), {
+      time: plan.handoff.time,
+    });
   }
   textFields.phasePlanGrid.replaceChildren(...plan.phases.map((phase) => {
     const card = document.createElement("article");

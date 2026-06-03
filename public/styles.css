@@ -1568,7 +1568,7 @@ section[id] {
 
 .phase-plan-radar {
   display: grid;
-  grid-template-columns: minmax(18rem, 1.35fr) repeat(2, minmax(12rem, 0.85fr));
+  grid-template-columns: minmax(16rem, 1.2fr) repeat(3, minmax(10.5rem, 0.85fr));
   gap: 0.68rem;
   margin-top: 0.95rem;
 }
