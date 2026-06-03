@@ -171,6 +171,8 @@ const textFields = {
   smartHubWatchCard: document.getElementById("smartHubWatchCard"),
   smartHubWatchStatus: document.getElementById("smartHubWatchStatus"),
   smartHubWatchDetail: document.getElementById("smartHubWatchDetail"),
+  smartFlowSplitMeta: document.getElementById("smartFlowSplitMeta"),
+  smartFlowSplitGrid: document.getElementById("smartFlowSplitGrid"),
   smartLoadMeta: document.getElementById("smartLoadMeta"),
   smartPlanStrip: document.getElementById("smartPlanStrip"),
   smartLoadPriority: document.getElementById("smartLoadPriority"),
@@ -678,6 +680,21 @@ const translations = {
     smartHubTagOffPeak: "Off-peak",
     smartHubTagTomorrowGood: "Tomorrow solar OK",
     smartHubTagTomorrowWeak: "Tomorrow solar weak",
+    smartFlowSplit: "Power routing",
+    smartFlowSplitMeta: "Live shape: solar {solar}, home {home}, battery {battery}, grid {grid}.",
+    smartFlowSolar: "Solar output",
+    smartFlowSolarActive: "Generation is carrying the current decision.",
+    smartFlowSolarIdle: "Solar output is quiet right now.",
+    smartFlowHome: "Home load",
+    smartFlowHomeDetail: "Immediate household demand.",
+    smartFlowBattery: "Battery",
+    smartFlowBatteryChargeDetail: "Power is being stored for later.",
+    smartFlowBatteryDischargeDetail: "Battery is covering part of the home load.",
+    smartFlowBatteryIdleDetail: "Battery flow is minimal.",
+    smartFlowGrid: "Grid",
+    smartFlowGridExportDetail: "Surplus is leaving the home.",
+    smartFlowGridImportDetail: "Home is leaning on grid supply.",
+    smartFlowGridIdleDetail: "Grid flow is minimal.",
     smartWatchlist: "Watchlist",
     smartWatchlistMeta: "Top signals to monitor now",
     smartWatchBattery: "Battery reserve",
@@ -1455,6 +1472,21 @@ const translations = {
     smartHubTagOffPeak: "非高峰",
     smartHubTagTomorrowGood: "明天太阳能可用",
     smartHubTagTomorrowWeak: "明天太阳能偏弱",
+    smartFlowSplit: "实时功率分配",
+    smartFlowSplitMeta: "当前形态：太阳能 {solar}，家庭 {home}，电池 {battery}，电网 {grid}。",
+    smartFlowSolar: "太阳能输出",
+    smartFlowSolarActive: "当前发电正在支撑主要判断。",
+    smartFlowSolarIdle: "当前太阳能输出较低。",
+    smartFlowHome: "家庭负载",
+    smartFlowHomeDetail: "此刻家庭即时用电需求。",
+    smartFlowBattery: "电池",
+    smartFlowBatteryChargeDetail: "正在把电存起来留给后面。",
+    smartFlowBatteryDischargeDetail: "电池正在覆盖一部分家庭负载。",
+    smartFlowBatteryIdleDetail: "电池流向很小。",
+    smartFlowGrid: "电网",
+    smartFlowGridExportDetail: "富余功率正在离开家庭。",
+    smartFlowGridImportDetail: "家庭正在依赖电网补充。",
+    smartFlowGridIdleDetail: "电网流向很小。",
     smartWatchlist: "观察清单",
     smartWatchlistMeta: "现在最值得盯的信号",
     smartWatchBattery: "电池余量",
@@ -2232,6 +2264,21 @@ const translations = {
     smartHubTagOffPeak: "นอกพีค",
     smartHubTagTomorrowGood: "โซลาร์พรุ่งนี้ดี",
     smartHubTagTomorrowWeak: "โซลาร์พรุ่งนี้อ่อน",
+    smartFlowSplit: "เส้นทางกำลังไฟ",
+    smartFlowSplitMeta: "ภาพสด: โซลาร์ {solar}, บ้าน {home}, แบต {battery}, กริด {grid}",
+    smartFlowSolar: "กำลังโซลาร์",
+    smartFlowSolarActive: "การผลิตกำลังหนุนการตัดสินใจตอนนี้",
+    smartFlowSolarIdle: "โซลาร์ค่อนข้างเงียบตอนนี้",
+    smartFlowHome: "โหลดบ้าน",
+    smartFlowHomeDetail: "ความต้องการไฟของบ้าน ณ ตอนนี้",
+    smartFlowBattery: "แบตเตอรี่",
+    smartFlowBatteryChargeDetail: "กำลังเก็บไฟไว้ใช้ภายหลัง",
+    smartFlowBatteryDischargeDetail: "แบตกำลังช่วยรับโหลดบ้านบางส่วน",
+    smartFlowBatteryIdleDetail: "การไหลของแบตต่ำมาก",
+    smartFlowGrid: "กริด",
+    smartFlowGridExportDetail: "ไฟส่วนเกินกำลังออกจากบ้าน",
+    smartFlowGridImportDetail: "บ้านกำลังพึ่งไฟจากกริด",
+    smartFlowGridIdleDetail: "การไหลกับกริดต่ำมาก",
     smartWatchlist: "รายการเฝ้าดู",
     smartWatchlistMeta: "สัญญาณสำคัญตอนนี้",
     smartWatchBattery: "สำรองแบต",
@@ -3486,6 +3533,118 @@ function setSmartHubBasis(card, valueElement, detailElement, tone, value, detail
   detailElement.textContent = detail;
 }
 
+function getLiveKw(value) {
+  const numericValue = Number(value ?? 0);
+
+  return Number.isFinite(numericValue) ? Math.max(0, numericValue) : 0;
+}
+
+function getSmartFlowSplit(payload) {
+  const live = payload?.live ?? {};
+  const solarKw = getLiveKw(live.solarGeneratedKw);
+  const homeKw = getLiveKw(live.homeUsageKw);
+  const batteryChargeKw = getLiveKw(live.batteryChargeKw);
+  const batteryDischargeKw = getLiveKw(live.batteryDischargeKw);
+  const gridImportKw = getLiveKw(live.gridImportKw);
+  const gridExportKw = getLiveKw(live.gridExportKw);
+  const batteryIsCharging = batteryChargeKw > batteryDischargeKw + 0.05;
+  const batteryIsDischarging = batteryDischargeKw > batteryChargeKw + 0.05;
+  const gridIsExporting = gridExportKw > gridImportKw + 0.05;
+  const gridIsImporting = gridImportKw > gridExportKw + 0.05;
+  const batteryValueKw = batteryIsCharging ? batteryChargeKw : batteryIsDischarging ? batteryDischargeKw : 0;
+  const gridValueKw = gridIsExporting ? gridExportKw : gridIsImporting ? gridImportKw : 0;
+  const maxKw = Math.max(solarKw, homeKw, batteryValueKw, gridValueKw, 0.1);
+  const batteryStatus = batteryIsCharging
+    ? `${t("charging")} ${formatKw(batteryValueKw)}`
+    : batteryIsDischarging
+      ? `${t("discharging")} ${formatKw(batteryValueKw)}`
+      : t("idle");
+  const gridStatus = gridIsExporting
+    ? `${t("exporting")} ${formatKw(gridValueKw)}`
+    : gridIsImporting
+      ? `${t("importing")} ${formatKw(gridValueKw)}`
+      : t("idle");
+
+  return {
+    solarKw,
+    homeKw,
+    batteryStatus,
+    gridStatus,
+    items: [
+      {
+        labelKey: "smartFlowSolar",
+        value: formatKw(solarKw),
+        detailKey: solarKw > 0.1 ? "smartFlowSolarActive" : "smartFlowSolarIdle",
+        tone: solarKw >= homeKw && solarKw > 0.1 ? "good" : solarKw > 0.1 ? "watch" : "neutral",
+        percent: (solarKw / maxKw) * 100,
+      },
+      {
+        labelKey: "smartFlowHome",
+        value: formatKw(homeKw),
+        detailKey: "smartFlowHomeDetail",
+        tone: homeKw <= solarKw && solarKw > 0.1 ? "good" : "neutral",
+        percent: (homeKw / maxKw) * 100,
+      },
+      {
+        labelKey: "smartFlowBattery",
+        value: batteryStatus,
+        detailKey: batteryIsCharging
+          ? "smartFlowBatteryChargeDetail"
+          : batteryIsDischarging
+            ? "smartFlowBatteryDischargeDetail"
+            : "smartFlowBatteryIdleDetail",
+        tone: batteryIsCharging ? "good" : batteryIsDischarging ? "watch" : "neutral",
+        percent: (batteryValueKw / maxKw) * 100,
+      },
+      {
+        labelKey: "smartFlowGrid",
+        value: gridStatus,
+        detailKey: gridIsExporting
+          ? "smartFlowGridExportDetail"
+          : gridIsImporting
+            ? "smartFlowGridImportDetail"
+            : "smartFlowGridIdleDetail",
+        tone: gridIsExporting ? "good" : gridIsImporting ? "alert" : "neutral",
+        percent: (gridValueKw / maxKw) * 100,
+      },
+    ],
+  };
+}
+
+function renderSmartFlowSplit(payload) {
+  if (!textFields.smartFlowSplitGrid) {
+    return;
+  }
+
+  const split = getSmartFlowSplit(payload);
+  textFields.smartFlowSplitMeta.textContent = interpolate(t("smartFlowSplitMeta"), {
+    solar: formatKw(split.solarKw),
+    home: formatKw(split.homeKw),
+    battery: split.batteryStatus,
+    grid: split.gridStatus,
+  });
+  textFields.smartFlowSplitGrid.replaceChildren(...split.items.map((item) => {
+    const card = document.createElement("article");
+    const top = document.createElement("div");
+    const label = document.createElement("span");
+    const value = document.createElement("strong");
+    const bar = document.createElement("div");
+    const fill = document.createElement("i");
+    const detail = document.createElement("small");
+
+    card.dataset.tone = item.tone;
+    label.textContent = t(item.labelKey);
+    value.textContent = item.value;
+    fill.style.width = `${Math.max(3, Math.min(100, item.percent)).toFixed(1)}%`;
+    detail.textContent = t(item.detailKey);
+    top.append(label, value);
+    bar.append(fill);
+    card.append(top, bar, detail);
+
+    return card;
+  }));
+}
+
 function getSmartHubConfidence(payload, weatherPayload = lastWeatherPayload) {
   const liveAgeMinutes = getTimestampAgeMinutes(payload?.live?.updatedAt);
   const warningCount = payload?.warnings?.length ?? 0;
@@ -4179,6 +4338,7 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
     decision.watchStatusKey,
     interpolate(t(decision.watchDetailKey), commonValues),
   );
+  renderSmartFlowSplit(payload);
   renderSmartDecisionLog(payload, decision, confidence);
 }
 

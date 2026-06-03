@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-02-load-queue" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-03-power-routing" />
   </head>
   <body>
     <div class="page-shell">
@@ -282,6 +282,13 @@
               <strong id="smartHubWatchStatus">--</strong>
               <small id="smartHubWatchDetail">--</small>
             </article>
+          </div>
+          <div class="smart-flow-split">
+            <div class="smart-flow-split-head">
+              <span data-i18n="smartFlowSplit">Power routing</span>
+              <small id="smartFlowSplitMeta">--</small>
+            </div>
+            <div id="smartFlowSplitGrid" class="smart-flow-split-grid"></div>
           </div>
           <div class="smart-hub-support-grid">
             <div class="smart-watchlist">
@@ -1637,6 +1644,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-02-load-queue"></script>
+    <script src="/app.js?v=2026-06-03-power-routing"></script>
   </body>
 </html>
