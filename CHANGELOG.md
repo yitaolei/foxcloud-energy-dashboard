@@ -36,6 +36,7 @@
 - Added a flexible load queue that groups deferrable loads into run-now, delay, and avoid lanes using the live load-advisor signals.
 - Added a smart power-routing panel that visualizes live solar output, home load, battery flow, and grid flow as normalized cockpit bars.
 - Added a daily operating phase panel that highlights the current household energy phase and the next checkpoint across morning, solar, peak, and overnight windows.
+- Added a phase radar strip that shows current phase progress, time remaining, the next checkpoint, and the best action for the active operating window.
 
 ### Changed
 

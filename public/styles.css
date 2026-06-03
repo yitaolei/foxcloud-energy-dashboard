@@ -1566,6 +1566,98 @@ section[id] {
   color: #b91c1c;
 }
 
+.phase-plan-radar {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1.35fr) repeat(2, minmax(12rem, 0.85fr));
+  gap: 0.68rem;
+  margin-top: 0.95rem;
+}
+
+.phase-plan-progress-block,
+.phase-plan-radar article {
+  position: relative;
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+  padding: 0.72rem 0.82rem;
+  overflow: hidden;
+}
+
+.phase-plan-radar article::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #64748b, #94a3b8);
+}
+
+.phase-plan-radar article[data-tone="good"]::before {
+  background: linear-gradient(180deg, #22c55e, #14b8a6);
+}
+
+.phase-plan-radar article[data-tone="watch"]::before {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+
+.phase-plan-radar article[data-tone="alert"]::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.phase-plan-progress-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.phase-plan-progress-head span,
+.phase-plan-radar article span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.phase-plan-progress-head b {
+  color: #1d4ed8;
+  font-size: 0.84rem;
+  font-weight: 950;
+  text-align: right;
+}
+
+.phase-plan-progress {
+  height: 0.62rem;
+  margin-top: 0.6rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+  overflow: hidden;
+}
+
+.phase-plan-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563eb, #14b8a6);
+  transition: width 320ms ease;
+}
+
+.phase-plan-radar article strong {
+  display: block;
+  margin-top: 0.28rem;
+  color: var(--ink);
+  font-size: clamp(0.96rem, 1.3vw, 1.12rem);
+  line-height: 1.14;
+}
+
+.phase-plan-radar article small {
+  display: block;
+  margin-top: 0.32rem;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.32;
+}
+
 .phase-plan-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -4692,6 +4784,7 @@ tbody tr:hover {
   .smart-hub-grid,
   .smart-hub-basis,
   .smart-hub-support-grid,
+  .phase-plan-radar,
   .phase-plan-grid,
   .smart-watchlist-grid,
   .smart-decision-log-list,
@@ -5149,6 +5242,7 @@ tbody tr:hover {
   .smart-hub-grid,
   .smart-hub-basis,
   .smart-hub-support-grid,
+  .phase-plan-radar,
   .phase-plan-grid,
   .smart-watchlist-grid,
   .smart-decision-log-list,

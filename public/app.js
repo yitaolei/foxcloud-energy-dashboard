@@ -142,6 +142,14 @@ const textFields = {
   operatingSummaryAction: document.getElementById("operatingSummaryAction"),
   phasePlanStatus: document.getElementById("phasePlanStatus"),
   phasePlanDetail: document.getElementById("phasePlanDetail"),
+  phasePlanProgressLabel: document.getElementById("phasePlanProgressLabel"),
+  phasePlanProgressBar: document.getElementById("phasePlanProgressBar"),
+  phasePlanCheckpointCard: document.getElementById("phasePlanCheckpointCard"),
+  phasePlanCheckpoint: document.getElementById("phasePlanCheckpoint"),
+  phasePlanCheckpointDetail: document.getElementById("phasePlanCheckpointDetail"),
+  phasePlanActionCard: document.getElementById("phasePlanActionCard"),
+  phasePlanAction: document.getElementById("phasePlanAction"),
+  phasePlanActionDetail: document.getElementById("phasePlanActionDetail"),
   phasePlanGrid: document.getElementById("phasePlanGrid"),
   smartHubStatus: document.getElementById("smartHubStatus"),
   smartHubConfidence: document.getElementById("smartHubConfidence"),
@@ -642,6 +650,12 @@ const translations = {
     phaseNextPeak: "peak window at {time}",
     phaseNextNight: "night reserve after {time}",
     phaseNextMorning: "morning ramp at {time}",
+    phasePlanProgress: "Phase progress",
+    phasePlanProgressValue: "{percent} through · {remaining} left",
+    phasePlanCheckpoint: "Next checkpoint",
+    phasePlanCheckpointDetail: "Switches to {phase} at {time}.",
+    phasePlanBestAction: "Best action",
+    phasePlanActionDetail: "Based on live surplus, reserve, tariff, and forecast.",
     smartHubKicker: "Smart energy pilot",
     smartHubTitle: "Today's energy decision",
     smartHubNow: "Now",
@@ -1457,6 +1471,12 @@ const translations = {
     phaseNextPeak: "{time} 进入高峰窗口",
     phaseNextNight: "{time} 后进入夜间余量",
     phaseNextMorning: "{time} 早晨蓄势",
+    phasePlanProgress: "阶段进度",
+    phasePlanProgressValue: "已过 {percent} · 剩余 {remaining}",
+    phasePlanCheckpoint: "下一检查点",
+    phasePlanCheckpointDetail: "{time} 切换到“{phase}”。",
+    phasePlanBestAction: "最佳动作",
+    phasePlanActionDetail: "根据实时富余、电池余量、电价和天气预报综合判断。",
     smartHubKicker: "智能能源驾驶舱",
     smartHubTitle: "今日能源判断",
     smartHubNow: "现在",
@@ -2272,6 +2292,12 @@ const translations = {
     phaseNextPeak: "ช่วงพีค {time}",
     phaseNextNight: "สำรองกลางคืนหลัง {time}",
     phaseNextMorning: "ช่วงเช้า {time}",
+    phasePlanProgress: "ความคืบหน้าช่วงนี้",
+    phasePlanProgressValue: "ผ่านแล้ว {percent} · เหลือ {remaining}",
+    phasePlanCheckpoint: "จุดตรวจถัดไป",
+    phasePlanCheckpointDetail: "เปลี่ยนเป็น {phase} เวลา {time}",
+    phasePlanBestAction: "การทำงานที่เหมาะสุด",
+    phasePlanActionDetail: "อิงจากส่วนเกิน แบต ค่าไฟ และพยากรณ์ล่าสุด",
     smartHubKicker: "ผู้ช่วยพลังงานอัจฉริยะ",
     smartHubTitle: "การตัดสินใจพลังงานวันนี้",
     smartHubNow: "ตอนนี้",
@@ -3487,6 +3513,28 @@ function formatClockMinutes(minutes) {
   return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
 }
 
+function getPhaseTiming(activeKey, current, { morningStart, solarStart, peakStart, peakEnd }) {
+  const windows = {
+    morning: { start: morningStart, end: solarStart },
+    solar: { start: solarStart, end: peakStart },
+    peak: { start: peakStart, end: peakEnd + 1 },
+    night: { start: peakEnd + 1, end: morningStart + (24 * 60) },
+  };
+  const window = windows[activeKey] ?? windows.night;
+  const currentInWindow = activeKey === "night" && current < morningStart
+    ? current + (24 * 60)
+    : current;
+  const duration = Math.max(1, window.end - window.start);
+  const elapsed = Math.max(0, Math.min(duration, currentInWindow - window.start));
+  const remaining = Math.max(0, window.end - currentInWindow);
+
+  return {
+    progressPercent: Math.max(0, Math.min(100, (elapsed / duration) * 100)),
+    remainingMinutes: remaining,
+    checkpointMinutes: window.end,
+  };
+}
+
 function getPhasePlan(payload) {
   const tariff = getTariffStatus(payload?.todaySavings ?? {});
   const flexibleLoad = getFlexibleLoadPlan(payload);
@@ -3553,18 +3601,35 @@ function getPhasePlan(payload) {
       : activeKey === "peak"
         ? { key: "phaseNextNight", time: formatClockMinutes(peakEnd + 1) }
         : { key: "phaseNextMorning", time: formatClockMinutes(morningStart) };
+  const nextPhaseKey = {
+    morning: "solar",
+    solar: "peak",
+    peak: "night",
+    night: "morning",
+  }[activeKey];
+  const timing = getPhaseTiming(activeKey, current, {
+    morningStart,
+    solarStart,
+    peakStart,
+    peakEnd,
+  });
+  const plannedPhases = phases.map((phase, index) => ({
+    ...phase,
+    actionKey: phaseActions[phase.key],
+    tone: phaseTones[phase.key],
+    state: phase.key === activeKey ? "active" : !isPreDawn && index < activeIndex ? "past" : "upcoming",
+  }));
 
   return {
     activeKey,
-    activePhase: phases[activeIndex],
+    activePhase: plannedPhases[activeIndex],
+    nextPhase: plannedPhases.find((phase) => phase.key === nextPhaseKey) ?? plannedPhases[0],
     next,
     currentTime: formatClockMinutes(current),
-    phases: phases.map((phase, index) => ({
-      ...phase,
-      actionKey: phaseActions[phase.key],
-      tone: phaseTones[phase.key],
-      state: phase.key === activeKey ? "active" : !isPreDawn && index < activeIndex ? "past" : "upcoming",
-    })),
+    checkpointTime: formatClockMinutes(timing.checkpointMinutes),
+    progressPercent: timing.progressPercent,
+    remainingMinutes: timing.remainingMinutes,
+    phases: plannedPhases,
     values: {
       peakWindow: tariff.peakWindow,
     },
@@ -3587,6 +3652,26 @@ function renderPhasePlan(payload) {
   textFields.phasePlanStatus.dataset.tone = plan.phases.find((phase) => phase.key === plan.activeKey)?.tone ?? "neutral";
   textFields.phasePlanStatus.textContent = t(plan.activePhase.labelKey);
   textFields.phasePlanDetail.textContent = interpolate(t("phasePlanDetail"), values);
+  if (textFields.phasePlanProgressLabel && textFields.phasePlanProgressBar) {
+    textFields.phasePlanProgressLabel.textContent = interpolate(t("phasePlanProgressValue"), {
+      percent: formatPercent(plan.progressPercent),
+      remaining: formatDurationMinutes(plan.remainingMinutes),
+    });
+    textFields.phasePlanProgressBar.style.width = `${plan.progressPercent.toFixed(1)}%`;
+  }
+  if (textFields.phasePlanCheckpoint) {
+    textFields.phasePlanCheckpointCard.dataset.tone = plan.nextPhase.tone;
+    textFields.phasePlanCheckpoint.textContent = t(plan.nextPhase.labelKey);
+    textFields.phasePlanCheckpointDetail.textContent = interpolate(t("phasePlanCheckpointDetail"), {
+      phase: t(plan.nextPhase.labelKey),
+      time: plan.checkpointTime,
+    });
+  }
+  if (textFields.phasePlanAction) {
+    textFields.phasePlanActionCard.dataset.tone = plan.activePhase.tone;
+    textFields.phasePlanAction.textContent = t(plan.activePhase.actionKey);
+    textFields.phasePlanActionDetail.textContent = t("phasePlanActionDetail");
+  }
   textFields.phasePlanGrid.replaceChildren(...plan.phases.map((phase) => {
     const card = document.createElement("article");
     const label = document.createElement("span");

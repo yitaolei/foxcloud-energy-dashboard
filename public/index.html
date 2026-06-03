@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-03-phase-trail" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-03-phase-radar" />
   </head>
   <body>
     <div class="page-shell">
@@ -235,6 +235,27 @@
               <p id="phasePlanDetail" class="muted-copy">--</p>
             </div>
             <strong id="phasePlanStatus" class="phase-plan-status">--</strong>
+          </div>
+          <div class="phase-plan-radar">
+            <div class="phase-plan-progress-block">
+              <div class="phase-plan-progress-head">
+                <span data-i18n="phasePlanProgress">Phase progress</span>
+                <b id="phasePlanProgressLabel">--</b>
+              </div>
+              <div class="phase-plan-progress" aria-hidden="true">
+                <span id="phasePlanProgressBar"></span>
+              </div>
+            </div>
+            <article id="phasePlanCheckpointCard" data-tone="neutral">
+              <span data-i18n="phasePlanCheckpoint">Next checkpoint</span>
+              <strong id="phasePlanCheckpoint">--</strong>
+              <small id="phasePlanCheckpointDetail">--</small>
+            </article>
+            <article id="phasePlanActionCard" data-tone="neutral">
+              <span data-i18n="phasePlanBestAction">Best action</span>
+              <strong id="phasePlanAction">--</strong>
+              <small id="phasePlanActionDetail">--</small>
+            </article>
           </div>
           <div id="phasePlanGrid" class="phase-plan-grid"></div>
         </section>
@@ -1656,6 +1677,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-03-phase-trail"></script>
+    <script src="/app.js?v=2026-06-03-phase-radar"></script>
   </body>
 </html>
