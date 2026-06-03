@@ -35,6 +35,7 @@
 - Added a tonight operating plan that turns live load headroom, peak timing, battery runway, grid pressure, and tomorrow's forecast into a four-stage evening timeline.
 - Added a flexible load queue that groups deferrable loads into run-now, delay, and avoid lanes using the live load-advisor signals.
 - Added a smart power-routing panel that visualizes live solar output, home load, battery flow, and grid flow as normalized cockpit bars.
+- Added a daily operating phase panel that highlights the current household energy phase and the next checkpoint across morning, solar, peak, and overnight windows.
 
 ### Changed
 
@@ -43,7 +44,7 @@
 - Made the battery factor in the energy health score larger and color-coded by SOC level.
 - Expanded live data confidence warning text with the current response warning detail and generated timestamp.
 - Kept settings panels grouped near the bottom of the dashboard, with forecast location settings immediately before savings settings.
-- Reworked the smart decision log into a compact signal-change trail so repeated recommendations no longer dominate the smart energy panel.
+- Reworked the smart decision log into a cleaner decision trail with one current recommendation and compact change rows instead of repeated identical advice.
 - Rebalanced the smart energy panel layout by turning decision basis into a lighter strip and grouping watchlist/history as secondary context.
 - Tightened the load advisor into a compact step strip and two-column load list, with full detail reserved for loads that need waiting or avoiding.
 - Grouped daily bill/score and data/tariff panels into compact dashboard rows, and turned savings plus action advice into lighter scanning sections.

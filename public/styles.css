@@ -1532,6 +1532,125 @@ section[id] {
   line-height: 1.15;
 }
 
+.phase-plan-panel {
+  border-color: rgba(37, 99, 235, 0.12);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.76)),
+    var(--surface-strong);
+}
+
+.phase-plan-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+}
+
+.phase-plan-status {
+  justify-self: end;
+  color: #2563eb;
+  font-size: clamp(1.28rem, 2vw, 1.8rem);
+  line-height: 1.05;
+  text-align: right;
+}
+
+.phase-plan-status[data-tone="good"] {
+  color: #0f766e;
+}
+
+.phase-plan-status[data-tone="watch"] {
+  color: #b45309;
+}
+
+.phase-plan-status[data-tone="alert"] {
+  color: #b91c1c;
+}
+
+.phase-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+}
+
+.phase-plan-grid article {
+  position: relative;
+  min-height: 126px;
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.78rem 0.84rem 0.82rem 1rem;
+  overflow: hidden;
+}
+
+.phase-plan-grid article::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, #64748b, #94a3b8);
+}
+
+.phase-plan-grid article[data-tone="good"]::before {
+  background: linear-gradient(180deg, #22c55e, #14b8a6);
+}
+
+.phase-plan-grid article[data-tone="watch"]::before {
+  background: linear-gradient(180deg, #f59e0b, #f97316);
+}
+
+.phase-plan-grid article[data-tone="alert"]::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.phase-plan-grid article[data-state="past"] {
+  background: rgba(248, 250, 252, 0.55);
+  opacity: 0.78;
+}
+
+.phase-plan-grid article[data-state="active"] {
+  border-color: rgba(37, 99, 235, 0.26);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 14px 32px rgba(37, 99, 235, 0.1);
+}
+
+.phase-plan-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.phase-plan-grid strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--ink);
+  font-size: clamp(1rem, 1.45vw, 1.22rem);
+  line-height: 1.12;
+}
+
+.phase-plan-grid em {
+  display: inline-flex;
+  margin-top: 0.45rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.phase-plan-grid small {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.34;
+}
+
 .smart-hub-panel {
   border-color: rgba(15, 118, 110, 0.2);
   background:
@@ -1835,6 +1954,15 @@ section[id] {
   background: linear-gradient(180deg, #ef4444, #dc2626);
 }
 
+.smart-decision-log-list article[data-kind="current"] {
+  border-color: rgba(20, 184, 166, 0.24);
+  background: rgba(240, 253, 250, 0.76);
+}
+
+.smart-decision-log-list article[data-kind="trail"] {
+  background: rgba(255, 255, 255, 0.58);
+}
+
 .smart-decision-log-time {
   display: block;
   color: var(--muted);
@@ -1842,11 +1970,20 @@ section[id] {
   font-weight: 800;
 }
 
+.smart-decision-log-list article[data-kind="current"] .smart-decision-log-time {
+  color: #0f766e;
+  font-weight: 950;
+}
+
 .smart-decision-log-summary {
   display: block;
   color: #14352c;
   font-size: 0.86rem;
   font-weight: 950;
+}
+
+.smart-decision-log-list article[data-kind="current"] .smart-decision-log-summary {
+  font-size: 0.98rem;
 }
 
 .smart-decision-log-metrics {
@@ -4555,6 +4692,7 @@ tbody tr:hover {
   .smart-hub-grid,
   .smart-hub-basis,
   .smart-hub-support-grid,
+  .phase-plan-grid,
   .smart-watchlist-grid,
   .smart-decision-log-list,
   .smart-flow-split-grid,
@@ -4614,6 +4752,15 @@ tbody tr:hover {
 
   .smart-hub-head {
     grid-template-columns: 1fr;
+  }
+
+  .phase-plan-head {
+    grid-template-columns: 1fr;
+  }
+
+  .phase-plan-status {
+    justify-self: start;
+    text-align: left;
   }
 
   .smart-hub-status {
@@ -5002,6 +5149,7 @@ tbody tr:hover {
   .smart-hub-grid,
   .smart-hub-basis,
   .smart-hub-support-grid,
+  .phase-plan-grid,
   .smart-watchlist-grid,
   .smart-decision-log-list,
   .smart-flow-split-grid,

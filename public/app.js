@@ -140,6 +140,9 @@ const textFields = {
   operatingSummaryGrid: document.getElementById("operatingSummaryGrid"),
   operatingSummaryReserve: document.getElementById("operatingSummaryReserve"),
   operatingSummaryAction: document.getElementById("operatingSummaryAction"),
+  phasePlanStatus: document.getElementById("phasePlanStatus"),
+  phasePlanDetail: document.getElementById("phasePlanDetail"),
+  phasePlanGrid: document.getElementById("phasePlanGrid"),
   smartHubStatus: document.getElementById("smartHubStatus"),
   smartHubConfidence: document.getElementById("smartHubConfidence"),
   smartHubConfidenceValue: document.getElementById("smartHubConfidenceValue"),
@@ -617,6 +620,28 @@ const translations = {
     operatingNetImport: "Net import {value}",
     operatingSummaryReserve: "Reserve above 20%",
     operatingSummaryAction: "Next action",
+    phasePlanKicker: "Day phase",
+    phasePlanTitle: "Operating rhythm",
+    phasePlanDetail: "Now {time}. {phase} is active; next checkpoint: {next}.",
+    phaseCurrent: "Current phase",
+    phaseMorning: "Morning ramp",
+    phaseSolar: "Solar window",
+    phasePeak: "Peak guard",
+    phaseNight: "Night reserve",
+    phaseMorningDetail: "Let solar build; keep heavy flexible loads waiting.",
+    phaseSolarDetail: "Use surplus before the peak window if headroom appears.",
+    phasePeakDetail: "Avoid avoidable import during {peakWindow}.",
+    phaseNightDetail: "Protect battery reserve for overnight household load.",
+    phaseActionWaitForSun: "Wait for solar",
+    phaseActionUseSurplus: "Use surplus now",
+    phaseActionWatchSurplus: "Watch surplus",
+    phaseActionReduceImport: "Reduce import",
+    phaseActionProtectReserve: "Protect reserve",
+    phaseActionNormal: "Normal rhythm",
+    phaseNextSolar: "solar window at {time}",
+    phaseNextPeak: "peak window at {time}",
+    phaseNextNight: "night reserve after {time}",
+    phaseNextMorning: "morning ramp at {time}",
     smartHubKicker: "Smart energy pilot",
     smartHubTitle: "Today's energy decision",
     smartHubNow: "Now",
@@ -712,10 +737,11 @@ const translations = {
     smartWatchWeather: "Tomorrow outlook",
     smartWatchWeatherWeak: "Tomorrow solar may be weaker; finish flexible loads sooner if possible.",
     smartWatchWeatherGood: "Tomorrow solar outlook supports delaying non-urgent loads.",
-    smartDecisionLog: "Recent decisions",
+    smartDecisionLog: "Decision trail",
     smartDecisionLogEmpty: "Waiting for smart decisions.",
     smartDecisionLogMeta: "Stored in this browser · latest {time}",
     smartDecisionLogMetaEmpty: "Stored in this browser",
+    smartDecisionLogNow: "Current advice",
     smartDecisionLogConfidence: "Confidence {value}",
     smartDecisionLogChangedTo: "Switched to {status}",
     smartDecisionLogStarted: "Baseline captured",
@@ -1409,6 +1435,28 @@ const translations = {
     operatingNetImport: "净取电 {value}",
     operatingSummaryReserve: "高于 20% 的余量",
     operatingSummaryAction: "下一步建议",
+    phasePlanKicker: "运行阶段",
+    phasePlanTitle: "今日运行节奏",
+    phasePlanDetail: "现在 {time}。当前处于“{phase}”；下一检查点：{next}。",
+    phaseCurrent: "当前阶段",
+    phaseMorning: "早晨蓄势",
+    phaseSolar: "太阳窗口",
+    phasePeak: "晚高峰防守",
+    phaseNight: "夜间余量",
+    phaseMorningDetail: "先让太阳能爬升，大功率可推迟负载先等等。",
+    phaseSolarDetail: "如果出现富余电，尽量在高峰前使用掉。",
+    phasePeakDetail: "高峰 {peakWindow} 期间，尽量避免不必要取电。",
+    phaseNightDetail: "保护电池余量，留给夜间家庭基础负载。",
+    phaseActionWaitForSun: "等太阳能爬升",
+    phaseActionUseSurplus: "现在利用富余",
+    phaseActionWatchSurplus: "观察太阳富余",
+    phaseActionReduceImport: "减少电网取电",
+    phaseActionProtectReserve: "保护电池余量",
+    phaseActionNormal: "保持正常节奏",
+    phaseNextSolar: "{time} 进入太阳窗口",
+    phaseNextPeak: "{time} 进入高峰窗口",
+    phaseNextNight: "{time} 后进入夜间余量",
+    phaseNextMorning: "{time} 早晨蓄势",
     smartHubKicker: "智能能源驾驶舱",
     smartHubTitle: "今日能源判断",
     smartHubNow: "现在",
@@ -1504,10 +1552,11 @@ const translations = {
     smartWatchWeather: "明天预报",
     smartWatchWeatherWeak: "明天太阳能可能偏弱，可推迟负载尽量提前完成。",
     smartWatchWeatherGood: "明天太阳能预报可用，非紧急负载可以考虑延后。",
-    smartDecisionLog: "最近判断",
+    smartDecisionLog: "判断轨迹",
     smartDecisionLogEmpty: "等待智能判断记录。",
     smartDecisionLogMeta: "仅保存在这个浏览器 · 最新 {time}",
     smartDecisionLogMetaEmpty: "仅保存在这个浏览器",
+    smartDecisionLogNow: "当前建议",
     smartDecisionLogConfidence: "可信度 {value}",
     smartDecisionLogChangedTo: "切换为{status}",
     smartDecisionLogStarted: "已记录基准",
@@ -2201,6 +2250,28 @@ const translations = {
     operatingNetImport: "นำเข้าสุทธิ {value}",
     operatingSummaryReserve: "สำรองเหนือ 20%",
     operatingSummaryAction: "ขั้นต่อไป",
+    phasePlanKicker: "ช่วงของวัน",
+    phasePlanTitle: "จังหวะการทำงานวันนี้",
+    phasePlanDetail: "ตอนนี้ {time}. ช่วง {phase} กำลังทำงาน; จุดตรวจถัดไป: {next}",
+    phaseCurrent: "ช่วงปัจจุบัน",
+    phaseMorning: "ช่วงเช้า",
+    phaseSolar: "หน้าต่างโซลาร์",
+    phasePeak: "กันช่วงพีค",
+    phaseNight: "สำรองกลางคืน",
+    phaseMorningDetail: "รอให้โซลาร์ขึ้นก่อน เลื่อนโหลดหนักไว้ก่อน",
+    phaseSolarDetail: "ใช้ไฟส่วนเกินก่อนช่วงพีคถ้ามี headroom",
+    phasePeakDetail: "เลี่ยงนำเข้าที่ไม่จำเป็นช่วง {peakWindow}",
+    phaseNightDetail: "รักษาแบตสำรองไว้สำหรับโหลดบ้านข้ามคืน",
+    phaseActionWaitForSun: "รอโซลาร์ขึ้น",
+    phaseActionUseSurplus: "ใช้ไฟส่วนเกินตอนนี้",
+    phaseActionWatchSurplus: "เฝ้าดูไฟส่วนเกิน",
+    phaseActionReduceImport: "ลดนำเข้ากริด",
+    phaseActionProtectReserve: "ป้องกันแบตสำรอง",
+    phaseActionNormal: "จังหวะปกติ",
+    phaseNextSolar: "หน้าต่างโซลาร์ {time}",
+    phaseNextPeak: "ช่วงพีค {time}",
+    phaseNextNight: "สำรองกลางคืนหลัง {time}",
+    phaseNextMorning: "ช่วงเช้า {time}",
     smartHubKicker: "ผู้ช่วยพลังงานอัจฉริยะ",
     smartHubTitle: "การตัดสินใจพลังงานวันนี้",
     smartHubNow: "ตอนนี้",
@@ -2296,10 +2367,11 @@ const translations = {
     smartWatchWeather: "พยากรณ์พรุ่งนี้",
     smartWatchWeatherWeak: "โซลาร์พรุ่งนี้อาจอ่อน ควรจบโหลดที่เลื่อนได้เร็วขึ้น",
     smartWatchWeatherGood: "พยากรณ์โซลาร์ดี โหลดไม่ด่วนอาจเลื่อนไปได้",
-    smartDecisionLog: "การตัดสินใจล่าสุด",
+    smartDecisionLog: "เส้นทางการตัดสินใจ",
     smartDecisionLogEmpty: "กำลังรอการตัดสินใจอัจฉริยะ",
     smartDecisionLogMeta: "เก็บในเบราว์เซอร์นี้ · ล่าสุด {time}",
     smartDecisionLogMetaEmpty: "เก็บในเบราว์เซอร์นี้",
+    smartDecisionLogNow: "คำแนะนำตอนนี้",
     smartDecisionLogConfidence: "มั่นใจ {value}",
     smartDecisionLogChangedTo: "เปลี่ยนเป็น {status}",
     smartDecisionLogStarted: "บันทึกฐานแล้ว",
@@ -3407,6 +3479,133 @@ function renderOperatingSummary(payload) {
   textFields.operatingSummaryAction.textContent = t(summary.actionKey);
 }
 
+function formatClockMinutes(minutes) {
+  const normalized = ((Math.round(minutes) % (24 * 60)) + 24 * 60) % (24 * 60);
+  const hours = Math.floor(normalized / 60);
+  const mins = normalized % 60;
+
+  return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+}
+
+function getPhasePlan(payload) {
+  const tariff = getTariffStatus(payload?.todaySavings ?? {});
+  const flexibleLoad = getFlexibleLoadPlan(payload);
+  const batteryRunway = getBatteryRunwayPlan(payload);
+  const gridForecast = getGridImportForecast(payload);
+  const morningStart = 5 * 60;
+  const solarStart = 9 * 60;
+  const peakStart = tariff.startMinutes;
+  const peakEnd = tariff.endMinutes;
+  const current = tariff.currentMinutes;
+  const reserve = batteryRunway.reservePercent;
+  const hasSurplus = flexibleLoad.headroomKw >= 0.8 && gridForecast.importPressure < 45;
+  const activeKey = tariff.isPeak
+    ? "peak"
+    : current >= solarStart && current < peakStart
+      ? "solar"
+      : current >= morningStart && current < solarStart
+        ? "morning"
+        : "night";
+  const phaseActions = {
+    morning: "phaseActionWaitForSun",
+    solar: hasSurplus ? "phaseActionUseSurplus" : "phaseActionWatchSurplus",
+    peak: gridForecast.importPressure >= 35 ? "phaseActionReduceImport" : "phaseActionProtectReserve",
+    night: reserve !== null && reserve < 35 ? "phaseActionProtectReserve" : "phaseActionNormal",
+  };
+  const phaseTones = {
+    morning: "watch",
+    solar: hasSurplus ? "good" : "watch",
+    peak: "alert",
+    night: reserve !== null && reserve < 35 ? "watch" : "neutral",
+  };
+  const phases = [
+    {
+      key: "morning",
+      labelKey: "phaseMorning",
+      detailKey: "phaseMorningDetail",
+      window: `${formatClockMinutes(morningStart)}-${formatClockMinutes(solarStart - 1)}`,
+    },
+    {
+      key: "solar",
+      labelKey: "phaseSolar",
+      detailKey: "phaseSolarDetail",
+      window: `${formatClockMinutes(solarStart)}-${formatClockMinutes(peakStart - 1)}`,
+    },
+    {
+      key: "peak",
+      labelKey: "phasePeak",
+      detailKey: "phasePeakDetail",
+      window: tariff.peakWindow,
+    },
+    {
+      key: "night",
+      labelKey: "phaseNight",
+      detailKey: "phaseNightDetail",
+      window: `${formatClockMinutes(peakEnd + 1)}-${formatClockMinutes(morningStart - 1)}`,
+    },
+  ];
+  const activeIndex = phases.findIndex((phase) => phase.key === activeKey);
+  const isPreDawn = activeKey === "night" && current < morningStart;
+  const next = activeKey === "morning"
+    ? { key: "phaseNextSolar", time: formatClockMinutes(solarStart) }
+    : activeKey === "solar"
+      ? { key: "phaseNextPeak", time: formatClockMinutes(peakStart) }
+      : activeKey === "peak"
+        ? { key: "phaseNextNight", time: formatClockMinutes(peakEnd + 1) }
+        : { key: "phaseNextMorning", time: formatClockMinutes(morningStart) };
+
+  return {
+    activeKey,
+    activePhase: phases[activeIndex],
+    next,
+    currentTime: formatClockMinutes(current),
+    phases: phases.map((phase, index) => ({
+      ...phase,
+      actionKey: phaseActions[phase.key],
+      tone: phaseTones[phase.key],
+      state: phase.key === activeKey ? "active" : !isPreDawn && index < activeIndex ? "past" : "upcoming",
+    })),
+    values: {
+      peakWindow: tariff.peakWindow,
+    },
+  };
+}
+
+function renderPhasePlan(payload) {
+  if (!payload?.live || !textFields.phasePlanGrid) {
+    return;
+  }
+
+  const plan = getPhasePlan(payload);
+  const values = {
+    ...plan.values,
+    time: plan.currentTime,
+    phase: t(plan.activePhase.labelKey),
+    next: interpolate(t(plan.next.key), { time: plan.next.time }),
+  };
+
+  textFields.phasePlanStatus.dataset.tone = plan.phases.find((phase) => phase.key === plan.activeKey)?.tone ?? "neutral";
+  textFields.phasePlanStatus.textContent = t(plan.activePhase.labelKey);
+  textFields.phasePlanDetail.textContent = interpolate(t("phasePlanDetail"), values);
+  textFields.phasePlanGrid.replaceChildren(...plan.phases.map((phase) => {
+    const card = document.createElement("article");
+    const label = document.createElement("span");
+    const action = document.createElement("strong");
+    const window = document.createElement("em");
+    const detail = document.createElement("small");
+
+    card.dataset.state = phase.state;
+    card.dataset.tone = phase.tone;
+    label.textContent = t(phase.labelKey);
+    action.textContent = t(phase.actionKey);
+    window.textContent = phase.window;
+    detail.textContent = interpolate(t(phase.detailKey), plan.values);
+    card.append(label, action, window, detail);
+
+    return card;
+  }));
+}
+
 function getSmartHubDecision(payload, weatherPayload = lastWeatherPayload) {
   const live = payload?.live ?? {};
   const today = payload?.today ?? {};
@@ -3890,6 +4089,54 @@ function createSmartDecisionMetric(labelKey, value) {
   return metric;
 }
 
+function createSmartDecisionLogRow(item, previous, kind = "trail") {
+  const row = document.createElement("article");
+  const time = document.createElement("span");
+  const summary = document.createElement("strong");
+  const metrics = document.createElement("div");
+  const confidenceLabel = document.createElement("em");
+  const isCurrent = kind === "current";
+
+  row.dataset.kind = kind;
+  row.dataset.tone = item.confidenceTone ?? "neutral";
+  time.className = "smart-decision-log-time";
+  summary.className = "smart-decision-log-summary";
+  metrics.className = "smart-decision-log-metrics";
+  time.textContent = isCurrent ? t("smartDecisionLogNow") : formatTimestampTime(item.generatedAt);
+  summary.textContent = isCurrent ? t(item.statusKey) : getSmartDecisionLogSummary(item, previous);
+  metrics.append(
+    createSmartDecisionMetric("smartDecisionMetricReserve", item.reserve === null ? "--" : formatPercent(item.reserve)),
+    createSmartDecisionMetric("smartDecisionMetricPressure", formatPercent(item.pressure)),
+    createSmartDecisionMetric("smartDecisionMetricSurplus", formatKw(item.headroomKw)),
+  );
+  confidenceLabel.textContent = interpolate(t("smartDecisionLogConfidence"), {
+    value: `${Number(item.confidenceScore ?? 0).toFixed(0)}%`,
+  });
+  row.append(time, summary, metrics, confidenceLabel);
+
+  return row;
+}
+
+function getSmartDecisionTrailRows(entries) {
+  const seenSummaries = new Set();
+  const rows = [];
+
+  entries.slice(1).forEach((item, index) => {
+    const previous = entries[index + 2];
+    const summary = getSmartDecisionLogSummary(item, previous);
+    const signature = `${item.statusKey}:${summary}`;
+
+    if (seenSummaries.has(signature)) {
+      return;
+    }
+
+    seenSummaries.add(signature);
+    rows.push(createSmartDecisionLogRow(item, previous, "trail"));
+  });
+
+  return rows.slice(0, 2);
+}
+
 function renderSmartDecisionLog(payload, decision, confidence) {
   if (!textFields.smartDecisionLogList) {
     return;
@@ -3909,32 +4156,10 @@ function renderSmartDecisionLog(payload, decision, confidence) {
     time: formatTimestamp(entries[0].generatedAt),
   });
   textFields.smartDecisionTrend.textContent = getSmartDecisionTrend(entries);
-  textFields.smartDecisionLogList.replaceChildren(...entries.slice(0, 4).map((item, index) => {
-    const previous = entries[index + 1];
-    const row = document.createElement("article");
-    const time = document.createElement("span");
-    const summary = document.createElement("strong");
-    const metrics = document.createElement("div");
-    const confidenceLabel = document.createElement("em");
-
-    row.dataset.tone = item.confidenceTone ?? "neutral";
-    time.className = "smart-decision-log-time";
-    summary.className = "smart-decision-log-summary";
-    metrics.className = "smart-decision-log-metrics";
-    time.textContent = formatTimestampTime(item.generatedAt);
-    summary.textContent = getSmartDecisionLogSummary(item, previous);
-    metrics.append(
-      createSmartDecisionMetric("smartDecisionMetricReserve", item.reserve === null ? "--" : formatPercent(item.reserve)),
-      createSmartDecisionMetric("smartDecisionMetricPressure", formatPercent(item.pressure)),
-      createSmartDecisionMetric("smartDecisionMetricSurplus", formatKw(item.headroomKw)),
-    );
-    confidenceLabel.textContent = interpolate(t("smartDecisionLogConfidence"), {
-      value: `${Number(item.confidenceScore ?? 0).toFixed(0)}%`,
-    });
-    row.append(time, summary, metrics, confidenceLabel);
-
-    return row;
-  }));
+  textFields.smartDecisionLogList.replaceChildren(
+    createSmartDecisionLogRow(entries[0], entries[1], "current"),
+    ...getSmartDecisionTrailRows(entries),
+  );
 }
 
 const smartLoads = [
@@ -7564,6 +7789,7 @@ function renderMetrics(payload) {
   renderDataQuality(payload);
   renderVisualKpis(payload);
   renderOperatingSummary(payload);
+  renderPhasePlan(payload);
   renderSmartHub(payload);
   renderNightOpsPlan(payload);
   renderTodayBillImpact(payload);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-03-power-routing" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-03-phase-trail" />
   </head>
   <body>
     <div class="page-shell">
@@ -225,6 +225,18 @@
               <strong id="operatingSummaryAction">--</strong>
             </article>
           </div>
+        </section>
+
+        <section class="panel phase-plan-panel" aria-live="polite">
+          <div class="phase-plan-head">
+            <div>
+              <p class="panel-kicker" data-i18n="phasePlanKicker">Day phase</p>
+              <h2 data-i18n="phasePlanTitle">Operating rhythm</h2>
+              <p id="phasePlanDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="phasePlanStatus" class="phase-plan-status">--</strong>
+          </div>
+          <div id="phasePlanGrid" class="phase-plan-grid"></div>
         </section>
 
         <section class="panel smart-hub-panel" aria-live="polite">
@@ -1644,6 +1656,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-03-power-routing"></script>
+    <script src="/app.js?v=2026-06-03-phase-trail"></script>
   </body>
 </html>
