@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-03-command-brief" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-05-priority-queue" />
   </head>
   <body>
     <div class="page-shell">
@@ -195,6 +195,78 @@
             <span><b data-i18n="inverter">Inverter</b>: <strong id="kpiInverterStatus">--</strong></span>
             <span><b data-i18n="lastUpdate">Last update</b>: <strong id="kpiLastUpdate">--</strong></span>
             <span><b data-i18n="dataSource">Data source</b>: <strong id="kpiDataSource">--</strong></span>
+          </div>
+        </section>
+
+        <section class="panel home-state-panel" aria-live="polite">
+          <div class="home-state-head">
+            <div>
+              <p class="panel-kicker" data-i18n="homeStateKicker">Plain home view</p>
+              <h2 data-i18n="homeStateTitle">Home energy at a glance</h2>
+              <p id="homeStateDetail" class="muted-copy">--</p>
+            </div>
+            <strong id="homeStateVerdict" class="home-state-verdict">--</strong>
+          </div>
+          <div class="home-state-grid">
+            <article id="homeStateBatteryRow" data-tone="neutral">
+              <span data-i18n="homeStateBattery">Battery</span>
+              <strong id="homeStateBatteryStatus">--</strong>
+              <small id="homeStateBatteryDetail">--</small>
+              <div class="home-state-bar" aria-hidden="true"><i id="homeStateBatteryBar"></i></div>
+            </article>
+            <article id="homeStateSolarRow" data-tone="neutral">
+              <span data-i18n="homeStateSolar">Solar flow</span>
+              <strong id="homeStateSolarStatus">--</strong>
+              <small id="homeStateSolarDetail">--</small>
+              <div class="home-state-bar" aria-hidden="true"><i id="homeStateSolarBar"></i></div>
+            </article>
+            <article id="homeStateLoadRow" data-tone="neutral">
+              <span data-i18n="homeStateLoad">Home load</span>
+              <strong id="homeStateLoadStatus">--</strong>
+              <small id="homeStateLoadDetail">--</small>
+              <div class="home-state-bar" aria-hidden="true"><i id="homeStateLoadBar"></i></div>
+            </article>
+            <article id="homeStateGridRow" data-tone="neutral">
+              <span data-i18n="homeStateGrid">Grid</span>
+              <strong id="homeStateGridStatus">--</strong>
+              <small id="homeStateGridDetail">--</small>
+              <div class="home-state-bar" aria-hidden="true"><i id="homeStateGridBar"></i></div>
+            </article>
+          </div>
+          <div class="home-judgement">
+            <div class="home-judgement-head">
+              <span data-i18n="homeJudgementKicker">Auto judgement</span>
+              <small id="homeJudgementMeta">--</small>
+            </div>
+            <div class="home-judgement-grid">
+              <article id="homeJudgeLoadCard" data-tone="neutral">
+                <span data-i18n="homeJudgeLoad">Flexible loads</span>
+                <strong id="homeJudgeLoadStatus">--</strong>
+                <small id="homeJudgeLoadDetail">--</small>
+              </article>
+              <article id="homeJudgePeakCard" data-tone="neutral">
+                <span data-i18n="homeJudgePeak">Peak readiness</span>
+                <strong id="homeJudgePeakStatus">--</strong>
+                <small id="homeJudgePeakDetail">--</small>
+              </article>
+              <article id="homeJudgeNightCard" data-tone="neutral">
+                <span data-i18n="homeJudgeNight">Tonight battery</span>
+                <strong id="homeJudgeNightStatus">--</strong>
+                <small id="homeJudgeNightDetail">--</small>
+              </article>
+              <article id="homeJudgeTomorrowCard" data-tone="neutral">
+                <span data-i18n="homeJudgeTomorrow">Tomorrow plan</span>
+                <strong id="homeJudgeTomorrowStatus">--</strong>
+                <small id="homeJudgeTomorrowDetail">--</small>
+              </article>
+            </div>
+          </div>
+          <div class="home-action-queue">
+            <div class="home-action-queue-head">
+              <span data-i18n="homeActionQueueKicker">Action priorities</span>
+              <small id="homeActionQueueMeta">--</small>
+            </div>
+            <ol id="homeActionQueueList" class="home-action-list"></ol>
           </div>
         </section>
 
@@ -1721,6 +1793,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-03-command-brief"></script>
+    <script src="/app.js?v=2026-06-05-priority-queue"></script>
   </body>
 </html>

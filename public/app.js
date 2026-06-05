@@ -134,6 +134,39 @@ const textFields = {
   kpiInverterStatus: document.getElementById("kpiInverterStatus"),
   kpiLastUpdate: document.getElementById("kpiLastUpdate"),
   kpiDataSource: document.getElementById("kpiDataSource"),
+  homeStateVerdict: document.getElementById("homeStateVerdict"),
+  homeStateDetail: document.getElementById("homeStateDetail"),
+  homeStateBatteryRow: document.getElementById("homeStateBatteryRow"),
+  homeStateBatteryStatus: document.getElementById("homeStateBatteryStatus"),
+  homeStateBatteryDetail: document.getElementById("homeStateBatteryDetail"),
+  homeStateBatteryBar: document.getElementById("homeStateBatteryBar"),
+  homeStateSolarRow: document.getElementById("homeStateSolarRow"),
+  homeStateSolarStatus: document.getElementById("homeStateSolarStatus"),
+  homeStateSolarDetail: document.getElementById("homeStateSolarDetail"),
+  homeStateSolarBar: document.getElementById("homeStateSolarBar"),
+  homeStateLoadRow: document.getElementById("homeStateLoadRow"),
+  homeStateLoadStatus: document.getElementById("homeStateLoadStatus"),
+  homeStateLoadDetail: document.getElementById("homeStateLoadDetail"),
+  homeStateLoadBar: document.getElementById("homeStateLoadBar"),
+  homeStateGridRow: document.getElementById("homeStateGridRow"),
+  homeStateGridStatus: document.getElementById("homeStateGridStatus"),
+  homeStateGridDetail: document.getElementById("homeStateGridDetail"),
+  homeStateGridBar: document.getElementById("homeStateGridBar"),
+  homeJudgementMeta: document.getElementById("homeJudgementMeta"),
+  homeJudgeLoadCard: document.getElementById("homeJudgeLoadCard"),
+  homeJudgeLoadStatus: document.getElementById("homeJudgeLoadStatus"),
+  homeJudgeLoadDetail: document.getElementById("homeJudgeLoadDetail"),
+  homeJudgePeakCard: document.getElementById("homeJudgePeakCard"),
+  homeJudgePeakStatus: document.getElementById("homeJudgePeakStatus"),
+  homeJudgePeakDetail: document.getElementById("homeJudgePeakDetail"),
+  homeJudgeNightCard: document.getElementById("homeJudgeNightCard"),
+  homeJudgeNightStatus: document.getElementById("homeJudgeNightStatus"),
+  homeJudgeNightDetail: document.getElementById("homeJudgeNightDetail"),
+  homeJudgeTomorrowCard: document.getElementById("homeJudgeTomorrowCard"),
+  homeJudgeTomorrowStatus: document.getElementById("homeJudgeTomorrowStatus"),
+  homeJudgeTomorrowDetail: document.getElementById("homeJudgeTomorrowDetail"),
+  homeActionQueueMeta: document.getElementById("homeActionQueueMeta"),
+  homeActionQueueList: document.getElementById("homeActionQueueList"),
   operatingSummaryVerdict: document.getElementById("operatingSummaryVerdict"),
   operatingSummaryDetail: document.getElementById("operatingSummaryDetail"),
   operatingSummarySolar: document.getElementById("operatingSummarySolar"),
@@ -636,6 +669,77 @@ const translations = {
     batteryKpiDetail: "In {charged} · out {discharged}",
     netGridExporting: "Net exporter today",
     netGridImporting: "Net importer today",
+    homeStateKicker: "Plain home view",
+    homeStateTitle: "Home energy at a glance",
+    homeStateDetail: "Solar {solar}, home load {home}, battery {battery}, grid {grid}. Updated {updated}.",
+    homeStateBattery: "Battery",
+    homeStateSolar: "Solar flow",
+    homeStateLoad: "Home load",
+    homeStateGrid: "Grid",
+    homeStateVerdictUseSun: "Use solar now",
+    homeStateVerdictSaveBattery: "Save battery",
+    homeStateVerdictAvoidGrid: "Avoid grid import",
+    homeStateVerdictSteady: "Home is steady",
+    homeStateBatteryGood: "Comfortable reserve",
+    homeStateBatteryWatch: "Watch reserve",
+    homeStateBatteryLow: "Low reserve",
+    homeStateBatteryUnknown: "Waiting for battery",
+    homeStateBatteryDetail: "SOC {soc}; reserve {reserve}; runway {runway}.",
+    homeStateSolarHome: "Covering home",
+    homeStateSolarCharging: "Charging battery",
+    homeStateSolarExport: "Exporting surplus",
+    homeStateSolarWeak: "Solar is light",
+    homeStateSolarIdle: "Solar idle",
+    homeStateSolarDetail: "{cover} of live home load. Export {export}; battery charge {charge}.",
+    homeStateLoadLow: "Light load",
+    homeStateLoadNormal: "Normal load",
+    homeStateLoadHigh: "High load",
+    homeStateLoadDetail: "Home {home}; recent average {average}; grid support {grid}.",
+    homeStateGridExport: "Exporting",
+    homeStateGridImport: "Importing",
+    homeStateGridBalanced: "Balanced",
+    homeStateGridDetail: "{tariff}; pressure {pressure}; action {action}.",
+    homeJudgementKicker: "Auto judgement",
+    homeJudgementMeta: "Judged from live flow, reserve, tariff, and forecast.",
+    homeJudgeLoad: "Flexible loads",
+    homeJudgePeak: "Peak readiness",
+    homeJudgeNight: "Tonight battery",
+    homeJudgeTomorrow: "Tomorrow plan",
+    homeJudgeLoadRun: "Run one load",
+    homeJudgeLoadLight: "Only light loads",
+    homeJudgeLoadWait: "Wait",
+    homeJudgeLoadAvoid: "Avoid now",
+    homeJudgeLoadDetail: "Headroom {headroom}; grid pressure {pressure}; battery {reserve}.",
+    homeJudgePeakReady: "Ready",
+    homeJudgePeakWatch: "Watch",
+    homeJudgePeakLow: "Low",
+    homeJudgePeakDetail: "Score {score}; peak {window}; grid {grid}.",
+    homeJudgeNightSafe: "Comfortable",
+    homeJudgeNightWatch: "Use gently",
+    homeJudgeNightSave: "Save battery",
+    homeJudgeNightDetail: "Runway {runway}; reserve {reserve}; risk {risk}.",
+    homeJudgeTomorrowSolar: "Use solar window",
+    homeJudgeTomorrowLight: "Keep loads light",
+    homeJudgeTomorrowWait: "Wait for forecast",
+    homeJudgeTomorrowDetail: "Outlook {outlook}; best window {window}; action {action}.",
+    homeActionQueueKicker: "Action priorities",
+    homeActionQueueMeta: "Ranked by impact; only the three most useful moves are shown.",
+    homeActionRunLoad: "Run one flexible load",
+    homeActionRunLoadDetail: "Headroom {headroom}; battery reserve {reserve}; grid pressure {pressure}.",
+    homeActionLightLoad: "Keep it to light loads",
+    homeActionLightLoadDetail: "Some solar is available, but headroom is only {headroom}; avoid stacking appliances.",
+    homeActionReduceImport: "Reduce grid import first",
+    homeActionReduceImportDetail: "Grid pressure {pressure}; {tariff}. Avoid overlapping high-power appliances.",
+    homeActionProtectBattery: "Protect battery reserve",
+    homeActionProtectBatteryDetail: "Reserve {reserve}; runway {runway}; risk {risk}.",
+    homeActionPeakPrep: "Prepare for peak",
+    homeActionPeakPrepDetail: "Readiness {score}; peak window {window}. Finish flexible loads before it tightens.",
+    homeActionPlanTomorrow: "Plan around tomorrow",
+    homeActionPlanTomorrowDetail: "Tomorrow {outlook}; best window {window}; {action}.",
+    homeActionWatchForecast: "Refresh the forecast",
+    homeActionWatchForecastDetail: "Tomorrow outlook is not ready yet; keep larger loads flexible until forecast data arrives.",
+    homeActionSteady: "Hold the current rhythm",
+    homeActionSteadyDetail: "Battery, grid, and home load are controlled. Recheck on the next refresh.",
     operatingSummaryKicker: "Operating summary",
     operatingSummaryTitle: "Today at a glance",
     operatingSummaryDetail: "Self-sufficiency {self}. {grid}. Dominant recent mode: {mode}.",
@@ -1487,6 +1591,77 @@ const translations = {
     batteryKpiDetail: "充入 {charged} · 放出 {discharged}",
     netGridExporting: "今天净回馈电网",
     netGridImporting: "今天净从电网取电",
+    homeStateKicker: "一眼看懂",
+    homeStateTitle: "家庭能源状态",
+    homeStateDetail: "太阳能 {solar}，家庭负载 {home}，电池 {battery}，电网 {grid}。更新：{updated}。",
+    homeStateBattery: "电池",
+    homeStateSolar: "太阳能流向",
+    homeStateLoad: "家庭负载",
+    homeStateGrid: "电网",
+    homeStateVerdictUseSun: "现在用太阳能",
+    homeStateVerdictSaveBattery: "保住电池",
+    homeStateVerdictAvoidGrid: "避免从电网取电",
+    homeStateVerdictSteady: "家里状态平稳",
+    homeStateBatteryGood: "电池余量舒服",
+    homeStateBatteryWatch: "留意电池余量",
+    homeStateBatteryLow: "电池余量偏低",
+    homeStateBatteryUnknown: "等待电池数据",
+    homeStateBatteryDetail: "SOC {soc}；高于 20% 余量 {reserve}；续航 {runway}。",
+    homeStateSolarHome: "正在覆盖家里",
+    homeStateSolarCharging: "正在充电池",
+    homeStateSolarExport: "正在回馈富余电",
+    homeStateSolarWeak: "太阳能偏弱",
+    homeStateSolarIdle: "太阳能待机",
+    homeStateSolarDetail: "覆盖当前家庭负载 {cover}。回馈 {export}；充电 {charge}。",
+    homeStateLoadLow: "轻负载",
+    homeStateLoadNormal: "正常负载",
+    homeStateLoadHigh: "高负载",
+    homeStateLoadDetail: "当前家庭用电 {home}；最近平均 {average}；电网支撑 {grid}。",
+    homeStateGridExport: "正在回馈",
+    homeStateGridImport: "正在取电",
+    homeStateGridBalanced: "基本平衡",
+    homeStateGridDetail: "{tariff}；取电压力 {pressure}；建议 {action}。",
+    homeJudgementKicker: "系统自动判断",
+    homeJudgementMeta: "根据实时流向、电池余量、电价和天气预报综合判断。",
+    homeJudgeLoad: "可推迟负载",
+    homeJudgePeak: "晚高峰准备",
+    homeJudgeNight: "今晚电池",
+    homeJudgeTomorrow: "明日安排",
+    homeJudgeLoadRun: "可以开一个负载",
+    homeJudgeLoadLight: "只开轻负载",
+    homeJudgeLoadWait: "先等一等",
+    homeJudgeLoadAvoid: "现在避免",
+    homeJudgeLoadDetail: "可用余量 {headroom}；取电压力 {pressure}；电池余量 {reserve}。",
+    homeJudgePeakReady: "准备好了",
+    homeJudgePeakWatch: "需要留意",
+    homeJudgePeakLow: "准备偏低",
+    homeJudgePeakDetail: "评分 {score}；高峰 {window}；电网 {grid}。",
+    homeJudgeNightSafe: "比较安心",
+    homeJudgeNightWatch: "温和用电",
+    homeJudgeNightSave: "保住电池",
+    homeJudgeNightDetail: "续航 {runway}；余量 {reserve}；风险 {risk}。",
+    homeJudgeTomorrowSolar: "安排到太阳窗口",
+    homeJudgeTomorrowLight: "保持轻负载",
+    homeJudgeTomorrowWait: "等待预报",
+    homeJudgeTomorrowDetail: "发电天气 {outlook}；最佳窗口 {window}；建议 {action}。",
+    homeActionQueueKicker: "行动优先级",
+    homeActionQueueMeta: "按影响排序，只显示现在最值得做的三件事。",
+    homeActionRunLoad: "趁太阳开一个负载",
+    homeActionRunLoadDetail: "可用富余 {headroom}；电池余量 {reserve}；取电压力 {pressure}。",
+    homeActionLightLoad: "只安排轻负载",
+    homeActionLightLoadDetail: "有一些太阳能可用，但富余只有 {headroom}；不要叠加多个电器。",
+    homeActionReduceImport: "先降低取电",
+    homeActionReduceImportDetail: "取电压力 {pressure}；{tariff}。现在避免叠加大功率电器。",
+    homeActionProtectBattery: "保护电池余量",
+    homeActionProtectBatteryDetail: "电池余量 {reserve}；续航 {runway}；风险 {risk}。",
+    homeActionPeakPrep: "为晚高峰做准备",
+    homeActionPeakPrepDetail: "准备评分 {score}；高峰窗口 {window}。尽量先完成可推迟负载。",
+    homeActionPlanTomorrow: "围绕明天安排",
+    homeActionPlanTomorrowDetail: "明天 {outlook}；最佳窗口 {window}；{action}。",
+    homeActionWatchForecast: "刷新天气预报",
+    homeActionWatchForecastDetail: "明天发电预报还没准备好；大负载先保持可调整。",
+    homeActionSteady: "保持当前节奏",
+    homeActionSteadyDetail: "电池、电网和家庭负载都可控。下一次刷新再判断。",
     operatingSummaryKicker: "运行摘要",
     operatingSummaryTitle: "今日一眼总览",
     operatingSummaryDetail: "自给率 {self}。{grid}。最近主要模式：{mode}。",
@@ -2338,6 +2513,77 @@ const translations = {
     batteryKpiDetail: "เข้า {charged} · ออก {discharged}",
     netGridExporting: "วันนี้ส่งออกสุทธิ",
     netGridImporting: "วันนี้นำเข้าสุทธิ",
+    homeStateKicker: "มองครั้งเดียวเข้าใจ",
+    homeStateTitle: "สถานะพลังงานในบ้าน",
+    homeStateDetail: "โซลาร์ {solar}, โหลดบ้าน {home}, แบต {battery}, กริด {grid}. อัปเดต {updated}",
+    homeStateBattery: "แบตเตอรี่",
+    homeStateSolar: "ทางไฟโซลาร์",
+    homeStateLoad: "โหลดบ้าน",
+    homeStateGrid: "กริด",
+    homeStateVerdictUseSun: "ใช้โซลาร์ตอนนี้",
+    homeStateVerdictSaveBattery: "เก็บแบตไว้",
+    homeStateVerdictAvoidGrid: "เลี่ยงใช้ไฟกริด",
+    homeStateVerdictSteady: "บ้านคงที่",
+    homeStateBatteryGood: "แบตสำรองดี",
+    homeStateBatteryWatch: "ดูแบตสำรอง",
+    homeStateBatteryLow: "แบตสำรองต่ำ",
+    homeStateBatteryUnknown: "รอข้อมูลแบต",
+    homeStateBatteryDetail: "SOC {soc}; สำรอง {reserve}; ระยะเวลา {runway}",
+    homeStateSolarHome: "จ่ายให้บ้าน",
+    homeStateSolarCharging: "ชาร์จแบต",
+    homeStateSolarExport: "ส่งออกไฟเหลือ",
+    homeStateSolarWeak: "โซลาร์อ่อน",
+    homeStateSolarIdle: "โซลาร์ว่าง",
+    homeStateSolarDetail: "ครอบคลุมโหลดสด {cover}. ส่งออก {export}; ชาร์จ {charge}",
+    homeStateLoadLow: "โหลดเบา",
+    homeStateLoadNormal: "โหลดปกติ",
+    homeStateLoadHigh: "โหลดสูง",
+    homeStateLoadDetail: "บ้าน {home}; เฉลี่ยล่าสุด {average}; พึ่งกริด {grid}",
+    homeStateGridExport: "กำลังส่งออก",
+    homeStateGridImport: "กำลังนำเข้า",
+    homeStateGridBalanced: "สมดุล",
+    homeStateGridDetail: "{tariff}; แรงกด {pressure}; คำแนะนำ {action}",
+    homeJudgementKicker: "การตัดสินใจอัตโนมัติ",
+    homeJudgementMeta: "ตัดสินจากไฟสด สำรองแบต ค่าไฟ และพยากรณ์",
+    homeJudgeLoad: "โหลดที่ยืดหยุ่น",
+    homeJudgePeak: "พร้อมช่วงพีค",
+    homeJudgeNight: "แบตคืนนี้",
+    homeJudgeTomorrow: "แผนพรุ่งนี้",
+    homeJudgeLoadRun: "เปิดได้หนึ่งโหลด",
+    homeJudgeLoadLight: "โหลดเบาเท่านั้น",
+    homeJudgeLoadWait: "รอก่อน",
+    homeJudgeLoadAvoid: "เลี่ยงตอนนี้",
+    homeJudgeLoadDetail: "Headroom {headroom}; แรงกด {pressure}; แบต {reserve}",
+    homeJudgePeakReady: "พร้อม",
+    homeJudgePeakWatch: "เฝ้าดู",
+    homeJudgePeakLow: "ต่ำ",
+    homeJudgePeakDetail: "คะแนน {score}; พีค {window}; กริด {grid}",
+    homeJudgeNightSafe: "สบายใจได้",
+    homeJudgeNightWatch: "ใช้เบาๆ",
+    homeJudgeNightSave: "เก็บแบตไว้",
+    homeJudgeNightDetail: "ระยะเวลา {runway}; สำรอง {reserve}; ความเสี่ยง {risk}",
+    homeJudgeTomorrowSolar: "ใช้ช่วงโซลาร์",
+    homeJudgeTomorrowLight: "โหลดเบา",
+    homeJudgeTomorrowWait: "รอพยากรณ์",
+    homeJudgeTomorrowDetail: "แนวโน้ม {outlook}; ช่วงดีสุด {window}; คำแนะนำ {action}",
+    homeActionQueueKicker: "ลำดับสิ่งที่ควรทำ",
+    homeActionQueueMeta: "เรียงตามผลกระทบ แสดงเฉพาะสามอย่างที่ควรทำที่สุด",
+    homeActionRunLoad: "เปิดโหลดยืดหยุ่นหนึ่งอย่าง",
+    homeActionRunLoadDetail: "Headroom {headroom}; สำรองแบต {reserve}; แรงกดกริด {pressure}",
+    homeActionLightLoad: "ใช้เฉพาะโหลดเบา",
+    homeActionLightLoadDetail: "มีโซลาร์บางส่วน แต่ headroom แค่ {headroom}; อย่าเปิดหลายเครื่องพร้อมกัน",
+    homeActionReduceImport: "ลดการนำเข้ากริดก่อน",
+    homeActionReduceImportDetail: "แรงกดกริด {pressure}; {tariff}. เลี่ยงเครื่องใช้ไฟสูงพร้อมกัน",
+    homeActionProtectBattery: "ปกป้องแบตสำรอง",
+    homeActionProtectBatteryDetail: "สำรอง {reserve}; ระยะเวลา {runway}; ความเสี่ยง {risk}",
+    homeActionPeakPrep: "เตรียมช่วงพีค",
+    homeActionPeakPrepDetail: "ความพร้อม {score}; ช่วงพีค {window}. จบโหลดยืดหยุ่นก่อนตึงขึ้น",
+    homeActionPlanTomorrow: "วางแผนตามพรุ่งนี้",
+    homeActionPlanTomorrowDetail: "พรุ่งนี้ {outlook}; ช่วงดีสุด {window}; {action}",
+    homeActionWatchForecast: "รีเฟรชพยากรณ์",
+    homeActionWatchForecastDetail: "แนวโน้มพรุ่งนี้ยังไม่พร้อม ให้โหลดใหญ่ยังเลื่อนได้ก่อน",
+    homeActionSteady: "คงจังหวะเดิม",
+    homeActionSteadyDetail: "แบต กริด และโหลดบ้านยังควบคุมได้ รอตรวจใหม่รอบถัดไป",
     operatingSummaryKicker: "สรุปการทำงาน",
     operatingSummaryTitle: "ภาพรวมวันนี้",
     operatingSummaryDetail: "พึ่งตนเอง {self} {grid} โหมดหลักล่าสุด: {mode}",
@@ -6074,6 +6320,493 @@ function renderGridImportForecast(payload) {
   textFields.gridForecastAction.textContent = t(forecast.actionKey);
 }
 
+function clampPercentValue(value) {
+  const numericValue = Number(value);
+
+  if (!Number.isFinite(numericValue)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(100, numericValue));
+}
+
+function setHomeStateRow(row, statusElement, detailElement, barElement, item) {
+  if (!row || !statusElement || !detailElement || !barElement) {
+    return;
+  }
+
+  row.dataset.tone = item.tone;
+  statusElement.textContent = t(item.statusKey);
+  detailElement.textContent = item.detail;
+  barElement.style.width = `${clampPercentValue(item.percent).toFixed(1)}%`;
+}
+
+function setHomeJudgementCard(card, statusElement, detailElement, judgement) {
+  if (!card || !statusElement || !detailElement) {
+    return;
+  }
+
+  card.dataset.tone = judgement.tone;
+  statusElement.textContent = t(judgement.statusKey);
+  detailElement.textContent = judgement.detail;
+}
+
+function getHomeJudgements(payload, weatherPayload = lastWeatherPayload) {
+  const flexibleLoad = getFlexibleLoadPlan(payload);
+  const gridForecast = getGridImportForecast(payload);
+  const batteryRunway = getBatteryRunwayPlan(payload);
+  const peakReadiness = getPeakReadiness(payload);
+  const tomorrowPrep = getTomorrowPrepPlan(payload, weatherPayload);
+  const reserveText = batteryRunway.reservePercent === null ? "--" : formatPercent(batteryRunway.reservePercent);
+  const runwayText = batteryRunway.minutesToFloor === null && batteryRunway.statusKey !== "runwayUnavailable"
+    ? t(batteryRunway.trendKey)
+    : formatRunwayTime(batteryRunway.minutesToFloor);
+  const loadStatusKey = gridForecast.importPressure >= 65 || (gridForecast.tariff.isPeak && gridForecast.importPressure >= 35)
+    ? "homeJudgeLoadAvoid"
+    : flexibleLoad.headroomKw >= 1.5 && (flexibleLoad.soc === null || flexibleLoad.soc >= 45)
+      ? "homeJudgeLoadRun"
+      : flexibleLoad.headroomKw >= 0.5 && gridForecast.importPressure < 55
+        ? "homeJudgeLoadLight"
+        : "homeJudgeLoadWait";
+  const loadTone = loadStatusKey === "homeJudgeLoadRun"
+    ? "good"
+    : loadStatusKey === "homeJudgeLoadAvoid"
+      ? "alert"
+      : "watch";
+  const peakStatusKey = peakReadiness.score >= 70
+    ? "homeJudgePeakReady"
+    : peakReadiness.score >= 45
+      ? "homeJudgePeakWatch"
+      : "homeJudgePeakLow";
+  const peakTone = peakReadiness.score >= 70
+    ? "good"
+    : peakReadiness.score >= 45
+      ? "watch"
+      : "alert";
+  const nightStatusKey = batteryRunway.riskKey === "runwayRiskHigh"
+    ? "homeJudgeNightSave"
+    : batteryRunway.riskKey === "runwayRiskMedium"
+      ? "homeJudgeNightWatch"
+      : "homeJudgeNightSafe";
+  const nightTone = batteryRunway.riskKey === "runwayRiskHigh"
+    ? "alert"
+    : batteryRunway.riskKey === "runwayRiskMedium"
+      ? "watch"
+      : "good";
+  const tomorrowStatusKey = tomorrowPrep.statusKey === "tomorrowPrepWaiting"
+    ? "homeJudgeTomorrowWait"
+    : tomorrowPrep.statusKey === "tomorrowPrepLimited" || tomorrowPrep.outlookKey === "poor"
+      ? "homeJudgeTomorrowLight"
+      : "homeJudgeTomorrowSolar";
+  const tomorrowTone = tomorrowStatusKey === "homeJudgeTomorrowSolar"
+    ? "good"
+    : tomorrowStatusKey === "homeJudgeTomorrowLight"
+      ? "watch"
+      : "neutral";
+
+  return {
+    load: {
+      tone: loadTone,
+      statusKey: loadStatusKey,
+      detail: interpolate(t("homeJudgeLoadDetail"), {
+        headroom: formatKw(flexibleLoad.headroomKw),
+        pressure: formatPercent(gridForecast.importPressure),
+        reserve: flexibleLoad.soc === null ? "--" : formatPercent(Math.max(0, flexibleLoad.soc - 20)),
+      }),
+    },
+    peak: {
+      tone: peakTone,
+      statusKey: peakStatusKey,
+      detail: interpolate(t("homeJudgePeakDetail"), {
+        score: interpolate(t("peakReadinessScore"), { score: peakReadiness.score }),
+        window: peakReadiness.tariff.peakWindow,
+        grid: peakReadiness.gridFlow,
+      }),
+    },
+    night: {
+      tone: nightTone,
+      statusKey: nightStatusKey,
+      detail: interpolate(t("homeJudgeNightDetail"), {
+        runway: runwayText,
+        reserve: reserveText,
+        risk: t(batteryRunway.riskKey),
+      }),
+    },
+    tomorrow: {
+      tone: tomorrowTone,
+      statusKey: tomorrowStatusKey,
+      detail: interpolate(t("homeJudgeTomorrowDetail"), {
+        outlook: t(tomorrowPrep.outlookKey),
+        window: t(tomorrowPrep.windowKey),
+        action: t(tomorrowPrep.actionKey),
+      }),
+    },
+  };
+}
+
+function getHomeActionQueue(payload, weatherPayload = lastWeatherPayload) {
+  const flexibleLoad = getFlexibleLoadPlan(payload);
+  const gridForecast = getGridImportForecast(payload);
+  const batteryRunway = getBatteryRunwayPlan(payload);
+  const peakReadiness = getPeakReadiness(payload);
+  const tomorrowPrep = getTomorrowPrepPlan(payload, weatherPayload);
+  const reserveText = batteryRunway.reservePercent === null ? "--" : formatPercent(batteryRunway.reservePercent);
+  const runwayText = batteryRunway.minutesToFloor === null && batteryRunway.statusKey !== "runwayUnavailable"
+    ? t(batteryRunway.trendKey)
+    : formatRunwayTime(batteryRunway.minutesToFloor);
+  const pressureText = formatPercent(gridForecast.importPressure);
+  const tariffText = gridForecast.tariff.isPeak ? t("peakNow") : t("offPeakNow");
+  const hasLowReserve = batteryRunway.reservePercent !== null && batteryRunway.reservePercent < 25;
+  const hasBatteryRisk = batteryRunway.riskKey === "runwayRiskHigh" || hasLowReserve;
+  const actions = [];
+  const addAction = (action) => {
+    const commonValues = {
+      headroom: formatKw(flexibleLoad.headroomKw),
+      pressure: pressureText,
+      reserve: reserveText,
+      runway: runwayText,
+      risk: t(batteryRunway.riskKey),
+      tariff: tariffText,
+      score: interpolate(t("peakReadinessScore"), { score: peakReadiness.score }),
+      window: peakReadiness.tariff.peakWindow,
+      outlook: t(tomorrowPrep.outlookKey),
+      action: t(tomorrowPrep.actionKey),
+    };
+
+    actions.push({
+      ...action,
+      values: {
+        ...commonValues,
+        ...(action.values ?? {}),
+      },
+    });
+  };
+
+  if (gridForecast.importPressure >= 65 || (gridForecast.tariff.isPeak && gridForecast.importPressure >= 35)) {
+    addAction({
+      score: gridForecast.importPressure + (gridForecast.tariff.isPeak ? 30 : 12),
+      tone: gridForecast.importPressure >= 65 || gridForecast.tariff.isPeak ? "alert" : "watch",
+      titleKey: "homeActionReduceImport",
+      detailKey: "homeActionReduceImportDetail",
+    });
+  }
+
+  if (hasBatteryRisk) {
+    addAction({
+      score: batteryRunway.riskKey === "runwayRiskHigh" ? 98 : 78,
+      tone: batteryRunway.riskKey === "runwayRiskHigh" ? "alert" : "watch",
+      titleKey: "homeActionProtectBattery",
+      detailKey: "homeActionProtectBatteryDetail",
+    });
+  }
+
+  if (flexibleLoad.headroomKw >= 1.5 && gridForecast.importPressure < 55 && (flexibleLoad.soc === null || flexibleLoad.soc >= 45)) {
+    addAction({
+      score: 90 + Math.min(12, flexibleLoad.headroomKw * 3),
+      tone: "good",
+      titleKey: "homeActionRunLoad",
+      detailKey: "homeActionRunLoadDetail",
+    });
+  } else if (flexibleLoad.headroomKw >= 0.5 && gridForecast.importPressure < 55) {
+    addAction({
+      score: 64 + Math.min(10, flexibleLoad.headroomKw * 4),
+      tone: "watch",
+      titleKey: "homeActionLightLoad",
+      detailKey: "homeActionLightLoadDetail",
+    });
+  }
+
+  if (!gridForecast.tariff.isPeak && peakReadiness.score < 65) {
+    addAction({
+      score: 78 - (peakReadiness.score * 0.25) + (gridForecast.tariff.detailMinutes <= 180 ? 12 : 0),
+      tone: peakReadiness.score < 45 ? "alert" : "watch",
+      titleKey: "homeActionPeakPrep",
+      detailKey: "homeActionPeakPrepDetail",
+    });
+  }
+
+  if (tomorrowPrep.statusKey === "tomorrowPrepLimited" || tomorrowPrep.outlookKey === "poor") {
+    addAction({
+      score: 66,
+      tone: "watch",
+      titleKey: "homeActionPlanTomorrow",
+      detailKey: "homeActionPlanTomorrowDetail",
+      values: {
+        window: t(tomorrowPrep.windowKey),
+      },
+    });
+  } else if (tomorrowPrep.statusKey === "tomorrowPrepWaiting") {
+    addAction({
+      score: 42,
+      tone: "neutral",
+      titleKey: "homeActionWatchForecast",
+      detailKey: "homeActionWatchForecastDetail",
+    });
+  }
+
+  if (actions.length === 0 || (gridForecast.importPressure < 35 && !hasBatteryRisk)) {
+    addAction({
+      score: 36,
+      tone: "neutral",
+      titleKey: "homeActionSteady",
+      detailKey: "homeActionSteadyDetail",
+    });
+  }
+
+  const seen = new Set();
+  return actions
+    .sort((a, b) => b.score - a.score)
+    .filter((action) => {
+      if (seen.has(action.titleKey)) {
+        return false;
+      }
+      seen.add(action.titleKey);
+      return true;
+    })
+    .slice(0, 3);
+}
+
+function renderHomeActionQueue(payload, weatherPayload = lastWeatherPayload) {
+  if (!textFields.homeActionQueueList) {
+    return;
+  }
+
+  const actions = getHomeActionQueue(payload, weatherPayload);
+
+  textFields.homeActionQueueMeta.textContent = t("homeActionQueueMeta");
+  textFields.homeActionQueueList.replaceChildren(...actions.map((action, index) => {
+    const item = document.createElement("li");
+    const rank = document.createElement("b");
+    const copy = document.createElement("div");
+    const title = document.createElement("strong");
+    const detail = document.createElement("small");
+
+    item.dataset.tone = action.tone;
+    rank.textContent = String(index + 1);
+    title.textContent = t(action.titleKey);
+    detail.textContent = interpolate(t(action.detailKey), action.values);
+    copy.append(title, detail);
+    item.append(rank, copy);
+
+    return item;
+  }));
+}
+
+function renderHomeJudgements(payload, weatherPayload = lastWeatherPayload) {
+  if (!textFields.homeJudgementMeta) {
+    return;
+  }
+
+  const judgements = getHomeJudgements(payload, weatherPayload);
+
+  textFields.homeJudgementMeta.textContent = t("homeJudgementMeta");
+  setHomeJudgementCard(
+    textFields.homeJudgeLoadCard,
+    textFields.homeJudgeLoadStatus,
+    textFields.homeJudgeLoadDetail,
+    judgements.load,
+  );
+  setHomeJudgementCard(
+    textFields.homeJudgePeakCard,
+    textFields.homeJudgePeakStatus,
+    textFields.homeJudgePeakDetail,
+    judgements.peak,
+  );
+  setHomeJudgementCard(
+    textFields.homeJudgeNightCard,
+    textFields.homeJudgeNightStatus,
+    textFields.homeJudgeNightDetail,
+    judgements.night,
+  );
+  setHomeJudgementCard(
+    textFields.homeJudgeTomorrowCard,
+    textFields.homeJudgeTomorrowStatus,
+    textFields.homeJudgeTomorrowDetail,
+    judgements.tomorrow,
+  );
+  renderHomeActionQueue(payload, weatherPayload);
+}
+
+function getHomeState(payload) {
+  const live = payload?.live ?? {};
+  const history = payload?.last24Hours ?? {};
+  const solarKw = getLiveKw(live.solarGeneratedKw);
+  const homeKw = getLiveKw(live.homeUsageKw);
+  const batteryChargeKw = getLiveKw(live.batteryChargeKw);
+  const batteryDischargeKw = getLiveKw(live.batteryDischargeKw);
+  const gridImportKw = getLiveKw(live.gridImportKw);
+  const gridExportKw = getLiveKw(live.gridExportKw);
+  const batteryRunway = getBatteryRunwayPlan(payload);
+  const gridForecast = getGridImportForecast(payload);
+  const flexibleLoad = getFlexibleLoadPlan(payload);
+  const solarCoveragePercent = homeKw > 0.05
+    ? Math.min(100, (solarKw / homeKw) * 100)
+    : solarKw > 0.05 ? 100 : null;
+  const recentHomeAverage = averageFinite((history.homeUsageKw ?? []).slice(-8)) ?? homeKw;
+  const loadRatio = recentHomeAverage > 0.05 ? homeKw / recentHomeAverage : 1;
+  const loadPressurePercent = recentHomeAverage > 0.05
+    ? (homeKw / Math.max(recentHomeAverage * 1.6, 0.5)) * 100
+    : (homeKw / 6) * 100;
+  const batteryTone = batteryRunway.reservePercent === null
+    ? "neutral"
+    : batteryRunway.riskKey === "runwayRiskHigh" || batteryRunway.reservePercent < 15
+      ? "alert"
+      : batteryRunway.riskKey === "runwayRiskMedium" || batteryRunway.reservePercent < 35
+        ? "watch"
+        : "good";
+  const batteryStatusKey = batteryTone === "alert"
+    ? "homeStateBatteryLow"
+    : batteryTone === "watch"
+      ? "homeStateBatteryWatch"
+      : batteryTone === "good"
+        ? "homeStateBatteryGood"
+        : "homeStateBatteryUnknown";
+  const solarStatusKey = solarKw <= 0.05
+    ? "homeStateSolarIdle"
+    : gridExportKw > gridImportKw + 0.2 && gridExportKw >= 0.25
+      ? "homeStateSolarExport"
+      : batteryChargeKw > batteryDischargeKw + 0.1 && batteryChargeKw >= 0.25
+        ? "homeStateSolarCharging"
+        : solarCoveragePercent !== null && solarCoveragePercent >= 80
+          ? "homeStateSolarHome"
+          : "homeStateSolarWeak";
+  const solarTone = solarStatusKey === "homeStateSolarIdle"
+    ? "neutral"
+    : solarStatusKey === "homeStateSolarWeak"
+      ? "watch"
+      : "good";
+  const loadStatusKey = homeKw >= 4 || loadRatio >= 1.35
+    ? "homeStateLoadHigh"
+    : homeKw <= 1.2 && loadRatio <= 0.85
+      ? "homeStateLoadLow"
+      : "homeStateLoadNormal";
+  const loadTone = loadStatusKey === "homeStateLoadHigh" ? "watch" : "good";
+  const gridStatusKey = gridExportKw > gridImportKw + 0.1
+    ? "homeStateGridExport"
+    : gridImportKw > gridExportKw + 0.1
+      ? "homeStateGridImport"
+      : "homeStateGridBalanced";
+  const gridTone = gridForecast.importPressure >= 65 && gridStatusKey === "homeStateGridImport"
+    ? "alert"
+    : gridStatusKey === "homeStateGridImport" || gridForecast.importPressure >= 35
+      ? "watch"
+      : gridStatusKey === "homeStateGridExport"
+        ? "good"
+        : "neutral";
+  const verdictKey = flexibleLoad.headroomKw >= 0.8 && gridTone !== "alert"
+    ? "homeStateVerdictUseSun"
+    : batteryTone === "alert"
+      ? "homeStateVerdictSaveBattery"
+      : gridTone === "alert" || (gridForecast.tariff.isPeak && gridImportKw > 0.1)
+        ? "homeStateVerdictAvoidGrid"
+        : "homeStateVerdictSteady";
+  const runwayText = batteryRunway.minutesToFloor === null && batteryRunway.statusKey !== "runwayUnavailable"
+    ? t(batteryRunway.trendKey)
+    : formatRunwayTime(batteryRunway.minutesToFloor);
+  const batteryStatus = t(batteryStatusKey);
+  const solarStatus = t(solarStatusKey);
+  const loadStatus = t(loadStatusKey);
+  const gridStatus = t(gridStatusKey);
+  const verdictTone = verdictKey === "homeStateVerdictUseSun" || verdictKey === "homeStateVerdictSteady"
+    ? "good"
+    : verdictKey === "homeStateVerdictSaveBattery"
+      ? "watch"
+      : "alert";
+
+  return {
+    verdictKey,
+    verdictTone,
+    detail: interpolate(t("homeStateDetail"), {
+      solar: solarStatus,
+      home: formatKw(homeKw),
+      battery: batteryStatus,
+      grid: gridStatus,
+      updated: formatTimestamp(live.updatedAt ?? payload?.generatedAt),
+    }),
+    battery: {
+      tone: batteryTone,
+      statusKey: batteryStatusKey,
+      percent: batteryRunway.soc ?? 0,
+      detail: interpolate(t("homeStateBatteryDetail"), {
+        soc: batteryRunway.soc === null || batteryRunway.soc === undefined ? "--" : formatPercent(batteryRunway.soc),
+        reserve: batteryRunway.reservePercent === null ? "--" : formatPercent(batteryRunway.reservePercent),
+        runway: runwayText,
+      }),
+    },
+    solar: {
+      tone: solarTone,
+      statusKey: solarStatusKey,
+      percent: solarCoveragePercent ?? 0,
+      detail: interpolate(t("homeStateSolarDetail"), {
+        cover: formatOptionalPercent(solarCoveragePercent),
+        export: formatKw(gridExportKw),
+        charge: formatKw(batteryChargeKw),
+      }),
+    },
+    load: {
+      tone: loadTone,
+      statusKey: loadStatusKey,
+      percent: loadPressurePercent,
+      detail: interpolate(t("homeStateLoadDetail"), {
+        home: formatKw(homeKw),
+        average: formatKw(recentHomeAverage),
+        grid: formatKw(gridImportKw),
+      }),
+    },
+    grid: {
+      tone: gridTone,
+      statusKey: gridStatusKey,
+      percent: gridForecast.importPressure,
+      detail: interpolate(t("homeStateGridDetail"), {
+        tariff: gridForecast.tariff.isPeak ? t("peakNow") : t("offPeakNow"),
+        pressure: formatPercent(gridForecast.importPressure),
+        action: t(gridForecast.actionKey),
+      }),
+    },
+  };
+}
+
+function renderHomeState(payload, weatherPayload = lastWeatherPayload) {
+  if (!payload?.live || !textFields.homeStateVerdict) {
+    return;
+  }
+
+  const state = getHomeState(payload);
+
+  textFields.homeStateVerdict.dataset.tone = state.verdictTone;
+  textFields.homeStateVerdict.textContent = t(state.verdictKey);
+  textFields.homeStateDetail.textContent = state.detail;
+  setHomeStateRow(
+    textFields.homeStateBatteryRow,
+    textFields.homeStateBatteryStatus,
+    textFields.homeStateBatteryDetail,
+    textFields.homeStateBatteryBar,
+    state.battery,
+  );
+  setHomeStateRow(
+    textFields.homeStateSolarRow,
+    textFields.homeStateSolarStatus,
+    textFields.homeStateSolarDetail,
+    textFields.homeStateSolarBar,
+    state.solar,
+  );
+  setHomeStateRow(
+    textFields.homeStateLoadRow,
+    textFields.homeStateLoadStatus,
+    textFields.homeStateLoadDetail,
+    textFields.homeStateLoadBar,
+    state.load,
+  );
+  setHomeStateRow(
+    textFields.homeStateGridRow,
+    textFields.homeStateGridStatus,
+    textFields.homeStateGridDetail,
+    textFields.homeStateGridBar,
+    state.grid,
+  );
+  renderHomeJudgements(payload, weatherPayload);
+}
+
 function getTomorrowPrepPlan(payload, weatherPayload = lastWeatherPayload) {
   const live = payload?.live ?? {};
   const history = payload?.last24Hours ?? {};
@@ -6781,6 +7514,7 @@ function renderWeather(payload) {
   if (!payload?.enabled || !payload.current) {
     weatherPanel.classList.add("hidden");
     renderTomorrowPrep(lastPayload, payload);
+    renderHomeState(lastPayload, payload);
     return;
   }
 
@@ -6823,6 +7557,7 @@ function renderWeather(payload) {
   renderEnergyScore(lastPayload, payload);
   renderEnergyCoach(lastPayload, payload);
   renderTomorrowPrep(lastPayload, payload);
+  renderHomeState(lastPayload, payload);
   renderSmartHub(lastPayload, payload);
   renderNightOpsPlan(lastPayload, payload);
   renderCommandBrief(lastPayload, payload);
@@ -8180,6 +8915,7 @@ function renderMetrics(payload) {
   renderWarnings(payload.warnings);
   renderDataQuality(payload);
   renderVisualKpis(payload);
+  renderHomeState(payload);
   renderOperatingSummary(payload);
   renderCommandBrief(payload);
   renderPhasePlan(payload);

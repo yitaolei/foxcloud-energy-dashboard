@@ -312,6 +312,8 @@ High-level steps:
 6. In Container Manager, create a project from the folder, or run `docker compose -f docker-compose.synology.yml up --build -d` if you use SSH.
 7. On your home network, open `http://NAS-IP:3000`, or use the port from `DASHBOARD_HOST_PORT` if you changed it.
 
+For Codex-assisted updates, see `docs/synology-passwordless-rebuild.md`. After the one-time NAS setup, `npm run deploy:nas` can sync the project, rebuild the Synology container, and check `/api/livez`.
+
 If the container keeps restarting and the log shows `SQLITE_CANTOPEN` or `unable to open database file`, the container cannot write to the SQLite database. Use `docker-compose.synology.yml`; it stores SQLite in a Docker-managed volume instead of the shared folder, which avoids Synology shared-folder permission issues. If Container Manager already created a container from the old compose file, delete and recreate the project so it reads the new compose file.
 
 Do not expose port `3000` directly to the Internet. Use Synology reverse proxy with HTTPS instead.
