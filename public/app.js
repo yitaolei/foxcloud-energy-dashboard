@@ -152,6 +152,14 @@ const textFields = {
   homeStateGridStatus: document.getElementById("homeStateGridStatus"),
   homeStateGridDetail: document.getElementById("homeStateGridDetail"),
   homeStateGridBar: document.getElementById("homeStateGridBar"),
+  homeSourceStatus: document.getElementById("homeSourceStatus"),
+  homeSourceDetail: document.getElementById("homeSourceDetail"),
+  homeSourceSolarBar: document.getElementById("homeSourceSolarBar"),
+  homeSourceBatteryBar: document.getElementById("homeSourceBatteryBar"),
+  homeSourceGridBar: document.getElementById("homeSourceGridBar"),
+  homeSourceSolarShare: document.getElementById("homeSourceSolarShare"),
+  homeSourceBatteryShare: document.getElementById("homeSourceBatteryShare"),
+  homeSourceGridShare: document.getElementById("homeSourceGridShare"),
   homeJudgementMeta: document.getElementById("homeJudgementMeta"),
   homeJudgeLoadCard: document.getElementById("homeJudgeLoadCard"),
   homeJudgeLoadStatus: document.getElementById("homeJudgeLoadStatus"),
@@ -699,6 +707,16 @@ const translations = {
     homeStateGridImport: "Importing",
     homeStateGridBalanced: "Balanced",
     homeStateGridDetail: "{tariff}; pressure {pressure}; action {action}.",
+    homeSourceKicker: "Home load source",
+    homeSourceSolar: "Solar",
+    homeSourceBattery: "Battery",
+    homeSourceGrid: "Grid",
+    homeSourceMostlySolar: "Mostly solar",
+    homeSourceMostlyBattery: "Battery is carrying",
+    homeSourceGridHelp: "Grid is supporting",
+    homeSourceMixed: "Mixed supply",
+    homeSourceIdle: "Waiting for load",
+    homeSourceDetail: "Current home load {load}; solar {solar}, battery {battery}, grid {grid}.",
     homeJudgementKicker: "Auto judgement",
     homeJudgementMeta: "Judged from live flow, reserve, tariff, and forecast.",
     homeJudgeLoad: "Flexible loads",
@@ -1621,6 +1639,16 @@ const translations = {
     homeStateGridImport: "正在取电",
     homeStateGridBalanced: "基本平衡",
     homeStateGridDetail: "{tariff}；取电压力 {pressure}；建议 {action}。",
+    homeSourceKicker: "家里用电来源",
+    homeSourceSolar: "太阳",
+    homeSourceBattery: "电池",
+    homeSourceGrid: "电网",
+    homeSourceMostlySolar: "主要靠太阳",
+    homeSourceMostlyBattery: "电池在支撑",
+    homeSourceGridHelp: "电网在支撑",
+    homeSourceMixed: "混合供电",
+    homeSourceIdle: "等待负载",
+    homeSourceDetail: "当前家庭负载 {load}；太阳 {solar}，电池 {battery}，电网 {grid}。",
     homeJudgementKicker: "系统自动判断",
     homeJudgementMeta: "根据实时流向、电池余量、电价和天气预报综合判断。",
     homeJudgeLoad: "可推迟负载",
@@ -2543,6 +2571,16 @@ const translations = {
     homeStateGridImport: "กำลังนำเข้า",
     homeStateGridBalanced: "สมดุล",
     homeStateGridDetail: "{tariff}; แรงกด {pressure}; คำแนะนำ {action}",
+    homeSourceKicker: "แหล่งไฟของบ้าน",
+    homeSourceSolar: "โซลาร์",
+    homeSourceBattery: "แบตเตอรี่",
+    homeSourceGrid: "กริด",
+    homeSourceMostlySolar: "ใช้โซลาร์เป็นหลัก",
+    homeSourceMostlyBattery: "แบตกำลังช่วย",
+    homeSourceGridHelp: "กริดกำลังช่วย",
+    homeSourceMixed: "ใช้ไฟผสม",
+    homeSourceIdle: "รอโหลด",
+    homeSourceDetail: "โหลดบ้านตอนนี้ {load}; โซลาร์ {solar}, แบต {battery}, กริด {grid}",
     homeJudgementKicker: "การตัดสินใจอัตโนมัติ",
     homeJudgementMeta: "ตัดสินจากไฟสด สำรองแบต ค่าไฟ และพยากรณ์",
     homeJudgeLoad: "โหลดที่ยืดหยุ่น",
@@ -6351,6 +6389,98 @@ function setHomeJudgementCard(card, statusElement, detailElement, judgement) {
   detailElement.textContent = judgement.detail;
 }
 
+function getHomeSourceMix(payload) {
+  const live = payload?.live ?? {};
+  const homeKw = getLiveKw(live.homeUsageKw);
+  const solarKw = getLiveKw(live.solarGeneratedKw);
+  const batteryChargeKw = getLiveKw(live.batteryChargeKw);
+  const batteryDischargeKw = getLiveKw(live.batteryDischargeKw);
+  const gridImportKw = getLiveKw(live.gridImportKw);
+  const gridExportKw = getLiveKw(live.gridExportKw);
+
+  if (homeKw <= 0.05) {
+    return {
+      tone: "neutral",
+      statusKey: "homeSourceIdle",
+      homeKw,
+      solarKw: 0,
+      batteryKw: 0,
+      gridKw: 0,
+      solarPercent: 0,
+      batteryPercent: 0,
+      gridPercent: 0,
+    };
+  }
+
+  let solarToHomeKw = Math.min(homeKw, Math.max(0, solarKw - batteryChargeKw - gridExportKw));
+  let batteryToHomeKw = Math.min(Math.max(0, homeKw - solarToHomeKw), batteryDischargeKw);
+  let gridToHomeKw = Math.min(Math.max(0, homeKw - solarToHomeKw - batteryToHomeKw), gridImportKw);
+  let remainderKw = Math.max(0, homeKw - solarToHomeKw - batteryToHomeKw - gridToHomeKw);
+
+  if (remainderKw > 0.05) {
+    if (solarKw >= batteryDischargeKw && solarKw >= gridImportKw) {
+      solarToHomeKw += remainderKw;
+    } else if (batteryDischargeKw >= gridImportKw) {
+      batteryToHomeKw += remainderKw;
+    } else {
+      gridToHomeKw += remainderKw;
+    }
+  }
+
+  const solarPercent = Math.max(0, Math.min(100, (solarToHomeKw / homeKw) * 100));
+  const batteryPercent = Math.max(0, Math.min(100, (batteryToHomeKw / homeKw) * 100));
+  const gridPercent = Math.max(0, Math.min(100, 100 - solarPercent - batteryPercent));
+  const statusKey = gridPercent >= 45
+    ? "homeSourceGridHelp"
+    : batteryPercent >= 55
+      ? "homeSourceMostlyBattery"
+      : solarPercent >= 60
+        ? "homeSourceMostlySolar"
+        : "homeSourceMixed";
+  const tone = statusKey === "homeSourceMostlySolar"
+    ? "good"
+    : statusKey === "homeSourceGridHelp"
+      ? gridPercent >= 65 ? "alert" : "watch"
+      : statusKey === "homeSourceMostlyBattery"
+        ? "watch"
+        : "neutral";
+
+  return {
+    tone,
+    statusKey,
+    homeKw,
+    solarKw: solarToHomeKw,
+    batteryKw: batteryToHomeKw,
+    gridKw: gridToHomeKw,
+    solarPercent,
+    batteryPercent,
+    gridPercent,
+  };
+}
+
+function renderHomeSourceMix(payload) {
+  if (!textFields.homeSourceStatus) {
+    return;
+  }
+
+  const mix = getHomeSourceMix(payload);
+
+  textFields.homeSourceStatus.dataset.tone = mix.tone;
+  textFields.homeSourceStatus.textContent = t(mix.statusKey);
+  textFields.homeSourceDetail.textContent = interpolate(t("homeSourceDetail"), {
+    load: formatKw(mix.homeKw),
+    solar: formatKw(mix.solarKw),
+    battery: formatKw(mix.batteryKw),
+    grid: formatKw(mix.gridKw),
+  });
+  textFields.homeSourceSolarBar.style.width = `${clampPercentValue(mix.solarPercent).toFixed(1)}%`;
+  textFields.homeSourceBatteryBar.style.width = `${clampPercentValue(mix.batteryPercent).toFixed(1)}%`;
+  textFields.homeSourceGridBar.style.width = `${clampPercentValue(mix.gridPercent).toFixed(1)}%`;
+  textFields.homeSourceSolarShare.textContent = formatPercent(mix.solarPercent);
+  textFields.homeSourceBatteryShare.textContent = formatPercent(mix.batteryPercent);
+  textFields.homeSourceGridShare.textContent = formatPercent(mix.gridPercent);
+}
+
 function getHomeJudgements(payload, weatherPayload = lastWeatherPayload) {
   const flexibleLoad = getFlexibleLoadPlan(payload);
   const gridForecast = getGridImportForecast(payload);
@@ -6804,6 +6934,7 @@ function renderHomeState(payload, weatherPayload = lastWeatherPayload) {
     textFields.homeStateGridBar,
     state.grid,
   );
+  renderHomeSourceMix(payload);
   renderHomeJudgements(payload, weatherPayload);
 }
 
