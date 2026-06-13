@@ -3603,6 +3603,26 @@ section[id] {
   border-left: 4px solid #14b8a6;
 }
 
+.settings-details {
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-details[open] > .settings-details-summary::after {
+  content: "-";
+}
+
+.settings-details-summary .status-text {
+  margin: 0;
+  max-width: 260px;
+  text-align: right;
+}
+
+.settings-details .location-grid {
+  border-top: 1px solid var(--border);
+  padding: 1rem;
+}
+
 .location-grid {
   display: grid;
   grid-template-columns: minmax(150px, 0.8fr) repeat(6, minmax(0, 1fr)) auto;

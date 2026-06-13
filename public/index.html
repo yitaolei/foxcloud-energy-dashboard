@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-13-action-section" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-13-weather-settings-fold" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,7 +33,7 @@
             <button id="refreshButton" class="refresh-button" type="button" data-i18n="refresh">Refresh</button>
             <button id="rebuildCacheButton" class="secondary-button" type="button" data-i18n="rebuildCache">Rebuild cache</button>
             <button id="exportPdfButton" class="secondary-button" type="button" data-i18n="exportPdf">Export PDF</button>
-            <p class="deploy-stamp">NAS build: 2026-06-13 action-section</p>
+            <p class="deploy-stamp">NAS build: 2026-06-13 weather-settings-fold</p>
             <p id="statusText" class="status-text">Loading dashboard data...</p>
           </div>
         </section>
@@ -83,52 +83,6 @@
             </div>
             <p id="solarPerformanceDetail" class="muted-copy">--</p>
             <small id="solarPerformanceMeta">--</small>
-          </div>
-        </section>
-
-        <section id="sectionSettings" class="panel location-panel settings-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="weatherLocationSettings">Weather location</p>
-              <h2 data-i18n="weatherLocationTitle">Forecast settings</h2>
-              <p class="muted-copy" data-i18n="weatherLocationHelp">
-                Enter a postcode or precise coordinates. Settings are saved in SQLite and used for the solar forecast.
-              </p>
-            </div>
-            <p id="weatherSettingsStatusText" class="status-text">--</p>
-          </div>
-          <div class="location-grid">
-            <label class="checkbox-label">
-              <input id="weatherEnabledInput" type="checkbox" />
-              <span data-i18n="weatherEnabled">Weather enabled</span>
-            </label>
-            <label>
-              <span data-i18n="weatherDisplayName">Display name</span>
-              <input id="weatherLocationNameInput" type="text" placeholder="Lidcombe" />
-            </label>
-            <label>
-              <span data-i18n="postcode">Postcode</span>
-              <input id="weatherPostcodeInput" type="text" placeholder="2141" />
-            </label>
-            <label>
-              <span data-i18n="countryCode">Country</span>
-              <input id="weatherCountryCodeInput" type="text" maxlength="2" placeholder="AU" />
-            </label>
-            <label>
-              <span data-i18n="latitude">Latitude</span>
-              <input id="weatherLatitudeInput" type="number" min="-90" max="90" step="0.000001" />
-            </label>
-            <label>
-              <span data-i18n="longitude">Longitude</span>
-              <input id="weatherLongitudeInput" type="number" min="-180" max="180" step="0.000001" />
-            </label>
-            <label>
-              <span data-i18n="timezone">Timezone</span>
-              <input id="weatherTimezoneInput" type="text" placeholder="Australia/Sydney" />
-            </label>
-            <button id="saveWeatherSettingsButton" class="refresh-button location-save-button" type="button" data-i18n="saveWeatherSettings">
-              Save weather
-            </button>
           </div>
         </section>
 
@@ -857,6 +811,52 @@
           </article>
         </section>
 
+        <details id="sectionSettings" class="panel location-panel settings-panel settings-details">
+          <summary class="deep-analysis-summary settings-details-summary">
+            <span>
+              <em class="panel-kicker" data-i18n="weatherLocationSettings">Weather location</em>
+              <b data-i18n="weatherLocationTitle">Forecast settings</b>
+              <small data-i18n="weatherLocationHelp">
+                Enter a postcode or precise coordinates. Settings are saved in SQLite and used for the solar forecast.
+              </small>
+            </span>
+            <p id="weatherSettingsStatusText" class="status-text">--</p>
+          </summary>
+          <div class="location-grid">
+            <label class="checkbox-label">
+              <input id="weatherEnabledInput" type="checkbox" />
+              <span data-i18n="weatherEnabled">Weather enabled</span>
+            </label>
+            <label>
+              <span data-i18n="weatherDisplayName">Display name</span>
+              <input id="weatherLocationNameInput" type="text" placeholder="Lidcombe" />
+            </label>
+            <label>
+              <span data-i18n="postcode">Postcode</span>
+              <input id="weatherPostcodeInput" type="text" placeholder="2141" />
+            </label>
+            <label>
+              <span data-i18n="countryCode">Country</span>
+              <input id="weatherCountryCodeInput" type="text" maxlength="2" placeholder="AU" />
+            </label>
+            <label>
+              <span data-i18n="latitude">Latitude</span>
+              <input id="weatherLatitudeInput" type="number" min="-90" max="90" step="0.000001" />
+            </label>
+            <label>
+              <span data-i18n="longitude">Longitude</span>
+              <input id="weatherLongitudeInput" type="number" min="-180" max="180" step="0.000001" />
+            </label>
+            <label>
+              <span data-i18n="timezone">Timezone</span>
+              <input id="weatherTimezoneInput" type="text" placeholder="Australia/Sydney" />
+            </label>
+            <button id="saveWeatherSettingsButton" class="refresh-button location-save-button" type="button" data-i18n="saveWeatherSettings">
+              Save weather
+            </button>
+          </div>
+        </details>
+
         <section class="panel tariff-panel settings-panel" aria-live="polite">
           <div class="panel-heading compact-heading">
             <div>
@@ -1335,6 +1335,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-13-action-section"></script>
+    <script src="/app.js?v=2026-06-13-weather-settings-fold"></script>
   </body>
 </html>
