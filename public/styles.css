@@ -537,6 +537,10 @@ section[id] {
   padding: 1rem;
 }
 
+.deep-analysis-panel:not([open]) > .deep-analysis-content {
+  display: none;
+}
+
 .deep-analysis-content > .panel {
   box-shadow: none;
 }
@@ -3616,6 +3620,10 @@ section[id] {
   margin: 0;
   max-width: 260px;
   text-align: right;
+}
+
+.settings-details:not([open]) > :not(summary) {
+  display: none;
 }
 
 .settings-details .location-grid,

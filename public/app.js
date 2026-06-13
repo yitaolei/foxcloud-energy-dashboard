@@ -8324,6 +8324,13 @@ function applyStoredPreferences() {
   periodRangeSelect.value = tableRangeSelect.value;
 }
 
+function resizeChartsAfterPanelOpen() {
+  window.requestAnimationFrame(() => {
+    energyChart?.resize();
+    last24HoursChart?.resize();
+  });
+}
+
 refreshButton.addEventListener("click", loadDashboard);
 rebuildCacheButton.addEventListener("click", rebuildSelectedCache);
 exportPdfButton.addEventListener("click", exportDashboardToPdf);
@@ -8381,6 +8388,13 @@ document.querySelectorAll(".sort-button").forEach((button) => {
     }
 
     renderTable(currentRows);
+  });
+});
+document.querySelectorAll(".deep-analysis-panel").forEach((details) => {
+  details.addEventListener("toggle", () => {
+    if (details.open) {
+      resizeChartsAfterPanelOpen();
+    }
   });
 });
 

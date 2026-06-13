@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-13-tariff-settings-fold" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-13-daily-chart-fold" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,7 +33,7 @@
             <button id="refreshButton" class="refresh-button" type="button" data-i18n="refresh">Refresh</button>
             <button id="rebuildCacheButton" class="secondary-button" type="button" data-i18n="rebuildCache">Rebuild cache</button>
             <button id="exportPdfButton" class="secondary-button" type="button" data-i18n="exportPdf">Export PDF</button>
-            <p class="deploy-stamp">NAS build: 2026-06-13 tariff-settings-fold</p>
+            <p class="deploy-stamp">NAS build: 2026-06-13 daily-chart-fold</p>
             <p id="statusText" class="status-text">Loading dashboard data...</p>
           </div>
         </section>
@@ -961,6 +961,17 @@
               </span>
             </summary>
             <div class="deep-analysis-content">
+              <article class="panel chart-panel">
+                <div class="panel-heading">
+                  <div>
+                    <p class="panel-kicker" data-i18n="chart">Chart</p>
+                    <h2 data-i18n="dailyEnergyChart">Daily solar, grid, and home usage</h2>
+                  </div>
+                </div>
+                <div class="chart-body">
+                  <canvas id="energyChart"></canvas>
+                </div>
+              </article>
               <div class="savings-breakdown-card">
             <div class="panel-heading compact-heading">
               <div>
@@ -1273,21 +1284,6 @@
           </article>
         </section>
 
-        <section class="chart-grid">
-          <article class="panel chart-panel">
-            <div class="panel-heading">
-              <div>
-                <p class="panel-kicker" data-i18n="chart">Chart</p>
-                <h2 data-i18n="dailyEnergyChart">Daily solar, grid, and home usage</h2>
-              </div>
-            </div>
-            <div class="chart-body">
-              <canvas id="energyChart"></canvas>
-            </div>
-          </article>
-
-        </section>
-
         <section class="panel">
           <div class="panel-heading">
             <div>
@@ -1335,6 +1331,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-13-tariff-settings-fold"></script>
+    <script src="/app.js?v=2026-06-13-daily-chart-fold"></script>
   </body>
 </html>
