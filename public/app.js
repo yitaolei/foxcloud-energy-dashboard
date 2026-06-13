@@ -63,6 +63,7 @@ const metricFields = {
   periodSolarSelfUsed: document.getElementById("periodSolarSelfUsed"),
   periodSolarExported: document.getElementById("periodSolarExported"),
   periodSolarUtilizationTotal: document.getElementById("periodSolarUtilizationTotal"),
+  kpiBatterySocNow: document.getElementById("kpiBatterySocNow"),
   kpiDailySolar: document.getElementById("kpiDailySolar"),
   kpiDailyConsumption: document.getElementById("kpiDailyConsumption"),
   kpiDailyBattery: document.getElementById("kpiDailyBattery"),
@@ -6845,17 +6846,24 @@ function getBatterySocLevel(value) {
 
 function renderBatterySocNow(value) {
   const level = getBatterySocLevel(value);
-  const card = metricFields.batterySocNow?.closest(".metric-card");
+  const targets = [
+    metricFields.kpiBatterySocNow,
+    metricFields.batterySocNow,
+  ].filter(Boolean);
 
-  metricFields.batterySocNow.textContent = formatPercent(value);
-  metricFields.batterySocNow.classList.toggle("battery-level-good", level === "good");
-  metricFields.batterySocNow.classList.toggle("battery-level-medium", level === "medium");
-  metricFields.batterySocNow.classList.toggle("battery-level-low", level === "low");
-  metricFields.batterySocNow.classList.toggle("battery-level-neutral", level === "unknown");
+  targets.forEach((target) => {
+    const card = target.closest(".visual-kpi-card, .metric-card");
 
-  if (card) {
-    card.dataset.level = level;
-  }
+    target.textContent = formatPercent(value);
+    target.classList.toggle("battery-level-good", level === "good");
+    target.classList.toggle("battery-level-medium", level === "medium");
+    target.classList.toggle("battery-level-low", level === "low");
+    target.classList.toggle("battery-level-neutral", level === "unknown");
+
+    if (card) {
+      card.dataset.level = level;
+    }
+  });
 }
 
 function renderWeather(payload) {
