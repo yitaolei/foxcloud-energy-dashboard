@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-13-weather-settings-fold" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-13-tariff-settings-fold" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,7 +33,7 @@
             <button id="refreshButton" class="refresh-button" type="button" data-i18n="refresh">Refresh</button>
             <button id="rebuildCacheButton" class="secondary-button" type="button" data-i18n="rebuildCache">Rebuild cache</button>
             <button id="exportPdfButton" class="secondary-button" type="button" data-i18n="exportPdf">Export PDF</button>
-            <p class="deploy-stamp">NAS build: 2026-06-13 weather-settings-fold</p>
+            <p class="deploy-stamp">NAS build: 2026-06-13 tariff-settings-fold</p>
             <p id="statusText" class="status-text">Loading dashboard data...</p>
           </div>
         </section>
@@ -857,17 +857,17 @@
           </div>
         </details>
 
-        <section class="panel tariff-panel settings-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="tariffSettings">Electricity tariff</p>
-              <h2 data-i18n="tariffSettingsTitle">Savings settings</h2>
-              <p class="muted-copy" data-i18n="tariffSettingsHelp">
+        <details class="panel tariff-panel settings-panel settings-details">
+          <summary class="deep-analysis-summary settings-details-summary">
+            <span>
+              <em class="panel-kicker" data-i18n="tariffSettings">Electricity tariff</em>
+              <b data-i18n="tariffSettingsTitle">Savings settings</b>
+              <small data-i18n="tariffSettingsHelp">
                 Edit your import and feed-in rates here. Settings are saved in SQLite and survive container rebuilds.
-              </p>
-            </div>
+              </small>
+            </span>
             <p id="tariffStatusText" class="status-text">--</p>
-          </div>
+          </summary>
           <div class="tariff-grid">
             <label>
               <span data-i18n="peakStart">Peak start</span>
@@ -893,7 +893,7 @@
               Save tariff
             </button>
           </div>
-        </section>
+        </details>
 
         <section id="sectionDailyData" class="panel daily-energy-table-panel">
           <div class="panel-heading">
@@ -1335,6 +1335,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-13-weather-settings-fold"></script>
+    <script src="/app.js?v=2026-06-13-tariff-settings-fold"></script>
   </body>
 </html>

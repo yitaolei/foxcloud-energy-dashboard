@@ -3618,7 +3618,8 @@ section[id] {
   text-align: right;
 }
 
-.settings-details .location-grid {
+.settings-details .location-grid,
+.settings-details .tariff-grid {
   border-top: 1px solid var(--border);
   padding: 1rem;
 }
