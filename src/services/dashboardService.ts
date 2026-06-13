@@ -16,6 +16,7 @@ import { calculateSavings } from "../lib/savings.js";
 import type {
   DashboardDailyRow,
   DashboardPayload,
+  DashboardWarning,
   EnergyRangePayload,
   FoxCloudDevice,
   FoxCloudHistoryDeviceResult,
@@ -80,6 +81,16 @@ const ENERGY_HISTORY_VARIABLES = [
   "chargeEnergyToTal",
   "dischargeEnergyToTal",
 ] as const;
+
+const createDashboardWarning = (
+  message: string,
+  severity: DashboardWarning["severity"] = "warning",
+  createdAt = new Date().toISOString(),
+): DashboardWarning => ({
+  message,
+  createdAt,
+  severity,
+});
 const CURRENT_MONTH_CACHE_TTL_MS = 10 * 60 * 1000;
 const MAX_REBUILD_DAYS = 31;
 const SOLAR_ACTIVE_POWER_THRESHOLD_KW = 0.05;
@@ -971,7 +982,7 @@ const buildDemoPayload = (year: number, month: number): DashboardPayload => {
     generatedAt: new Date().toISOString(),
     isStale: false,
     warnings: [
-      "Demo mode is enabled. These are sample values, not live FoxCloud data.",
+      createDashboardWarning("Demo mode is enabled. These are sample values, not live FoxCloud data.", "info", now.toISOString()),
     ],
     source: "demo",
     requestedPeriod: { year, month },
@@ -1126,14 +1137,23 @@ export async function getDashboardData(year: number, month: number): Promise<Das
       cachedPayload.requestedPeriod.year === year &&
       cachedPayload.requestedPeriod.month === month
     ) {
+      const warningCreatedAt = new Date().toISOString();
       return {
         ...cachedPayload,
-        generatedAt: new Date().toISOString(),
+        generatedAt: warningCreatedAt,
         isStale: true,
         source: "cache",
         warnings: [
-          "Showing the last successful cached response because the live FoxCloud request failed.",
-          error instanceof Error ? error.message : "Unknown FoxCloud error",
+          createDashboardWarning(
+            "Showing the last successful cached response because the live FoxCloud request failed.",
+            "warning",
+            warningCreatedAt,
+          ),
+          createDashboardWarning(
+            error instanceof Error ? error.message : "Unknown FoxCloud error",
+            "error",
+            warningCreatedAt,
+          ),
         ],
       };
     }

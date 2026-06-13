@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-05-source-mix" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-13-lean-first-screen" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,6 +33,7 @@
             <button id="refreshButton" class="refresh-button" type="button" data-i18n="refresh">Refresh</button>
             <button id="rebuildCacheButton" class="secondary-button" type="button" data-i18n="rebuildCache">Rebuild cache</button>
             <button id="exportPdfButton" class="secondary-button" type="button" data-i18n="exportPdf">Export PDF</button>
+            <p class="deploy-stamp">NAS build: 2026-06-13 lean-first-screen</p>
             <p id="statusText" class="status-text">Loading dashboard data...</p>
           </div>
         </section>
@@ -256,11 +257,6 @@
               <small id="homeJudgementMeta">--</small>
             </div>
             <div class="home-judgement-grid">
-              <article id="homeJudgeLoadCard" data-tone="neutral">
-                <span data-i18n="homeJudgeLoad">Flexible loads</span>
-                <strong id="homeJudgeLoadStatus">--</strong>
-                <small id="homeJudgeLoadDetail">--</small>
-              </article>
               <article id="homeJudgePeakCard" data-tone="neutral">
                 <span data-i18n="homeJudgePeak">Peak readiness</span>
                 <strong id="homeJudgePeakStatus">--</strong>
@@ -278,356 +274,9 @@
               </article>
             </div>
           </div>
-          <div class="home-action-queue">
-            <div class="home-action-queue-head">
-              <span data-i18n="homeActionQueueKicker">Action priorities</span>
-              <small id="homeActionQueueMeta">--</small>
-            </div>
-            <ol id="homeActionQueueList" class="home-action-list"></ol>
-          </div>
         </section>
-
-        <section class="panel operating-summary-panel" aria-live="polite">
-          <div class="operating-summary-head">
-            <div>
-              <p class="panel-kicker" data-i18n="operatingSummaryKicker">Operating summary</p>
-              <h2 data-i18n="operatingSummaryTitle">Today at a glance</h2>
-              <p id="operatingSummaryDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="operatingSummaryVerdict" class="operating-summary-verdict">--</strong>
-          </div>
-          <div class="operating-summary-grid">
-            <article>
-              <span data-i18n="timelineSolarLed">Solar-led time</span>
-              <strong id="operatingSummarySolar">--</strong>
-            </article>
-            <article>
-              <span data-i18n="timelineGridLed">Grid import time</span>
-              <strong id="operatingSummaryGrid">--</strong>
-            </article>
-            <article>
-              <span data-i18n="operatingSummaryReserve">Reserve above 20%</span>
-              <strong id="operatingSummaryReserve">--</strong>
-            </article>
-            <article>
-              <span data-i18n="operatingSummaryAction">Next action</span>
-              <strong id="operatingSummaryAction">--</strong>
-            </article>
-          </div>
-        </section>
-
-        <section class="panel command-brief-panel" aria-live="polite">
-          <div class="command-brief-head">
-            <div>
-              <p class="panel-kicker" data-i18n="commandBriefKicker">Smart command</p>
-              <h2 data-i18n="commandBriefTitle">Next best moves</h2>
-              <p id="commandBriefDetail" class="muted-copy">--</p>
-            </div>
-            <div class="command-brief-mode">
-              <span data-i18n="commandBriefMode">Mode</span>
-              <strong id="commandBriefMode">--</strong>
-            </div>
-          </div>
-          <div class="command-brief-layout">
-            <div class="command-brief-actions">
-              <article id="commandBriefNowCard" data-tone="neutral">
-                <span data-i18n="commandBriefNow">Now</span>
-                <strong id="commandBriefNow">--</strong>
-                <small id="commandBriefNowDetail">--</small>
-              </article>
-              <article id="commandBriefNextCard" data-tone="neutral">
-                <span data-i18n="commandBriefNext">Next handoff</span>
-                <strong id="commandBriefNext">--</strong>
-                <small id="commandBriefNextDetail">--</small>
-              </article>
-              <article id="commandBriefRiskCard" data-tone="neutral">
-                <span data-i18n="commandBriefRisk">Watch</span>
-                <strong id="commandBriefRisk">--</strong>
-                <small id="commandBriefRiskDetail">--</small>
-              </article>
-            </div>
-            <div>
-              <div class="command-brief-signals-head">
-                <span data-i18n="commandBriefSignals">Decision signals</span>
-              </div>
-              <div id="commandBriefSignals" class="command-brief-signals"></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel phase-plan-panel" aria-live="polite">
-          <div class="phase-plan-head">
-            <div>
-              <p class="panel-kicker" data-i18n="phasePlanKicker">Day phase</p>
-              <h2 data-i18n="phasePlanTitle">Operating rhythm</h2>
-              <p id="phasePlanDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="phasePlanStatus" class="phase-plan-status">--</strong>
-          </div>
-          <div class="phase-plan-radar">
-            <div class="phase-plan-progress-block">
-              <div class="phase-plan-progress-head">
-                <span data-i18n="phasePlanProgress">Phase progress</span>
-                <b id="phasePlanProgressLabel">--</b>
-              </div>
-              <div class="phase-plan-progress" aria-hidden="true">
-                <span id="phasePlanProgressBar"></span>
-              </div>
-            </div>
-            <article id="phasePlanCheckpointCard" data-tone="neutral">
-              <span data-i18n="phasePlanCheckpoint">Next checkpoint</span>
-              <strong id="phasePlanCheckpoint">--</strong>
-              <small id="phasePlanCheckpointDetail">--</small>
-            </article>
-            <article id="phasePlanActionCard" data-tone="neutral">
-              <span data-i18n="phasePlanBestAction">Best action</span>
-              <strong id="phasePlanAction">--</strong>
-              <small id="phasePlanActionDetail">--</small>
-            </article>
-            <article id="phasePlanHandoffCard" data-tone="neutral">
-              <span data-i18n="phasePlanHandoff">Handoff cue</span>
-              <strong id="phasePlanHandoff">--</strong>
-              <small id="phasePlanHandoffDetail">--</small>
-            </article>
-          </div>
-          <div id="phasePlanGrid" class="phase-plan-grid"></div>
-        </section>
-
-        <section class="panel smart-hub-panel" aria-live="polite">
-          <div class="smart-hub-head">
-            <div>
-              <p class="panel-kicker" data-i18n="smartHubKicker">Smart energy pilot</p>
-              <h2 data-i18n="smartHubTitle">Today's energy decision</h2>
-              <p id="smartHubNarrative" class="smart-hub-narrative">--</p>
-            </div>
-            <div class="smart-hub-verdict">
-              <strong id="smartHubStatus" class="smart-hub-status">--</strong>
-              <div id="smartHubConfidence" class="smart-hub-confidence" data-tone="neutral">
-                <span data-i18n="smartHubConfidence">Confidence</span>
-                <b id="smartHubConfidenceValue">--</b>
-                <small id="smartHubConfidenceDetail">--</small>
-              </div>
-            </div>
-          </div>
-          <div id="smartHubTags" class="smart-hub-tags"></div>
-          <div class="smart-hub-basis" aria-label="Decision basis">
-            <article id="smartHubSolarBasisCard" data-tone="neutral">
-              <span data-i18n="smartHubBasisSolar">Solar surplus</span>
-              <strong id="smartHubSolarBasis">--</strong>
-              <small id="smartHubSolarBasisDetail">--</small>
-            </article>
-            <article id="smartHubBatteryBasisCard" data-tone="neutral">
-              <span data-i18n="smartHubBasisBattery">Battery reserve</span>
-              <strong id="smartHubBatteryBasis">--</strong>
-              <small id="smartHubBatteryBasisDetail">--</small>
-            </article>
-            <article id="smartHubGridBasisCard" data-tone="neutral">
-              <span data-i18n="smartHubBasisGrid">Grid pressure</span>
-              <strong id="smartHubGridBasis">--</strong>
-              <small id="smartHubGridBasisDetail">--</small>
-            </article>
-            <article id="smartHubOutlookBasisCard" data-tone="neutral">
-              <span data-i18n="smartHubBasisOutlook">Next window</span>
-              <strong id="smartHubOutlookBasis">--</strong>
-              <small id="smartHubOutlookBasisDetail">--</small>
-            </article>
-          </div>
-          <div class="smart-hub-grid">
-            <article id="smartHubNowCard" class="smart-hub-card" data-tone="good">
-              <span data-i18n="smartHubNow">Now</span>
-              <strong id="smartHubNowStatus">--</strong>
-              <small id="smartHubNowDetail">--</small>
-            </article>
-            <article id="smartHubLaterCard" class="smart-hub-card" data-tone="watch">
-              <span data-i18n="smartHubLater">Later today</span>
-              <strong id="smartHubLaterStatus">--</strong>
-              <small id="smartHubLaterDetail">--</small>
-            </article>
-            <article id="smartHubWatchCard" class="smart-hub-card" data-tone="neutral">
-              <span data-i18n="smartHubWatch">Watch</span>
-              <strong id="smartHubWatchStatus">--</strong>
-              <small id="smartHubWatchDetail">--</small>
-            </article>
-          </div>
-          <div class="smart-flow-split">
-            <div class="smart-flow-split-head">
-              <span data-i18n="smartFlowSplit">Power routing</span>
-              <small id="smartFlowSplitMeta">--</small>
-            </div>
-            <div id="smartFlowSplitGrid" class="smart-flow-split-grid"></div>
-          </div>
-          <div class="smart-hub-support-grid">
-            <div class="smart-watchlist">
-              <div class="smart-watchlist-head">
-                <span data-i18n="smartWatchlist">Watchlist</span>
-                <small data-i18n="smartWatchlistMeta">Top signals to monitor now</small>
-              </div>
-              <div id="smartWatchlistGrid" class="smart-watchlist-grid"></div>
-            </div>
-            <div class="smart-decision-log">
-              <div class="smart-decision-log-head">
-                <span data-i18n="smartDecisionLog">Recent decisions</span>
-                <small id="smartDecisionLogMeta">--</small>
-              </div>
-              <p id="smartDecisionTrend" class="smart-decision-trend">--</p>
-              <div id="smartDecisionLogList" class="smart-decision-log-list"></div>
-            </div>
-          </div>
-          <div class="smart-load-advisor">
-            <div class="smart-load-head">
-              <div>
-                <p class="panel-kicker" data-i18n="smartLoadKicker">Load advisor</p>
-                <h3 data-i18n="smartLoadTitle">If I run it now</h3>
-              </div>
-              <span id="smartLoadMeta">--</span>
-            </div>
-            <div id="smartPlanStrip" class="smart-plan-strip"></div>
-            <div id="smartLoadPriority" class="smart-load-priority" data-tone="neutral">
-              <span data-i18n="smartLoadPriority">Priority</span>
-              <strong id="smartLoadPriorityTitle">--</strong>
-              <small id="smartLoadPriorityDetail">--</small>
-            </div>
-            <div class="smart-load-queue">
-              <div class="smart-load-queue-head">
-                <span data-i18n="smartLoadQueue">Load queue</span>
-                <small data-i18n="smartLoadQueueMeta">Grouped by what to run now, delay, or avoid.</small>
-              </div>
-              <div id="smartLoadQueueGrid" class="smart-load-queue-grid"></div>
-            </div>
-            <div id="smartLoadGrid" class="smart-load-grid"></div>
-          </div>
-        </section>
-
-        <section class="panel night-ops-panel" aria-live="polite">
-          <div class="panel-heading compact-heading night-ops-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="nightOpsKicker">Tonight plan</p>
-              <h2 data-i18n="nightOpsTitle">Evening operating plan</h2>
-              <p id="nightOpsDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="nightOpsStatus" class="night-ops-status">--</strong>
-          </div>
-          <div class="night-ops-layout">
-            <div id="nightOpsTimeline" class="night-ops-timeline"></div>
-            <div class="night-ops-command">
-              <div id="nightOpsFocusCard" class="night-ops-focus" data-tone="neutral">
-                <span data-i18n="nightOpsFocus">Tonight focus</span>
-                <strong id="nightOpsFocus">--</strong>
-                <small id="nightOpsFocusDetail">--</small>
-              </div>
-              <div class="night-ops-check-grid">
-                <article id="nightOpsReserveCard" data-tone="neutral">
-                  <span data-i18n="nightOpsReserve">Reserve</span>
-                  <strong id="nightOpsReserveValue">--</strong>
-                  <small id="nightOpsReserveDetail">--</small>
-                </article>
-                <article id="nightOpsPeakCard" data-tone="neutral">
-                  <span data-i18n="nightOpsPeak">Peak</span>
-                  <strong id="nightOpsPeakValue">--</strong>
-                  <small id="nightOpsPeakDetail">--</small>
-                </article>
-                <article id="nightOpsGridCard" data-tone="neutral">
-                  <span data-i18n="nightOpsGrid">Grid</span>
-                  <strong id="nightOpsGridValue">--</strong>
-                  <small id="nightOpsGridDetail">--</small>
-                </article>
-                <article id="nightOpsTomorrowCard" data-tone="neutral">
-                  <span data-i18n="nightOpsTomorrow">Tomorrow</span>
-                  <strong id="nightOpsTomorrowValue">--</strong>
-                  <small id="nightOpsTomorrowDetail">--</small>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div class="dashboard-summary-grid">
-          <section class="panel top-bill-impact-panel" aria-live="polite">
-            <div class="panel-heading compact-heading">
-              <div>
-                <p class="panel-kicker" data-i18n="todayBillImpactKicker">Bill impact</p>
-                <h2 data-i18n="todayBillImpactTitle">Today's bill impact</h2>
-                <p id="todayBillImpactDetail" class="muted-copy">--</p>
-              </div>
-              <strong id="todayBillImpactBenefit" class="top-bill-impact-benefit">--</strong>
-            </div>
-            <div class="top-bill-impact-grid">
-              <article>
-                <span data-i18n="withoutSolarBattery">Without solar/battery</span>
-                <strong id="todayBillWithoutSolar">--</strong>
-              </article>
-              <article>
-                <span data-i18n="gridEnergyCost">Grid energy cost</span>
-                <strong id="todayBillGridCost">--</strong>
-              </article>
-              <article>
-                <span data-i18n="exportCredit">Export credit</span>
-                <strong id="todayBillExportCredit">--</strong>
-              </article>
-              <article>
-                <span data-i18n="netCostAfterExport">Net after export credit</span>
-                <strong id="todayBillNetCost">--</strong>
-              </article>
-            </div>
-          </section>
-
-          <section class="panel energy-score-panel" aria-live="polite">
-            <div id="energyScoreRing" class="energy-score-ring" style="--score-percent: 0%">
-              <strong id="energyScoreValue">--</strong>
-              <span id="energyScoreStatus">--</span>
-            </div>
-            <div class="energy-score-copy">
-              <p class="panel-kicker" data-i18n="energyScoreKicker">Home energy score</p>
-              <h2 data-i18n="energyScoreTitle">Energy health score</h2>
-              <p id="energyScoreDetail" class="muted-copy">--</p>
-              <div class="energy-score-factors">
-                <span id="energyScoreSelfFactor">--</span>
-                <span id="energyScoreBatteryFactor" class="energy-score-battery-factor">--</span>
-                <span id="energyScoreGridFactor">--</span>
-                <span id="energyScoreTempFactor">--</span>
-                <span id="energyScoreWeatherFactor">--</span>
-              </div>
-            </div>
-          </section>
-        </div>
 
         <div class="dashboard-support-strip">
-          <section id="dataQualityPanel" class="panel data-quality-panel" aria-live="polite">
-            <div class="panel-heading compact-heading">
-              <div>
-                <p class="panel-kicker" data-i18n="dataQualityKicker">Data quality</p>
-                <h2 data-i18n="dataQualityTitle">Live data confidence</h2>
-                <p id="dataQualityDetail" class="muted-copy">--</p>
-              </div>
-              <div class="data-quality-status">
-                <span data-i18n="systemStatus">System status</span>
-                <strong id="dataQualityStatus">--</strong>
-              </div>
-            </div>
-            <div class="data-quality-grid">
-              <article>
-                <span data-i18n="dataFreshness">Data freshness</span>
-                <strong id="dataQualityFreshness">--</strong>
-              </article>
-              <article>
-                <span data-i18n="dataSource">Data source</span>
-                <strong id="dataQualitySource">--</strong>
-              </article>
-              <article>
-                <span data-i18n="warningsLabel">Warnings</span>
-                <strong id="dataQualityWarnings">--</strong>
-              </article>
-              <article>
-                <span data-i18n="responseGenerated">Response generated</span>
-                <strong id="dataQualityResponse">--</strong>
-              </article>
-              <article class="data-quality-warning-detail">
-                <span data-i18n="warningDetailLabel">Warning detail</span>
-                <strong id="dataQualityWarningDetail">--</strong>
-              </article>
-            </div>
-          </section>
-
           <section class="panel tariff-timeline-panel" aria-live="polite">
             <div class="panel-heading compact-heading">
               <div>
@@ -902,39 +551,6 @@
           </div>
         </section>
 
-        <section class="panel flexible-load-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="flexibleLoadKicker">Flexible loads</p>
-              <h2 data-i18n="flexibleLoadTitle">Flexible load planner</h2>
-              <p id="flexibleLoadDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="flexibleLoadStatus" class="flexible-load-status">--</strong>
-          </div>
-          <div class="flexible-load-layout">
-            <div class="flexible-load-meter">
-              <span data-i18n="usableSurplusNow">Usable surplus now</span>
-              <strong id="flexibleLoadCapacity">--</strong>
-              <div class="flexible-load-bar"><span id="flexibleLoadBar" style="width: 0%"></span></div>
-              <small id="flexibleLoadExamples">--</small>
-            </div>
-            <div class="flexible-load-grid">
-              <article>
-                <span data-i18n="bestLoadWindow">Best window</span>
-                <strong id="flexibleLoadWindow">--</strong>
-              </article>
-              <article>
-                <span data-i18n="avoidLoadNow">Avoid now</span>
-                <strong id="flexibleLoadAvoid">--</strong>
-              </article>
-              <article>
-                <span data-i18n="batteryGuard">Battery guard</span>
-                <strong id="flexibleLoadBatteryGuard">--</strong>
-              </article>
-            </div>
-          </div>
-        </section>
-
         <section class="panel battery-runway-panel" aria-live="polite">
           <div class="panel-heading compact-heading">
             <div>
@@ -1117,40 +733,7 @@
         </section>
 
         <div class="action-advice-grid">
-          <section id="sectionActions" class="panel action-board-panel" aria-live="polite">
-            <div class="panel-heading compact-heading">
-              <div>
-                <p class="panel-kicker" data-i18n="actionBoardKicker">Priority board</p>
-                <h2 data-i18n="actionBoardTitle">What to do now</h2>
-                <p id="actionBoardDetail" class="muted-copy">--</p>
-              </div>
-              <strong id="actionBoardStatus" class="action-board-status">--</strong>
-            </div>
-            <div class="action-board-grid">
-              <article id="actionBoardNowCard" class="action-board-card" data-tone="good">
-                <span data-i18n="actionBoardNow">Now</span>
-                <strong id="actionBoardNowStatus">--</strong>
-                <small id="actionBoardNowDetail">--</small>
-              </article>
-              <article id="actionBoardBatteryCard" class="action-board-card" data-tone="good">
-                <span data-i18n="actionBoardBattery">Battery</span>
-                <strong id="actionBoardBatteryStatus">--</strong>
-                <small id="actionBoardBatteryDetail">--</small>
-              </article>
-              <article id="actionBoardPeakCard" class="action-board-card" data-tone="good">
-                <span data-i18n="actionBoardPeak">Peak window</span>
-                <strong id="actionBoardPeakStatus">--</strong>
-                <small id="actionBoardPeakDetail">--</small>
-              </article>
-              <article id="actionBoardTomorrowCard" class="action-board-card" data-tone="good">
-                <span data-i18n="actionBoardTomorrow">Tomorrow</span>
-                <strong id="actionBoardTomorrowStatus">--</strong>
-                <small id="actionBoardTomorrowDetail">--</small>
-              </article>
-            </div>
-          </section>
-
-          <section class="panel energy-coach-panel" aria-live="polite">
+          <section id="sectionActions" class="panel energy-coach-panel" aria-live="polite">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="energyCoachKicker">Energy coach</p>
@@ -1587,10 +1170,6 @@
 
             <div class="summary-grid">
               <article class="summary-card">
-                <span data-i18n="selfConsumption">Self-consumption</span>
-                <strong id="todaySelfConsumption">--</strong>
-              </article>
-              <article class="summary-card">
                 <span data-i18n="returnToGrid">Return to grid</span>
                 <strong id="todayFeedin">--</strong>
               </article>
@@ -1603,37 +1182,12 @@
                 <strong id="todayGrid">--</strong>
               </article>
               <article class="summary-card">
-                <span data-i18n="batteryLevel">Battery level</span>
-                <strong id="batterySoc" class="battery-level-value">--</strong>
-              </article>
-              <article class="summary-card">
                 <span data-i18n="intoBattery">Into battery</span>
                 <strong id="todayBatteryCharge">--</strong>
               </article>
               <article class="summary-card">
                 <span data-i18n="outOfBattery">Out of battery</span>
                 <strong id="todayBatteryDischarge">--</strong>
-              </article>
-              <article class="summary-card savings-card">
-                <span data-i18n="todaySavings">Estimated savings today</span>
-                <strong id="todaySavings">--</strong>
-                <small id="todaySavingsMeta" class="muted-copy">--</small>
-              </article>
-              <article class="summary-card">
-                <span data-i18n="batteryTemp">Min battery temp</span>
-                <strong id="batteryTemp">--</strong>
-              </article>
-              <article class="summary-card">
-                <span data-i18n="batteryMaxTemp">Max battery temp</span>
-                <strong id="batteryMaxTemp">--</strong>
-              </article>
-              <article class="summary-card">
-                <span data-i18n="batteryPackTemp">Battery pack temp</span>
-                <strong id="batteryPackTemp">--</strong>
-              </article>
-              <article class="summary-card">
-                <span data-i18n="inverterTemp">Inverter temp</span>
-                <strong id="inverterTemp">--</strong>
               </article>
             </div>
           </article>
@@ -1661,6 +1215,11 @@
         </section>
 
         <section class="metrics-grid">
+          <article class="metric-card accent-battery-soc" data-level="unknown">
+            <span class="metric-label" data-i18n="batteryLevelNow">Battery level now</span>
+            <strong id="batterySocNow" class="metric-value battery-level-value">--</strong>
+            <span class="metric-subtext" data-i18n="batteryLevelNowHelp">Current battery SOC</span>
+          </article>
           <article class="metric-card accent-solar">
             <span class="metric-label" data-i18n="solarGeneratedNow">Solar generated now</span>
             <strong id="solarNow" class="metric-value">--</strong>
@@ -1693,50 +1252,6 @@
           </article>
         </section>
 
-        <section class="panel">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="lastHour">Past Hour</p>
-              <h2 data-i18n="lastHourTitle">Energy over the last hour</h2>
-              <p class="muted-copy" data-i18n="lastHourHelp">
-                These are estimated kWh totals calculated from FoxCloud power samples over the last 60 minutes.
-              </p>
-            </div>
-          </div>
-          <div class="metrics-grid">
-            <article class="metric-card accent-solar">
-              <span class="metric-label" data-i18n="solarGeneratedLastHour">Solar generated last hour</span>
-              <strong id="solarLastHour" class="metric-value">--</strong>
-              <span class="metric-subtext" data-i18n="lastHourTotalHelp">Estimated energy in the last 60 minutes</span>
-            </article>
-            <article class="metric-card accent-home">
-              <span class="metric-label" data-i18n="homeUsageLastHour">Home usage last hour</span>
-              <strong id="homeLastHour" class="metric-value">--</strong>
-              <span class="metric-subtext" data-i18n="lastHourTotalHelp">Estimated energy in the last 60 minutes</span>
-            </article>
-            <article class="metric-card accent-grid">
-              <span class="metric-label" data-i18n="gridImportLastHour">Grid import last hour</span>
-              <strong id="gridImportLastHour" class="metric-value">--</strong>
-              <span class="metric-subtext" data-i18n="lastHourTotalHelp">Estimated energy in the last 60 minutes</span>
-            </article>
-            <article class="metric-card accent-grid-export">
-              <span class="metric-label" data-i18n="gridExportLastHour">Grid export last hour</span>
-              <strong id="gridExportLastHour" class="metric-value">--</strong>
-              <span class="metric-subtext" data-i18n="lastHourTotalHelp">Estimated energy in the last 60 minutes</span>
-            </article>
-            <article class="metric-card accent-battery-in">
-              <span class="metric-label" data-i18n="batteryChargeLastHour">Battery charge last hour</span>
-              <strong id="batteryChargeLastHour" class="metric-value">--</strong>
-              <span class="metric-subtext" data-i18n="lastHourTotalHelp">Estimated energy in the last 60 minutes</span>
-            </article>
-            <article class="metric-card accent-battery-out">
-              <span class="metric-label" data-i18n="batteryDischargeLastHour">Battery discharge last hour</span>
-              <strong id="batteryDischargeLastHour" class="metric-value">--</strong>
-              <span class="metric-subtext" data-i18n="lastHourTotalHelp">Estimated energy in the last 60 minutes</span>
-            </article>
-          </div>
-        </section>
-
         <section class="chart-grid">
           <article class="panel chart-panel">
             <div class="panel-heading">
@@ -1750,17 +1265,6 @@
             </div>
           </article>
 
-          <article class="panel chart-panel">
-            <div class="panel-heading">
-              <div>
-                <p class="panel-kicker" data-i18n="chart">Chart</p>
-                <h2 data-i18n="batteryChart">Battery charge and discharge</h2>
-              </div>
-            </div>
-            <div class="chart-body">
-              <canvas id="batteryChart"></canvas>
-            </div>
-          </article>
         </section>
 
         <section class="panel">
@@ -1810,6 +1314,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-05-source-mix"></script>
+    <script src="/app.js?v=2026-06-13-lean-first-screen"></script>
   </body>
 </html>

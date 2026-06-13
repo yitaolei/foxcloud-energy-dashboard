@@ -19,6 +19,7 @@ const storageKeys = {
 };
 
 const metricFields = {
+  batterySocNow: document.getElementById("batterySocNow"),
   solarNow: document.getElementById("solarNow"),
   homeNow: document.getElementById("homeNow"),
   gridImportNow: document.getElementById("gridImportNow"),
@@ -26,24 +27,11 @@ const metricFields = {
   batteryChargeNow: document.getElementById("batteryChargeNow"),
   batteryDischargeNow: document.getElementById("batteryDischargeNow"),
   todaySolar: document.getElementById("todaySolar"),
-  todaySelfConsumption: document.getElementById("todaySelfConsumption"),
   todayFeedin: document.getElementById("todayFeedin"),
   todayHome: document.getElementById("todayHome"),
   todayGrid: document.getElementById("todayGrid"),
   todayBatteryCharge: document.getElementById("todayBatteryCharge"),
   todayBatteryDischarge: document.getElementById("todayBatteryDischarge"),
-  batterySoc: document.getElementById("batterySoc"),
-  batteryTemp: document.getElementById("batteryTemp"),
-  batteryMaxTemp: document.getElementById("batteryMaxTemp"),
-  batteryPackTemp: document.getElementById("batteryPackTemp"),
-  inverterTemp: document.getElementById("inverterTemp"),
-  todaySavings: document.getElementById("todaySavings"),
-  solarLastHour: document.getElementById("solarLastHour"),
-  homeLastHour: document.getElementById("homeLastHour"),
-  gridImportLastHour: document.getElementById("gridImportLastHour"),
-  gridExportLastHour: document.getElementById("gridExportLastHour"),
-  batteryChargeLastHour: document.getElementById("batteryChargeLastHour"),
-  batteryDischargeLastHour: document.getElementById("batteryDischargeLastHour"),
   periodSolarProduction: document.getElementById("periodSolarProduction"),
   periodHomeUsage: document.getElementById("periodHomeUsage"),
   periodIntoBattery: document.getElementById("periodIntoBattery"),
@@ -110,7 +98,6 @@ const textFields = {
   deviceMeta: document.getElementById("deviceMeta"),
   liveMeta: document.getElementById("liveMeta"),
   periodTotalsMeta: document.getElementById("periodTotalsMeta"),
-  todaySavingsMeta: document.getElementById("todaySavingsMeta"),
   periodSavingsMeta: document.getElementById("periodSavingsMeta"),
   badgeRow: document.getElementById("badgeRow"),
   weatherLocation: document.getElementById("weatherLocation"),
@@ -240,31 +227,6 @@ const textFields = {
   smartHubWatchDetail: document.getElementById("smartHubWatchDetail"),
   smartFlowSplitMeta: document.getElementById("smartFlowSplitMeta"),
   smartFlowSplitGrid: document.getElementById("smartFlowSplitGrid"),
-  smartLoadMeta: document.getElementById("smartLoadMeta"),
-  smartPlanStrip: document.getElementById("smartPlanStrip"),
-  smartLoadPriority: document.getElementById("smartLoadPriority"),
-  smartLoadPriorityTitle: document.getElementById("smartLoadPriorityTitle"),
-  smartLoadPriorityDetail: document.getElementById("smartLoadPriorityDetail"),
-  smartLoadQueueGrid: document.getElementById("smartLoadQueueGrid"),
-  smartLoadGrid: document.getElementById("smartLoadGrid"),
-  nightOpsStatus: document.getElementById("nightOpsStatus"),
-  nightOpsDetail: document.getElementById("nightOpsDetail"),
-  nightOpsTimeline: document.getElementById("nightOpsTimeline"),
-  nightOpsFocusCard: document.getElementById("nightOpsFocusCard"),
-  nightOpsFocus: document.getElementById("nightOpsFocus"),
-  nightOpsFocusDetail: document.getElementById("nightOpsFocusDetail"),
-  nightOpsReserveCard: document.getElementById("nightOpsReserveCard"),
-  nightOpsReserveValue: document.getElementById("nightOpsReserveValue"),
-  nightOpsReserveDetail: document.getElementById("nightOpsReserveDetail"),
-  nightOpsPeakCard: document.getElementById("nightOpsPeakCard"),
-  nightOpsPeakValue: document.getElementById("nightOpsPeakValue"),
-  nightOpsPeakDetail: document.getElementById("nightOpsPeakDetail"),
-  nightOpsGridCard: document.getElementById("nightOpsGridCard"),
-  nightOpsGridValue: document.getElementById("nightOpsGridValue"),
-  nightOpsGridDetail: document.getElementById("nightOpsGridDetail"),
-  nightOpsTomorrowCard: document.getElementById("nightOpsTomorrowCard"),
-  nightOpsTomorrowValue: document.getElementById("nightOpsTomorrowValue"),
-  nightOpsTomorrowDetail: document.getElementById("nightOpsTomorrowDetail"),
   todayBillImpactDetail: document.getElementById("todayBillImpactDetail"),
   energyScoreRing: document.getElementById("energyScoreRing"),
   energyScoreStatus: document.getElementById("energyScoreStatus"),
@@ -487,7 +449,6 @@ const flowFields = {
 };
 
 let energyChart;
-let batteryChart;
 let last24HoursChart;
 let currentRows = [];
 let sortState = {
@@ -501,6 +462,7 @@ let lastWeatherPayload = null;
 let lastTariff = null;
 let lastWeatherSettings = null;
 const REBUILD_LIMIT_DAYS = 31;
+const WARNING_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
 function getSelectValues(selectElement) {
   return new Set(Array.from(selectElement.options).map((option) => option.value));
@@ -740,7 +702,7 @@ const translations = {
     homeJudgeTomorrowLight: "Keep loads light",
     homeJudgeTomorrowWait: "Wait for forecast",
     homeJudgeTomorrowDetail: "Outlook {outlook}; best window {window}; action {action}.",
-    homeActionQueueKicker: "Action priorities",
+    homeActionQueueKicker: "Suggested actions",
     homeActionQueueMeta: "Ranked by impact; only the three most useful moves are shown.",
     homeActionRunLoad: "Run one flexible load",
     homeActionRunLoadDetail: "Headroom {headroom}; battery reserve {reserve}; grid pressure {pressure}.",
@@ -942,93 +904,6 @@ const translations = {
     smartDecisionDriverConfidenceUp: "confidence rose {value}",
     smartDecisionDriverConfidenceDown: "confidence fell {value}",
     smartDecisionDriverNoMajor: "signals are mostly unchanged",
-    smartLoadKicker: "Load advisor",
-    smartLoadTitle: "If I run it now",
-    smartLoadMeta: "Assumes current surplus {headroom} and battery reserve {reserve}.",
-    smartLoadDishwasher: "Dishwasher",
-    smartLoadLaundry: "Washing machine",
-    smartLoadDryer: "Dryer",
-    smartLoadEv: "EV top-up",
-    smartLoadGood: "Good now",
-    smartLoadWatch: "Maybe later",
-    smartLoadAvoid: "Avoid now",
-    smartLoadGoodDetail: "{load} should mostly fit the current solar/battery window. Extra grid need: {grid}.",
-    smartLoadWatchDetail: "{load} may need about {grid} from grid/battery. Better if solar improves.",
-    smartLoadAvoidDetail: "{load} is likely to raise grid import by about {grid}. Wait for surplus or off-peak.",
-    smartLoadBatteryGuard: "Battery guard",
-    smartLoadPeakGuard: "Peak guard",
-    smartLoadSolarFit: "Solar fit",
-    smartLoadWindowNow: "Best window: now",
-    smartLoadWindowOffPeak: "Best window: off-peak in {time}",
-    smartLoadWindowTomorrow: "Best window: {window}",
-    smartLoadWindowBattery: "Best window: after battery reserve improves",
-    smartPlanNow: "Now",
-    smartPlanNext: "Next",
-    smartPlanPeak: "Peak",
-    smartPlanTomorrow: "Tomorrow",
-    smartPlanNowUse: "Use flexible loads",
-    smartPlanNowWait: "Keep loads light",
-    smartPlanNextOffPeak: "Wait for off-peak in {time}",
-    smartPlanNextSolar: "Watch for solar surplus",
-    smartPlanPeakAvoid: "Avoid heavy import",
-    smartPlanPeakReady: "Battery can help",
-    smartPlanTomorrowSolar: "{outlook}; {window}",
-    smartPlanTomorrowWait: "Wait for forecast",
-    smartLoadPriority: "Priority",
-    smartLoadPriorityRun: "Run {load} first",
-    smartLoadPriorityWait: "Wait before starting loads",
-    smartLoadPriorityDetailRun: "{load} has the lightest impact now. Put {defer} later.",
-    smartLoadPriorityDetailWait: "No flexible load fits well now. Best next move: {window}.",
-    smartLoadQueue: "Load queue",
-    smartLoadQueueMeta: "Grouped by what to run now, delay, or avoid.",
-    smartLoadLaneNow: "Run now",
-    smartLoadLaneLater: "Delay",
-    smartLoadLaneAvoid: "Avoid now",
-    smartLoadLaneEmpty: "No loads",
-    smartLoadQueueGridNeed: "Extra grid {grid}",
-    nightOpsKicker: "Tonight plan",
-    nightOpsTitle: "Evening operating plan",
-    nightOpsFocus: "Tonight focus",
-    nightOpsReserve: "Reserve",
-    nightOpsPeak: "Peak",
-    nightOpsGrid: "Grid",
-    nightOpsTomorrow: "Tomorrow",
-    nightOpsStatusUseWindow: "Use the current window",
-    nightOpsStatusReduceImport: "Reduce import now",
-    nightOpsStatusSaveBattery: "Hold battery reserve",
-    nightOpsStatusPrepareTomorrow: "Prepare for weak solar",
-    nightOpsStatusSteady: "Steady evening",
-    nightOpsDetail: "Live plan from {tariff}, battery reserve {reserve}, grid pressure {pressure}, tomorrow {tomorrow}.",
-    nightOpsStepNow: "Now",
-    nightOpsStepPeak: "Peak window",
-    nightOpsStepNight: "Overnight",
-    nightOpsStepTomorrow: "Tomorrow",
-    nightOpsNowRun: "Run flexible loads",
-    nightOpsNowRunDetail: "Headroom {headroom} is available. Prioritise the lightest deferrable load before exports are wasted.",
-    nightOpsNowReduce: "Cut heavy loads",
-    nightOpsNowReduceDetail: "Grid pressure is {pressure}; avoid stacking dryer, EV, or cooking loads.",
-    nightOpsNowHold: "Keep loads light",
-    nightOpsNowHoldDetail: "No strong surplus right now. Wait for off-peak or a clearer solar window.",
-    nightOpsPeakActive: "Peak is active",
-    nightOpsPeakActiveDetail: "Peak {peakWindow} is running now. Let the battery cover essentials and avoid avoidable import.",
-    nightOpsPeakSoon: "Peak starts in {time}",
-    nightOpsPeakSoonDetail: "Finish flexible loads before {peakWindow}; battery readiness is {score}.",
-    nightOpsPeakClear: "Peak is later",
-    nightOpsPeakClearDetail: "Peak {peakWindow}; no immediate pressure, but keep reserve above the 20% floor.",
-    nightOpsNightSave: "Protect overnight reserve",
-    nightOpsNightSaveDetail: "Runway risk is {risk}; reserve {reserve}. Keep late discretionary loads small.",
-    nightOpsNightNormal: "Normal overnight rhythm",
-    nightOpsNightNormalDetail: "Runway risk is {risk}; reserve {reserve}. Normal household load should be fine.",
-    nightOpsTomorrowSolar: "Use tomorrow solar",
-    nightOpsTomorrowSolarDetail: "Tomorrow outlook {outlook}. Best window: {tomorrowWindow}.",
-    nightOpsTomorrowConserve: "Bring loads forward",
-    nightOpsTomorrowConserveDetail: "Tomorrow outlook {outlook}; finish optional loads tonight if reserve allows.",
-    nightOpsTomorrowWait: "Wait for forecast",
-    nightOpsTomorrowWaitDetail: "Weather is missing. Refresh forecast before planning daytime loads.",
-    nightOpsReserveDetail: "Runway {risk}",
-    nightOpsPeakDetail: "{peakWindow}",
-    nightOpsGridDetail: "{flow}",
-    nightOpsTomorrowDetail: "{tomorrowWindow}",
     operatingSolarDay: "Solar-led day",
     operatingBalancedDay: "Balanced day",
     operatingGridDay: "Grid-heavy day",
@@ -1066,6 +941,7 @@ const translations = {
     warningsLabel: "Warnings",
     warningsCount: "{count} warning(s)",
     noWarnings: "No warnings",
+    warningWithCreatedAt: "{message}. Created at: {createdAt}",
     warningDetailLabel: "Warning detail",
     warningDetailNone: "No warning in this response.",
     warningDetailOne: "Latest warning in this response: {warning}. Generated at {time}.",
@@ -1370,12 +1246,10 @@ const translations = {
     homeUsage: "Home usage",
     gridConsumption: "Grid consumption",
     batteryLevel: "Battery level",
+    batteryLevelNow: "Battery level now",
+    batteryLevelNowHelp: "Current battery SOC",
     intoBattery: "Into battery",
     outOfBattery: "Out of battery",
-    batteryTemp: "Min battery temp",
-    batteryMaxTemp: "Max battery temp",
-    batteryPackTemp: "Battery pack temp",
-    inverterTemp: "Inverter temp",
     last24Hours: "Last 24 Hours",
     last24Title: "Battery level, home usage, and battery discharge",
     system: "System",
@@ -1391,19 +1265,8 @@ const translations = {
     batteryChargeHelp: "Instant charging power",
     batteryDischargeNow: "Battery discharge now",
     batteryDischargeHelp: "Instant discharging power",
-    lastHour: "Past Hour",
-    lastHourTitle: "Energy over the last hour",
-    lastHourHelp: "These are estimated kWh totals calculated from FoxCloud power samples over the last 60 minutes.",
-    lastHourTotalHelp: "Estimated energy in the last 60 minutes",
-    solarGeneratedLastHour: "Solar generated last hour",
-    homeUsageLastHour: "Home usage last hour",
-    gridImportLastHour: "Grid import last hour",
-    gridExportLastHour: "Grid export last hour",
-    batteryChargeLastHour: "Battery charge last hour",
-    batteryDischargeLastHour: "Battery discharge last hour",
     chart: "Chart",
     dailyEnergyChart: "Daily solar, grid, and home usage",
-    batteryChart: "Battery charge and discharge",
     table: "Table",
     dailyEnergyData: "Daily energy data",
     date: "Date",
@@ -1413,6 +1276,8 @@ const translations = {
     noLiveTimestamp: "No live timestamp available",
     liveUpdated: "Live updated",
     responseGenerated: "Response generated",
+    liveMetaFresh: "Live data updated: {liveUpdated} • Current response generated: {responseGenerated}",
+    liveMetaCache: "Cached data, original live update: {liveUpdated}, current response: {responseGenerated}, cache age: {cacheAge}",
     online: "Online",
     fault: "Fault",
     offline: "Offline",
@@ -1672,7 +1537,7 @@ const translations = {
     homeJudgeTomorrowLight: "保持轻负载",
     homeJudgeTomorrowWait: "等待预报",
     homeJudgeTomorrowDetail: "发电天气 {outlook}；最佳窗口 {window}；建议 {action}。",
-    homeActionQueueKicker: "行动优先级",
+    homeActionQueueKicker: "建议行动",
     homeActionQueueMeta: "按影响排序，只显示现在最值得做的三件事。",
     homeActionRunLoad: "趁太阳开一个负载",
     homeActionRunLoadDetail: "可用富余 {headroom}；电池余量 {reserve}；取电压力 {pressure}。",
@@ -1874,93 +1739,6 @@ const translations = {
     smartDecisionDriverConfidenceUp: "可信度上升 {value}",
     smartDecisionDriverConfidenceDown: "可信度下降 {value}",
     smartDecisionDriverNoMajor: "主要信号变化不大",
-    smartLoadKicker: "负载试算",
-    smartLoadTitle: "如果现在运行",
-    smartLoadMeta: "按当前富余 {headroom} 和电池余量 {reserve} 估算。",
-    smartLoadDishwasher: "洗碗机",
-    smartLoadLaundry: "洗衣机",
-    smartLoadDryer: "烘干机",
-    smartLoadEv: "EV 补电",
-    smartLoadGood: "现在适合",
-    smartLoadWatch: "可以再等等",
-    smartLoadAvoid: "现在避免",
-    smartLoadGoodDetail: "{load} 基本适合当前太阳能/电池窗口。额外电网需求：{grid}。",
-    smartLoadWatchDetail: "{load} 可能需要约 {grid} 来自电网或电池。太阳能改善后更合适。",
-    smartLoadAvoidDetail: "{load} 很可能让电网取电增加约 {grid}。建议等富余电或非高峰。",
-    smartLoadBatteryGuard: "保护电池",
-    smartLoadPeakGuard: "避开高峰",
-    smartLoadSolarFit: "太阳能匹配",
-    smartLoadWindowNow: "最佳窗口：现在",
-    smartLoadWindowOffPeak: "最佳窗口：{time} 后非高峰",
-    smartLoadWindowTomorrow: "最佳窗口：{window}",
-    smartLoadWindowBattery: "最佳窗口：电池余量改善后",
-    smartPlanNow: "现在",
-    smartPlanNext: "下一步",
-    smartPlanPeak: "高峰",
-    smartPlanTomorrow: "明天",
-    smartPlanNowUse: "运行可推迟负载",
-    smartPlanNowWait: "保持轻负载",
-    smartPlanNextOffPeak: "等 {time} 后非高峰",
-    smartPlanNextSolar: "观察太阳能富余",
-    smartPlanPeakAvoid: "避免大功率取电",
-    smartPlanPeakReady: "电池可支撑",
-    smartPlanTomorrowSolar: "{outlook}；{window}",
-    smartPlanTomorrowWait: "等待天气预报",
-    smartLoadPriority: "优先级",
-    smartLoadPriorityRun: "优先运行 {load}",
-    smartLoadPriorityWait: "先不要启动负载",
-    smartLoadPriorityDetailRun: "{load} 现在影响最小。{defer} 可以排到后面。",
-    smartLoadPriorityDetailWait: "现在没有特别合适的可推迟负载。下一步建议：{window}。",
-    smartLoadQueue: "负载队列",
-    smartLoadQueueMeta: "按现在运行、稍后再跑、现在避免分组。",
-    smartLoadLaneNow: "现在可跑",
-    smartLoadLaneLater: "稍后再跑",
-    smartLoadLaneAvoid: "现在避免",
-    smartLoadLaneEmpty: "暂无负载",
-    smartLoadQueueGridNeed: "额外电网 {grid}",
-    nightOpsKicker: "晚间计划",
-    nightOpsTitle: "晚间运行计划",
-    nightOpsFocus: "今晚重点",
-    nightOpsReserve: "电池",
-    nightOpsPeak: "高峰",
-    nightOpsGrid: "电网",
-    nightOpsTomorrow: "明天",
-    nightOpsStatusUseWindow: "利用当前窗口",
-    nightOpsStatusReduceImport: "现在减少取电",
-    nightOpsStatusSaveBattery: "保住电池余量",
-    nightOpsStatusPrepareTomorrow: "为弱太阳能做准备",
-    nightOpsStatusSteady: "晚间平稳",
-    nightOpsDetail: "根据 {tariff}、电池余量 {reserve}、电网压力 {pressure}、明天 {tomorrow} 生成。",
-    nightOpsStepNow: "现在",
-    nightOpsStepPeak: "高峰窗口",
-    nightOpsStepNight: "夜间",
-    nightOpsStepTomorrow: "明天",
-    nightOpsNowRun: "运行可推迟负载",
-    nightOpsNowRunDetail: "当前有 {headroom} 富余。优先安排影响最小的可推迟负载，少把富余电白白回馈出去。",
-    nightOpsNowReduce: "减少大功率负载",
-    nightOpsNowReduceDetail: "电网压力 {pressure}；避免烘干机、EV 补电、做饭等大负载叠加。",
-    nightOpsNowHold: "保持轻负载",
-    nightOpsNowHoldDetail: "现在没有明显富余。等非高峰，或等更清晰的太阳能窗口。",
-    nightOpsPeakActive: "高峰正在进行",
-    nightOpsPeakActiveDetail: "当前处于 {peakWindow} 高峰窗口。让电池覆盖基础负载，避免不必要取电。",
-    nightOpsPeakSoon: "{time} 后进入高峰",
-    nightOpsPeakSoonDetail: "尽量在 {peakWindow} 前完成可推迟负载；电池准备度 {score}。",
-    nightOpsPeakClear: "高峰还早",
-    nightOpsPeakClearDetail: "高峰 {peakWindow}；当前压力不急，但保持电池高于 20% 保留线。",
-    nightOpsNightSave: "保护夜间余量",
-    nightOpsNightSaveDetail: "续航风险 {risk}；余量 {reserve}。夜里可选负载尽量小一点。",
-    nightOpsNightNormal: "正常夜间节奏",
-    nightOpsNightNormalDetail: "续航风险 {risk}；余量 {reserve}。普通家庭负载问题不大。",
-    nightOpsTomorrowSolar: "利用明天太阳能",
-    nightOpsTomorrowSolarDetail: "明天预报 {outlook}。最佳窗口：{tomorrowWindow}。",
-    nightOpsTomorrowConserve: "把负载提前",
-    nightOpsTomorrowConserveDetail: "明天预报 {outlook}；如果电池允许，非必要负载尽量今晚完成。",
-    nightOpsTomorrowWait: "等待天气预报",
-    nightOpsTomorrowWaitDetail: "天气数据缺失。安排日间负载前先刷新预报。",
-    nightOpsReserveDetail: "续航 {risk}",
-    nightOpsPeakDetail: "{peakWindow}",
-    nightOpsGridDetail: "{flow}",
-    nightOpsTomorrowDetail: "{tomorrowWindow}",
     operatingSolarDay: "太阳能主导日",
     operatingBalancedDay: "运行均衡",
     operatingGridDay: "电网依赖偏高",
@@ -1998,6 +1776,7 @@ const translations = {
     warningsLabel: "警告",
     warningsCount: "{count} 个警告",
     noWarnings: "没有警告",
+    warningWithCreatedAt: "{message}。产生时间：{createdAt}",
     warningDetailLabel: "警告说明",
     warningDetailNone: "这次响应没有警告。",
     warningDetailOne: "这次响应里的警告：{warning}。生成时间：{time}。",
@@ -2302,12 +2081,10 @@ const translations = {
     homeUsage: "家庭用电",
     gridConsumption: "电网用电",
     batteryLevel: "电池电量",
+    batteryLevelNow: "当前电池电量",
+    batteryLevelNowHelp: "实时 SOC",
     intoBattery: "充入电池",
     outOfBattery: "电池放电",
-    batteryTemp: "最低电池温度",
-    batteryMaxTemp: "最高电池温度",
-    batteryPackTemp: "电池包温度",
-    inverterTemp: "逆变器温度",
     last24Hours: "过去 24 小时",
     last24Title: "电池电量、家庭用电与电池放电",
     system: "系统",
@@ -2323,19 +2100,8 @@ const translations = {
     batteryChargeHelp: "实时充电功率",
     batteryDischargeNow: "当前电池放电",
     batteryDischargeHelp: "实时放电功率",
-    lastHour: "过去 1 小时",
-    lastHourTitle: "过去 1 小时能源统计",
-    lastHourHelp: "这些是根据 FoxCloud 最近 60 分钟功率采样估算出来的 kWh 累计值。",
-    lastHourTotalHelp: "最近 60 分钟估算电量",
-    solarGeneratedLastHour: "过去 1 小时太阳能发电",
-    homeUsageLastHour: "过去 1 小时家庭用电",
-    gridImportLastHour: "过去 1 小时电网输入",
-    gridExportLastHour: "过去 1 小时电网输出",
-    batteryChargeLastHour: "过去 1 小时电池充电",
-    batteryDischargeLastHour: "过去 1 小时电池放电",
     chart: "图表",
     dailyEnergyChart: "每日太阳能、电网与家庭用电",
-    batteryChart: "电池充电与放电",
     table: "表格",
     dailyEnergyData: "每日能源数据",
     date: "日期",
@@ -2345,6 +2111,8 @@ const translations = {
     noLiveTimestamp: "没有实时更新时间",
     liveUpdated: "实时更新",
     responseGenerated: "响应生成",
+    liveMetaFresh: "实时数据更新时间：{liveUpdated} • 当前响应生成时间：{responseGenerated}",
+    liveMetaCache: "缓存数据，原始实时更新时间：{liveUpdated}，当前响应：{responseGenerated}，缓存数据年龄：{cacheAge}",
     online: "在线",
     fault: "故障",
     offline: "离线",
@@ -2806,93 +2574,6 @@ const translations = {
     smartDecisionDriverConfidenceUp: "ความมั่นใจเพิ่ม {value}",
     smartDecisionDriverConfidenceDown: "ความมั่นใจลด {value}",
     smartDecisionDriverNoMajor: "สัญญาณหลักแทบไม่เปลี่ยน",
-    smartLoadKicker: "ตัวช่วยโหลด",
-    smartLoadTitle: "ถ้าเปิดตอนนี้",
-    smartLoadMeta: "ประเมินจากไฟส่วนเกิน {headroom} และสำรองแบต {reserve}",
-    smartLoadDishwasher: "เครื่องล้างจาน",
-    smartLoadLaundry: "เครื่องซักผ้า",
-    smartLoadDryer: "เครื่องอบผ้า",
-    smartLoadEv: "ชาร์จ EV",
-    smartLoadGood: "เหมาะตอนนี้",
-    smartLoadWatch: "รอก่อนได้",
-    smartLoadAvoid: "เลี่ยงตอนนี้",
-    smartLoadGoodDetail: "{load} น่าจะพอดีกับหน้าต่างโซลาร์/แบตตอนนี้ ใช้กริดเพิ่ม {grid}",
-    smartLoadWatchDetail: "{load} อาจต้องใช้กริด/แบตประมาณ {grid} รอให้โซลาร์ดีขึ้นจะเหมาะกว่า",
-    smartLoadAvoidDetail: "{load} น่าจะเพิ่มนำเข้ากริดประมาณ {grid} รอไฟส่วนเกินหรือนอกพีคดีกว่า",
-    smartLoadBatteryGuard: "ป้องกันแบต",
-    smartLoadPeakGuard: "เลี่ยงพีค",
-    smartLoadSolarFit: "พอดีกับโซลาร์",
-    smartLoadWindowNow: "ช่วงที่ดีที่สุด: ตอนนี้",
-    smartLoadWindowOffPeak: "ช่วงที่ดีที่สุด: นอกพีคใน {time}",
-    smartLoadWindowTomorrow: "ช่วงที่ดีที่สุด: {window}",
-    smartLoadWindowBattery: "ช่วงที่ดีที่สุด: หลังสำรองแบตดีขึ้น",
-    smartPlanNow: "ตอนนี้",
-    smartPlanNext: "ถัดไป",
-    smartPlanPeak: "พีค",
-    smartPlanTomorrow: "พรุ่งนี้",
-    smartPlanNowUse: "ใช้โหลดที่เลื่อนได้",
-    smartPlanNowWait: "ใช้โหลดเบา",
-    smartPlanNextOffPeak: "รอนอกพีคใน {time}",
-    smartPlanNextSolar: "รอดูโซลาร์ส่วนเกิน",
-    smartPlanPeakAvoid: "เลี่ยงนำเข้าหนัก",
-    smartPlanPeakReady: "แบตช่วยได้",
-    smartPlanTomorrowSolar: "{outlook}; {window}",
-    smartPlanTomorrowWait: "รอพยากรณ์",
-    smartLoadPriority: "ลำดับ",
-    smartLoadPriorityRun: "เปิด {load} ก่อน",
-    smartLoadPriorityWait: "รอก่อนเริ่มโหลด",
-    smartLoadPriorityDetailRun: "{load} กระทบน้อยที่สุดตอนนี้ เลื่อน {defer} ไว้ทีหลัง",
-    smartLoadPriorityDetailWait: "ตอนนี้ยังไม่มีโหลดที่เหมาะมาก ขั้นต่อไป: {window}",
-    smartLoadQueue: "คิวโหลด",
-    smartLoadQueueMeta: "จัดกลุ่มเป็นเปิดตอนนี้ รอก่อน หรือเลี่ยงตอนนี้",
-    smartLoadLaneNow: "เปิดตอนนี้",
-    smartLoadLaneLater: "รอก่อน",
-    smartLoadLaneAvoid: "เลี่ยงตอนนี้",
-    smartLoadLaneEmpty: "ไม่มีโหลด",
-    smartLoadQueueGridNeed: "ใช้กริดเพิ่ม {grid}",
-    nightOpsKicker: "แผนคืนนี้",
-    nightOpsTitle: "แผนเดินระบบตอนเย็น",
-    nightOpsFocus: "จุดเน้นคืนนี้",
-    nightOpsReserve: "สำรอง",
-    nightOpsPeak: "พีค",
-    nightOpsGrid: "กริด",
-    nightOpsTomorrow: "พรุ่งนี้",
-    nightOpsStatusUseWindow: "ใช้ช่วงนี้",
-    nightOpsStatusReduceImport: "ลดนำเข้าตอนนี้",
-    nightOpsStatusSaveBattery: "รักษาแบตสำรอง",
-    nightOpsStatusPrepareTomorrow: "เตรียมโซลาร์อ่อน",
-    nightOpsStatusSteady: "เย็นนี้นิ่ง",
-    nightOpsDetail: "แผนสดจาก {tariff}, สำรองแบต {reserve}, แรงกดกริด {pressure}, พรุ่งนี้ {tomorrow}",
-    nightOpsStepNow: "ตอนนี้",
-    nightOpsStepPeak: "ช่วงพีค",
-    nightOpsStepNight: "ข้ามคืน",
-    nightOpsStepTomorrow: "พรุ่งนี้",
-    nightOpsNowRun: "เปิดโหลดที่เลื่อนได้",
-    nightOpsNowRunDetail: "มีไฟเหลือ {headroom} ให้ใช้โหลดที่เลื่อนได้เบาสุดก่อนส่งออกทิ้ง",
-    nightOpsNowReduce: "ลดโหลดหนัก",
-    nightOpsNowReduceDetail: "แรงกดกริด {pressure}; เลี่ยงเครื่องอบผ้า EV หรือทำอาหารพร้อมกัน",
-    nightOpsNowHold: "ใช้โหลดเบา",
-    nightOpsNowHoldDetail: "ตอนนี้ส่วนเกินยังไม่ชัด รอนอกพีคหรือหน้าต่างโซลาร์ที่ดีกว่า",
-    nightOpsPeakActive: "พีคกำลังทำงาน",
-    nightOpsPeakActiveDetail: "ช่วงพีค {peakWindow} กำลังทำงาน ให้แบตรองรับโหลดจำเป็นและเลี่ยงนำเข้า",
-    nightOpsPeakSoon: "พีคเริ่มใน {time}",
-    nightOpsPeakSoonDetail: "จบโหลดที่เลื่อนได้ก่อน {peakWindow}; ความพร้อมแบต {score}",
-    nightOpsPeakClear: "พีคยังอีกไกล",
-    nightOpsPeakClearDetail: "พีค {peakWindow}; ยังไม่กดดัน แต่รักษาสำรองเหนือเส้น 20%",
-    nightOpsNightSave: "ป้องกันสำรองข้ามคืน",
-    nightOpsNightSaveDetail: "ความเสี่ยงรันเวย์ {risk}; สำรอง {reserve}. ลดโหลดเสริมตอนดึก",
-    nightOpsNightNormal: "จังหวะข้ามคืนปกติ",
-    nightOpsNightNormalDetail: "ความเสี่ยงรันเวย์ {risk}; สำรอง {reserve}. โหลดบ้านปกติน่าจะพอ",
-    nightOpsTomorrowSolar: "ใช้โซลาร์พรุ่งนี้",
-    nightOpsTomorrowSolarDetail: "แนวโน้มพรุ่งนี้ {outlook}. ช่วงดีที่สุด: {tomorrowWindow}",
-    nightOpsTomorrowConserve: "เลื่อนโหลดมาเร็วขึ้น",
-    nightOpsTomorrowConserveDetail: "แนวโน้มพรุ่งนี้ {outlook}; ถ้าแบตพอ จบโหลดเสริมคืนนี้",
-    nightOpsTomorrowWait: "รอพยากรณ์",
-    nightOpsTomorrowWaitDetail: "ไม่มีข้อมูลอากาศ รีเฟรชพยากรณ์ก่อนวางแผนโหลดกลางวัน",
-    nightOpsReserveDetail: "รันเวย์ {risk}",
-    nightOpsPeakDetail: "{peakWindow}",
-    nightOpsGridDetail: "{flow}",
-    nightOpsTomorrowDetail: "{tomorrowWindow}",
     operatingSolarDay: "วันที่โซลาร์นำ",
     operatingBalancedDay: "สมดุล",
     operatingGridDay: "พึ่งกริดมาก",
@@ -2930,6 +2611,7 @@ const translations = {
     warningsLabel: "คำเตือน",
     warningsCount: "{count} คำเตือน",
     noWarnings: "ไม่มีคำเตือน",
+    warningWithCreatedAt: "{message}. สร้างเมื่อ: {createdAt}",
     warningDetailLabel: "รายละเอียดคำเตือน",
     warningDetailNone: "ไม่มีคำเตือนในคำตอบนี้",
     warningDetailOne: "คำเตือนในคำตอบนี้: {warning} สร้างเมื่อ {time}",
@@ -3234,12 +2916,10 @@ const translations = {
     homeUsage: "การใช้ไฟในบ้าน",
     gridConsumption: "การใช้ไฟจากกริด",
     batteryLevel: "ระดับแบตเตอรี่",
+    batteryLevelNow: "ระดับแบตเตอรี่ตอนนี้",
+    batteryLevelNowHelp: "SOC ปัจจุบัน",
     intoBattery: "เข้าแบตเตอรี่",
     outOfBattery: "ออกจากแบตเตอรี่",
-    batteryTemp: "อุณหภูมิแบตเตอรี่ต่ำสุด",
-    batteryMaxTemp: "อุณหภูมิแบตเตอรี่สูงสุด",
-    batteryPackTemp: "อุณหภูมิแพ็กแบตเตอรี่",
-    inverterTemp: "อุณหภูมิอินเวอร์เตอร์",
     last24Hours: "24 ชั่วโมงที่ผ่านมา",
     last24Title: "ระดับแบตเตอรี่ การใช้ไฟในบ้าน และการคายประจุแบตเตอรี่",
     system: "ระบบ",
@@ -3255,19 +2935,8 @@ const translations = {
     batteryChargeHelp: "กำลังชาร์จแบบทันที",
     batteryDischargeNow: "คายประจุแบตเตอรี่ตอนนี้",
     batteryDischargeHelp: "กำลังคายประจุแบบทันที",
-    lastHour: "1 ชั่วโมงที่ผ่านมา",
-    lastHourTitle: "พลังงานในช่วง 1 ชั่วโมงที่ผ่านมา",
-    lastHourHelp: "เป็นยอด kWh โดยประมาณจากตัวอย่างกำลังไฟของ FoxCloud ในช่วง 60 นาทีล่าสุด",
-    lastHourTotalHelp: "พลังงานโดยประมาณในช่วง 60 นาทีล่าสุด",
-    solarGeneratedLastHour: "โซลาร์ผลิตใน 1 ชั่วโมงที่ผ่านมา",
-    homeUsageLastHour: "บ้านใช้ไฟใน 1 ชั่วโมงที่ผ่านมา",
-    gridImportLastHour: "นำเข้าจากกริดใน 1 ชั่วโมงที่ผ่านมา",
-    gridExportLastHour: "ส่งออกไปกริดใน 1 ชั่วโมงที่ผ่านมา",
-    batteryChargeLastHour: "ชาร์จแบตเตอรี่ใน 1 ชั่วโมงที่ผ่านมา",
-    batteryDischargeLastHour: "คายประจุแบตเตอรี่ใน 1 ชั่วโมงที่ผ่านมา",
     chart: "กราฟ",
     dailyEnergyChart: "โซลาร์ กริด และการใช้ไฟในบ้านรายวัน",
-    batteryChart: "การชาร์จและคายประจุแบตเตอรี่",
     table: "ตาราง",
     dailyEnergyData: "ข้อมูลพลังงานรายวัน",
     date: "วันที่",
@@ -3277,6 +2946,8 @@ const translations = {
     noLiveTimestamp: "ไม่มีเวลาอัปเดตแบบสด",
     liveUpdated: "อัปเดตแบบสด",
     responseGenerated: "สร้างคำตอบเมื่อ",
+    liveMetaFresh: "อัปเดตข้อมูลสด: {liveUpdated} • สร้างคำตอบปัจจุบัน: {responseGenerated}",
+    liveMetaCache: "ข้อมูลแคช อัปเดตสดเดิม: {liveUpdated}, คำตอบปัจจุบัน: {responseGenerated}, อายุแคช: {cacheAge}",
     online: "ออนไลน์",
     fault: "ขัดข้อง",
     offline: "ออฟไลน์",
@@ -3937,8 +3608,6 @@ function getCommandBrief(payload, weatherPayload = lastWeatherPayload) {
   const decision = getSmartHubDecision(payload, weatherPayload);
   const confidence = getSmartHubConfidence(payload, weatherPayload);
   const phasePlan = getPhasePlan(payload);
-  const nightPlan = getNightOpsPlan(payload, weatherPayload);
-  const nightAlert = nightPlan.steps.find((step) => step.tone === "alert");
   const values = {
     self: formatOptionalPercent(decision.selfSufficiency),
     headroom: formatKw(decision.headroomKw),
@@ -3962,17 +3631,11 @@ function getCommandBrief(payload, weatherPayload = lastWeatherPayload) {
     confidence: `${confidence.score}%`,
     mode: t(decision.statusKey),
   };
-  const risk = nightAlert
-    ? {
-      tone: "alert",
-      title: interpolate(t(nightAlert.titleKey), values),
-      detail: interpolate(t(nightAlert.detailKey), values),
-    }
-    : {
-      tone: getWatchTone(decision.watchStatusKey),
-      title: t(decision.watchStatusKey),
-      detail: interpolate(t(decision.watchDetailKey), values),
-    };
+  const risk = {
+    tone: getWatchTone(decision.watchStatusKey),
+    title: t(decision.watchStatusKey),
+    detail: interpolate(t(decision.watchDetailKey), values),
+  };
 
   return {
     modeTone: getDecisionTone(decision.statusKey),
@@ -4837,276 +4500,6 @@ function renderSmartDecisionLog(payload, decision, confidence) {
   );
 }
 
-const smartLoads = [
-  {
-    key: "smartLoadDishwasher",
-    kw: 1.2,
-    durationMinutes: 90,
-  },
-  {
-    key: "smartLoadLaundry",
-    kw: 0.8,
-    durationMinutes: 60,
-  },
-  {
-    key: "smartLoadDryer",
-    kw: 2.4,
-    durationMinutes: 75,
-  },
-  {
-    key: "smartLoadEv",
-    kw: 3.6,
-    durationMinutes: 120,
-  },
-];
-
-function getSmartLoadAdvice(load, decision) {
-  const extraGridKw = Math.max(0, load.kw - Math.max(0, decision.headroomKw));
-  const reserve = decision.reserve;
-  const isPeak = decision.tariff.isPeak;
-  const pressure = decision.pressure;
-  const batteryProtected = reserve !== null && reserve < 30;
-  const solarFit = extraGridKw <= 0.2;
-  const shouldAvoid = (isPeak && extraGridKw > 0.4)
-    || pressure >= 65
-    || (batteryProtected && extraGridKw > 0.2)
-    || extraGridKw >= 1.6;
-  const shouldWatch = !shouldAvoid && (!solarFit || pressure >= 35 || batteryProtected);
-  const statusKey = shouldAvoid
-    ? "smartLoadAvoid"
-    : shouldWatch
-      ? "smartLoadWatch"
-      : "smartLoadGood";
-  const detailKey = shouldAvoid
-    ? "smartLoadAvoidDetail"
-    : shouldWatch
-      ? "smartLoadWatchDetail"
-      : "smartLoadGoodDetail";
-  const tone = shouldAvoid ? "alert" : shouldWatch ? "watch" : "good";
-  const guardKey = batteryProtected
-    ? "smartLoadBatteryGuard"
-    : isPeak
-      ? "smartLoadPeakGuard"
-      : "smartLoadSolarFit";
-  const windowKey = !shouldAvoid && !shouldWatch
-    ? "smartLoadWindowNow"
-    : batteryProtected
-      ? "smartLoadWindowBattery"
-      : isPeak || pressure >= 55
-        ? "smartLoadWindowOffPeak"
-        : "smartLoadWindowTomorrow";
-
-  return {
-    extraGridKw,
-    statusKey,
-    detailKey,
-    tone,
-    guardKey,
-    windowKey,
-  };
-}
-
-function getSmartLoadRank(load, advice) {
-  const statusPenalty = advice.statusKey === "smartLoadGood" ? 0 : advice.statusKey === "smartLoadWatch" ? 20 : 60;
-  return statusPenalty + advice.extraGridKw * 18 + load.kw * 2;
-}
-
-const smartLoadQueueLanes = [
-  {
-    key: "now",
-    labelKey: "smartLoadLaneNow",
-    tone: "good",
-  },
-  {
-    key: "later",
-    labelKey: "smartLoadLaneLater",
-    tone: "watch",
-  },
-  {
-    key: "avoid",
-    labelKey: "smartLoadLaneAvoid",
-    tone: "alert",
-  },
-];
-
-function getSmartLoadLaneKey(advice) {
-  if (advice.statusKey === "smartLoadGood") return "now";
-  if (advice.statusKey === "smartLoadWatch") return "later";
-  return "avoid";
-}
-
-function getSmartLoadWindowText(advice, decision) {
-  return interpolate(t(advice.windowKey), {
-    time: formatDurationMinutes(decision.tariff.detailMinutes),
-    window: t(decision.tomorrowWindowKey),
-  });
-}
-
-function renderSmartLoadQueue(loadPlans, decision) {
-  if (!textFields.smartLoadQueueGrid) return;
-
-  const groupedPlans = {
-    now: [],
-    later: [],
-    avoid: [],
-  };
-  loadPlans.forEach((plan) => {
-    groupedPlans[getSmartLoadLaneKey(plan.advice)].push(plan);
-  });
-
-  textFields.smartLoadQueueGrid.replaceChildren(...smartLoadQueueLanes.map((lane) => {
-    const section = document.createElement("section");
-    const header = document.createElement("header");
-    const label = document.createElement("span");
-    const count = document.createElement("strong");
-    const body = document.createElement("div");
-    const lanePlans = groupedPlans[lane.key];
-
-    section.dataset.tone = lane.tone;
-    label.textContent = t(lane.labelKey);
-    count.textContent = String(lanePlans.length);
-    header.append(label, count);
-
-    if (!lanePlans.length) {
-      const empty = document.createElement("p");
-      empty.textContent = t("smartLoadLaneEmpty");
-      body.append(empty);
-    } else {
-      body.append(...lanePlans.map(({ load, advice }) => {
-        const item = document.createElement("article");
-        const name = document.createElement("strong");
-        const status = document.createElement("span");
-        const gridNeed = document.createElement("small");
-        const window = document.createElement("em");
-
-        item.dataset.tone = advice.tone;
-        name.textContent = t(load.key);
-        status.textContent = t(advice.statusKey);
-        gridNeed.textContent = interpolate(t("smartLoadQueueGridNeed"), {
-          grid: formatKw(advice.extraGridKw),
-        });
-        window.textContent = getSmartLoadWindowText(advice, decision);
-        item.append(name, status, gridNeed, window);
-        return item;
-      }));
-    }
-
-    section.append(header, body);
-    return section;
-  }));
-}
-
-function renderSmartLoadPriority(loadPlans, decision) {
-  const bestPlan = loadPlans[0];
-  const shouldWait = !bestPlan || bestPlan.advice.statusKey === "smartLoadAvoid";
-  const deferred = loadPlans
-    .slice(1)
-    .filter((plan) => plan.advice.statusKey !== "smartLoadGood")
-    .map((plan) => t(plan.load.key))
-    .slice(0, 2)
-    .join(" / ");
-  const windowText = getSmartLoadWindowText(bestPlan?.advice ?? { windowKey: "smartLoadWindowTomorrow" }, decision);
-
-  textFields.smartLoadPriority.dataset.tone = shouldWait ? "watch" : bestPlan.advice.tone;
-  textFields.smartLoadPriorityTitle.textContent = shouldWait
-    ? t("smartLoadPriorityWait")
-    : interpolate(t("smartLoadPriorityRun"), { load: t(bestPlan.load.key) });
-  textFields.smartLoadPriorityDetail.textContent = shouldWait
-    ? interpolate(t("smartLoadPriorityDetailWait"), { window: windowText })
-    : interpolate(t("smartLoadPriorityDetailRun"), {
-      load: t(bestPlan.load.key),
-      defer: deferred || t(decision.tomorrowWindowKey),
-    });
-}
-
-function renderSmartLoadAdvisor(decision) {
-  textFields.smartLoadMeta.textContent = interpolate(t("smartLoadMeta"), {
-    headroom: formatKw(decision.headroomKw),
-    reserve: decision.reserve === null ? "--" : formatPercent(decision.reserve),
-  });
-  renderSmartPlanStrip(decision);
-  const loadPlans = smartLoads
-    .map((load) => ({
-      load,
-      advice: getSmartLoadAdvice(load, decision),
-    }))
-    .sort((left, right) => getSmartLoadRank(left.load, left.advice) - getSmartLoadRank(right.load, right.advice));
-
-  renderSmartLoadPriority(loadPlans, decision);
-  renderSmartLoadQueue(loadPlans, decision);
-  textFields.smartLoadGrid.replaceChildren(...loadPlans.map(({ load, advice }) => {
-    const card = document.createElement("article");
-    const label = document.createElement("span");
-    const status = document.createElement("strong");
-    const detail = document.createElement("small");
-    const meta = document.createElement("em");
-    const window = document.createElement("b");
-
-    card.dataset.tone = advice.tone;
-    card.dataset.status = advice.statusKey;
-    label.textContent = t(load.key);
-    status.textContent = t(advice.statusKey);
-    detail.textContent = interpolate(t(advice.detailKey), {
-      load: t(load.key),
-      grid: formatKw(advice.extraGridKw),
-    });
-    meta.textContent = `${formatKw(load.kw)} · ${formatDurationMinutes(load.durationMinutes)} · ${t(advice.guardKey)}`;
-    window.textContent = getSmartLoadWindowText(advice, decision);
-    card.append(label, status, detail, meta, window);
-
-    return card;
-  }));
-}
-
-function renderSmartPlanStrip(decision) {
-  const batteryCanSupport = decision.reserve !== null && decision.reserve >= 35;
-  const hasSurplus = decision.headroomKw >= 0.8;
-  const tomorrowKnown = decision.tomorrowOutlookKey !== "unknown";
-  const steps = [
-    {
-      labelKey: "smartPlanNow",
-      valueKey: hasSurplus ? "smartPlanNowUse" : "smartPlanNowWait",
-      tone: hasSurplus ? "good" : "watch",
-    },
-    {
-      labelKey: "smartPlanNext",
-      valueKey: decision.tariff.isPeak || decision.pressure >= 55 ? "smartPlanNextOffPeak" : "smartPlanNextSolar",
-      tone: decision.tariff.isPeak || decision.pressure >= 55 ? "watch" : "good",
-    },
-    {
-      labelKey: "smartPlanPeak",
-      valueKey: decision.pressure >= 55 ? "smartPlanPeakAvoid" : "smartPlanPeakReady",
-      tone: decision.pressure >= 55 ? "alert" : batteryCanSupport ? "good" : "watch",
-    },
-    {
-      labelKey: "smartPlanTomorrow",
-      valueKey: tomorrowKnown ? "smartPlanTomorrowSolar" : "smartPlanTomorrowWait",
-      tone: tomorrowKnown && (decision.tomorrowOutlookKey === "excellent" || decision.tomorrowOutlookKey === "good")
-        ? "good"
-        : tomorrowKnown && decision.tomorrowOutlookKey === "poor"
-          ? "alert"
-          : "watch",
-    },
-  ];
-
-  textFields.smartPlanStrip.replaceChildren(...steps.map((step) => {
-    const item = document.createElement("article");
-    const label = document.createElement("span");
-    const value = document.createElement("strong");
-
-    item.dataset.tone = step.tone;
-    label.textContent = t(step.labelKey);
-    value.textContent = interpolate(t(step.valueKey), {
-      time: formatDurationMinutes(decision.tariff.detailMinutes),
-      outlook: t(decision.tomorrowOutlookKey),
-      window: t(decision.tomorrowWindowKey),
-    });
-    item.append(label, value);
-
-    return item;
-  }));
-}
-
 function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
   if (!payload?.live || !payload?.today) {
     return;
@@ -5212,7 +4605,6 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
     decision.tariff.isPeak ? t("peakNow") : formatDurationMinutes(decision.tariff.detailMinutes),
     interpolate(t("smartHubBasisOutlookDetail"), commonValues),
   );
-  renderSmartLoadAdvisor(decision);
 
   setSmartHubCard(
     textFields.smartHubNowCard,
@@ -5240,235 +4632,6 @@ function renderSmartHub(payload, weatherPayload = lastWeatherPayload) {
   );
   renderSmartFlowSplit(payload);
   renderSmartDecisionLog(payload, decision, confidence);
-}
-
-function createNightOpsTimelineStep(step, values) {
-  const item = document.createElement("article");
-  const label = document.createElement("span");
-  const title = document.createElement("strong");
-  const detail = document.createElement("small");
-
-  item.dataset.tone = step.tone;
-  label.textContent = t(step.labelKey);
-  title.textContent = interpolate(t(step.titleKey), values);
-  detail.textContent = interpolate(t(step.detailKey), values);
-  item.append(label, title, detail);
-
-  return item;
-}
-
-function setNightOpsCheck(card, valueElement, detailElement, tone, value, detail) {
-  card.dataset.tone = tone;
-  valueElement.textContent = value;
-  detailElement.textContent = detail;
-}
-
-function getNightOpsPlan(payload, weatherPayload = lastWeatherPayload) {
-  const flexibleLoad = getFlexibleLoadPlan(payload);
-  const batteryRunway = getBatteryRunwayPlan(payload);
-  const gridForecast = getGridImportForecast(payload);
-  const tomorrowPrep = getTomorrowPrepPlan(payload, weatherPayload);
-  const peakReadiness = getPeakReadiness(payload);
-  const tariff = gridForecast.tariff;
-  const reserve = batteryRunway.reservePercent;
-  const shouldReduceImport = gridForecast.importPressure >= 65
-    || (tariff.isPeak && gridForecast.importPressure >= 35);
-  const shouldSaveBattery = batteryRunway.riskKey === "runwayRiskHigh"
-    || (reserve !== null && reserve < 25);
-  const hasUsableWindow = flexibleLoad.headroomKw >= 0.8
-    && gridForecast.importPressure < 45
-    && !tariff.isPeak;
-  const tomorrowWaiting = tomorrowPrep.statusKey === "tomorrowPrepWaiting";
-  const tomorrowWeak = tomorrowPrep.statusKey === "tomorrowPrepLimited"
-    || tomorrowPrep.outlookKey === "poor";
-  const statusKey = shouldReduceImport
-    ? "nightOpsStatusReduceImport"
-    : shouldSaveBattery
-      ? "nightOpsStatusSaveBattery"
-      : hasUsableWindow
-        ? "nightOpsStatusUseWindow"
-        : tomorrowWeak
-          ? "nightOpsStatusPrepareTomorrow"
-          : "nightOpsStatusSteady";
-  const statusTone = shouldReduceImport || shouldSaveBattery || tomorrowWeak
-    ? "alert"
-    : hasUsableWindow
-      ? "good"
-      : "neutral";
-  const nowStep = shouldReduceImport
-    ? {
-      labelKey: "nightOpsStepNow",
-      titleKey: "nightOpsNowReduce",
-      detailKey: "nightOpsNowReduceDetail",
-      tone: "alert",
-    }
-    : hasUsableWindow
-      ? {
-        labelKey: "nightOpsStepNow",
-        titleKey: "nightOpsNowRun",
-        detailKey: "nightOpsNowRunDetail",
-        tone: "good",
-      }
-      : {
-        labelKey: "nightOpsStepNow",
-        titleKey: "nightOpsNowHold",
-        detailKey: "nightOpsNowHoldDetail",
-        tone: "neutral",
-      };
-  const peakStep = tariff.isPeak
-    ? {
-      labelKey: "nightOpsStepPeak",
-      titleKey: "nightOpsPeakActive",
-      detailKey: "nightOpsPeakActiveDetail",
-      tone: shouldReduceImport ? "alert" : "watch",
-    }
-    : tariff.detailMinutes <= 180
-      ? {
-        labelKey: "nightOpsStepPeak",
-        titleKey: "nightOpsPeakSoon",
-        detailKey: "nightOpsPeakSoonDetail",
-        tone: peakReadiness.score >= 70 ? "good" : "watch",
-      }
-      : {
-        labelKey: "nightOpsStepPeak",
-        titleKey: "nightOpsPeakClear",
-        detailKey: "nightOpsPeakClearDetail",
-        tone: "good",
-      };
-  const nightStep = shouldSaveBattery
-    ? {
-      labelKey: "nightOpsStepNight",
-      titleKey: "nightOpsNightSave",
-      detailKey: "nightOpsNightSaveDetail",
-      tone: "alert",
-    }
-    : {
-      labelKey: "nightOpsStepNight",
-      titleKey: "nightOpsNightNormal",
-      detailKey: "nightOpsNightNormalDetail",
-      tone: batteryRunway.riskKey === "runwayRiskMedium" ? "watch" : "good",
-    };
-  const tomorrowStep = tomorrowWaiting
-    ? {
-      labelKey: "nightOpsStepTomorrow",
-      titleKey: "nightOpsTomorrowWait",
-      detailKey: "nightOpsTomorrowWaitDetail",
-      tone: "watch",
-    }
-    : tomorrowWeak
-      ? {
-        labelKey: "nightOpsStepTomorrow",
-        titleKey: "nightOpsTomorrowConserve",
-        detailKey: "nightOpsTomorrowConserveDetail",
-        tone: "alert",
-      }
-      : {
-        labelKey: "nightOpsStepTomorrow",
-        titleKey: "nightOpsTomorrowSolar",
-        detailKey: "nightOpsTomorrowSolarDetail",
-        tone: "good",
-      };
-
-  return {
-    statusKey,
-    statusTone,
-    focusStep: [nowStep, peakStep, nightStep, tomorrowStep].find((step) => step.tone === "alert") ?? nowStep,
-    steps: [nowStep, peakStep, nightStep, tomorrowStep],
-    flexibleLoad,
-    batteryRunway,
-    gridForecast,
-    tomorrowPrep,
-    peakReadiness,
-  };
-}
-
-function renderNightOpsPlan(payload, weatherPayload = lastWeatherPayload) {
-  if (!payload?.live || !textFields.nightOpsTimeline) {
-    return;
-  }
-
-  const plan = getNightOpsPlan(payload, weatherPayload);
-  const reserveText = plan.batteryRunway.reservePercent === null
-    ? "--"
-    : formatPercent(plan.batteryRunway.reservePercent);
-  const peakScoreText = interpolate(t("peakReadinessScore"), {
-    score: plan.peakReadiness.score,
-  });
-  const values = {
-    tariff: plan.gridForecast.tariff.isPeak ? t("peakNow") : t("offPeakNow"),
-    reserve: reserveText,
-    pressure: formatPercent(plan.gridForecast.importPressure),
-    tomorrow: t(plan.tomorrowPrep.statusKey),
-    headroom: formatKw(plan.flexibleLoad.headroomKw),
-    peakWindow: plan.gridForecast.tariff.peakWindow,
-    tomorrowWindow: t(plan.tomorrowPrep.windowKey),
-    time: formatDurationMinutes(plan.gridForecast.tariff.detailMinutes),
-    score: peakScoreText,
-    risk: t(plan.batteryRunway.riskKey),
-    outlook: t(plan.tomorrowPrep.outlookKey),
-    flow: plan.gridForecast.gridFlow,
-  };
-  const reserveTone = plan.batteryRunway.riskKey === "runwayRiskHigh"
-    ? "alert"
-    : plan.batteryRunway.riskKey === "runwayRiskMedium"
-      ? "watch"
-      : "good";
-  const peakTone = plan.peakReadiness.score >= 75
-    ? "good"
-    : plan.peakReadiness.score >= 50
-      ? "watch"
-      : "alert";
-  const gridTone = plan.gridForecast.importPressure >= 65
-    ? "alert"
-    : plan.gridForecast.importPressure >= 35
-      ? "watch"
-      : "good";
-  const tomorrowTone = plan.tomorrowPrep.statusKey === "tomorrowPrepWaiting"
-    ? "watch"
-    : plan.tomorrowPrep.statusKey === "tomorrowPrepLimited"
-      ? "alert"
-      : "good";
-
-  textFields.nightOpsStatus.dataset.tone = plan.statusTone;
-  textFields.nightOpsStatus.textContent = t(plan.statusKey);
-  textFields.nightOpsDetail.textContent = interpolate(t("nightOpsDetail"), values);
-  textFields.nightOpsFocusCard.dataset.tone = plan.focusStep.tone;
-  textFields.nightOpsFocus.textContent = interpolate(t(plan.focusStep.titleKey), values);
-  textFields.nightOpsFocusDetail.textContent = interpolate(t(plan.focusStep.detailKey), values);
-  textFields.nightOpsTimeline.replaceChildren(...plan.steps.map((step) => createNightOpsTimelineStep(step, values)));
-
-  setNightOpsCheck(
-    textFields.nightOpsReserveCard,
-    textFields.nightOpsReserveValue,
-    textFields.nightOpsReserveDetail,
-    reserveTone,
-    reserveText,
-    interpolate(t("nightOpsReserveDetail"), values),
-  );
-  setNightOpsCheck(
-    textFields.nightOpsPeakCard,
-    textFields.nightOpsPeakValue,
-    textFields.nightOpsPeakDetail,
-    peakTone,
-    peakScoreText,
-    interpolate(t("nightOpsPeakDetail"), values),
-  );
-  setNightOpsCheck(
-    textFields.nightOpsGridCard,
-    textFields.nightOpsGridValue,
-    textFields.nightOpsGridDetail,
-    gridTone,
-    formatPercent(plan.gridForecast.importPressure),
-    interpolate(t("nightOpsGridDetail"), values),
-  );
-  setNightOpsCheck(
-    textFields.nightOpsTomorrowCard,
-    textFields.nightOpsTomorrowValue,
-    textFields.nightOpsTomorrowDetail,
-    tomorrowTone,
-    t(plan.tomorrowPrep.outlookKey),
-    interpolate(t("nightOpsTomorrowDetail"), values),
-  );
 }
 
 function getTodayBillImpact(payload) {
@@ -6754,7 +5917,6 @@ function renderHomeJudgements(payload, weatherPayload = lastWeatherPayload) {
     textFields.homeJudgeTomorrowDetail,
     judgements.tomorrow,
   );
-  renderHomeActionQueue(payload, weatherPayload);
 }
 
 function getHomeState(payload) {
@@ -7639,6 +6801,51 @@ function formatDataAge(value) {
   return interpolate(t("dataAgeMinutes"), { minutes: ageMinutes });
 }
 
+function formatLiveMeta(payload) {
+  const values = {
+    liveUpdated: formatTimestamp(payload.live?.updatedAt),
+    responseGenerated: formatTimestamp(payload.generatedAt),
+    cacheAge: formatDataAge(payload.live?.updatedAt),
+  };
+
+  return payload.isStale || payload.source === "cache"
+    ? interpolate(t("liveMetaCache"), values)
+    : interpolate(t("liveMetaFresh"), values);
+}
+
+function getBatterySocLevel(value) {
+  const soc = Number(value);
+
+  if (!Number.isFinite(soc)) {
+    return "unknown";
+  }
+
+  if (soc >= 60) {
+    return "good";
+  }
+
+  if (soc >= 30) {
+    return "medium";
+  }
+
+  return "low";
+}
+
+function renderBatterySocNow(value) {
+  const level = getBatterySocLevel(value);
+  const card = metricFields.batterySocNow?.closest(".metric-card");
+
+  metricFields.batterySocNow.textContent = formatPercent(value);
+  metricFields.batterySocNow.classList.toggle("battery-level-good", level === "good");
+  metricFields.batterySocNow.classList.toggle("battery-level-medium", level === "medium");
+  metricFields.batterySocNow.classList.toggle("battery-level-low", level === "low");
+  metricFields.batterySocNow.classList.toggle("battery-level-neutral", level === "unknown");
+
+  if (card) {
+    card.dataset.level = level;
+  }
+}
+
 function renderWeather(payload) {
   lastWeatherPayload = payload;
 
@@ -7685,14 +6892,9 @@ function renderWeather(payload) {
 
   textFields.weatherDaily.replaceChildren(...forecastCards);
   renderSolarPerformance(lastPayload, payload);
-  renderEnergyScore(lastPayload, payload);
   renderEnergyCoach(lastPayload, payload);
   renderTomorrowPrep(lastPayload, payload);
   renderHomeState(lastPayload, payload);
-  renderSmartHub(lastPayload, payload);
-  renderNightOpsPlan(lastPayload, payload);
-  renderCommandBrief(lastPayload, payload);
-  renderActionBoard(lastPayload, payload);
 }
 
 async function loadWeather() {
@@ -7748,7 +6950,7 @@ function renderBadges(payload) {
 
 function getDataQuality(payload) {
   const liveAgeMinutes = getTimestampAgeMinutes(payload.live?.updatedAt);
-  const warningCount = payload.warnings?.length ?? 0;
+  const warningCount = getActiveWarnings(payload.warnings).length;
   const hasStaleSource = payload.isStale || payload.source === "cache";
   const hasMissingLiveAge = liveAgeMinutes === null;
 
@@ -7775,10 +6977,36 @@ function getDataQuality(payload) {
   };
 }
 
+function normalizeWarning(item) {
+  if (!item || typeof item !== "object" || typeof item.message !== "string") {
+    return null;
+  }
+
+  const createdAt = item.createdAt;
+  const createdAtTime = new Date(createdAt).getTime();
+
+  if (!createdAt || Number.isNaN(createdAtTime) || Date.now() - createdAtTime > WARNING_MAX_AGE_MS) {
+    return null;
+  }
+
+  return {
+    message: item.message,
+    createdAt,
+    severity: item.severity || "warning",
+  };
+}
+
+function getActiveWarnings(warnings) {
+  return Array.isArray(warnings)
+    ? warnings.map((item) => normalizeWarning(item)).filter(Boolean)
+    : [];
+}
+
 function renderDataQuality(payload) {
   const quality = getDataQuality(payload);
-  const warningCount = payload.warnings?.length ?? 0;
-  const firstWarning = (payload.warnings?.[0] ?? "").replace(/[.。]+$/, "");
+  const activeWarnings = getActiveWarnings(payload.warnings);
+  const warningCount = activeWarnings.length;
+  const firstWarning = (activeWarnings[0]?.message ?? "").replace(/[.。]+$/, "");
 
   textFields.dataQualityPanel.dataset.tone = quality.tone;
   textFields.dataQualityStatus.textContent = t(quality.statusKey);
@@ -7794,12 +7022,14 @@ function renderDataQuality(payload) {
     : interpolate(t(warningCount === 1 ? "warningDetailOne" : "warningDetailMany"), {
       count: warningCount,
       warning: firstWarning,
-      time: formatTimestamp(payload.generatedAt),
+      time: formatTimestamp(activeWarnings[0]?.createdAt ?? payload.generatedAt),
     });
 }
 
 function renderWarnings(warnings) {
-  if (!warnings || warnings.length === 0) {
+  const activeWarnings = getActiveWarnings(warnings);
+
+  if (activeWarnings.length === 0) {
     warningBox.classList.add("hidden");
     warningBox.replaceChildren();
     return;
@@ -7807,28 +7037,40 @@ function renderWarnings(warnings) {
 
   warningBox.classList.remove("hidden");
   warningBox.replaceChildren(
-    ...warnings.map((item) => {
+    ...activeWarnings.map((item) => {
       const warning = document.createElement("p");
-      warning.textContent = item;
+      warning.dataset.severity = item.severity;
+      warning.textContent = interpolate(t("warningWithCreatedAt"), {
+        message: item.message.replace(/[.。]+$/, ""),
+        createdAt: formatTimestamp(item.createdAt),
+      });
       return warning;
     }),
   );
 }
 
+function createClientWarning(message, severity = "error") {
+  return {
+    message,
+    createdAt: new Date().toISOString(),
+    severity,
+  };
+}
+
 function buildDashboardLoadWarnings(payload, message) {
   const diagnostic = payload?.diagnostic;
   if (diagnostic?.kind !== "modbus_connection") {
-    return [message];
+    return [createClientWarning(message)];
   }
 
   return [
-    interpolate(t("modbusConnectError"), {
+    createClientWarning(interpolate(t("modbusConnectError"), {
       target: diagnostic.target ?? "--",
       timeoutMs: diagnostic.timeoutMs ?? "--",
-    }),
-    t("modbusConnectAdviceIp"),
-    t("modbusConnectAdvicePort"),
-    t("modbusConnectAdviceRestart"),
+    })),
+    createClientWarning(t("modbusConnectAdviceIp"), "info"),
+    createClientWarning(t("modbusConnectAdvicePort"), "info"),
+    createClientWarning(t("modbusConnectAdviceRestart"), "info"),
   ];
 }
 
@@ -8410,7 +7652,7 @@ async function rebuildSelectedCache() {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     statusText.textContent = `${t("unableToLoad")}: ${message}`;
-    renderWarnings([message]);
+    renderWarnings([createClientWarning(message)]);
   } finally {
     rebuildCacheButton.disabled = false;
     refreshButton.disabled = false;
@@ -8503,11 +7745,9 @@ function getChartOptions(yTitle) {
 
 function renderCharts(payload) {
   destroyChart(energyChart);
-  destroyChart(batteryChart);
   destroyChart(last24HoursChart);
 
   const energyContext = document.getElementById("energyChart").getContext("2d");
-  const batteryContext = document.getElementById("batteryChart").getContext("2d");
   const last24HoursContext = document.getElementById("last24HoursChart").getContext("2d");
   const chartRows = getChartRows(payload);
   const labels = chartRows.map((row) => String(row.day));
@@ -8549,30 +7789,6 @@ function renderCharts(payload) {
       ],
     },
     options: getChartOptions(t("dailyEnergyKwh")),
-  });
-
-  batteryChart = new Chart(batteryContext, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: t("energyIntoBattery"),
-          data: chartRows.map((row) => row.daily_charged_energy_total),
-          backgroundColor: "#14b8a6",
-          borderRadius: 4,
-          maxBarThickness: 14,
-        },
-        {
-          label: t("energyOutBattery"),
-          data: chartRows.map((row) => row.daily_discharged_energy_total),
-          backgroundColor: "#7c3aed",
-          borderRadius: 4,
-          maxBarThickness: 14,
-        },
-      ],
-    },
-    options: getChartOptions(t("batteryEnergyKwh")),
   });
 
   last24HoursChart = new Chart(last24HoursContext, {
@@ -8998,6 +8214,7 @@ function renderMetrics(payload) {
     throw new Error(payload?.error || "Dashboard API returned an unexpected response.");
   }
 
+  renderBatterySocNow(payload.live.batterySocPercent);
   metricFields.solarNow.textContent = formatKw(payload.live.solarGeneratedKw);
   metricFields.homeNow.textContent = formatKw(payload.live.homeUsageKw);
   metricFields.gridImportNow.textContent = formatKw(payload.live.gridImportKw);
@@ -9006,54 +8223,21 @@ function renderMetrics(payload) {
   metricFields.batteryDischargeNow.textContent = formatKw(payload.live.batteryDischargeKw);
 
   metricFields.todaySolar.textContent = formatKwh(payload.today.solarProductionKwh);
-  metricFields.todaySelfConsumption.textContent = formatKwh(payload.today.selfConsumptionKwh);
   metricFields.todayFeedin.textContent = formatKwh(payload.today.returnToGridKwh);
   metricFields.todayHome.textContent = formatKwh(payload.today.homeUsageKwh);
   metricFields.todayGrid.textContent = formatKwh(payload.today.gridConsumptionKwh);
   metricFields.todayBatteryCharge.textContent = formatKwh(payload.today.energyGoingIntoBatteryKwh);
   metricFields.todayBatteryDischarge.textContent = formatKwh(payload.today.energyComingOutOfBatteryKwh);
-  metricFields.todaySavings.textContent = formatMoney(
-    payload.todaySavings?.estimatedTotalBenefit,
-    payload.todaySavings?.currency,
-  );
-  textFields.todaySavingsMeta.textContent = formatSavingsMeta(payload.todaySavings);
-  metricFields.batterySoc.textContent = formatPercent(payload.live.batterySocPercent);
-  metricFields.batterySoc.classList.toggle(
-    "battery-level-low",
-    Number(payload.live.batterySocPercent ?? 100) < 50,
-  );
-  metricFields.batterySoc.classList.toggle(
-    "battery-level-good",
-    payload.live.batterySocPercent !== null && payload.live.batterySocPercent !== undefined && Number(payload.live.batterySocPercent) >= 50,
-  );
-  metricFields.batteryTemp.textContent = formatTemperature(payload.live.batteryMinTemperatureCelsius ?? payload.live.batteryTemperatureCelsius);
-  metricFields.batteryMaxTemp.textContent = formatTemperature(payload.live.batteryMaxTemperatureCelsius);
-  metricFields.batteryPackTemp.textContent = formatTemperature(payload.live.batteryPackTemperatureCelsius);
-  metricFields.inverterTemp.textContent = formatTemperature(payload.live.inverterTemperatureCelsius);
-  metricFields.solarLastHour.textContent = formatKwh(payload.lastHour?.solarGeneratedKwh);
-  metricFields.homeLastHour.textContent = formatKwh(payload.lastHour?.homeUsageKwh);
-  metricFields.gridImportLastHour.textContent = formatKwh(payload.lastHour?.gridImportKwh);
-  metricFields.gridExportLastHour.textContent = formatKwh(payload.lastHour?.gridExportKwh);
-  metricFields.batteryChargeLastHour.textContent = formatKwh(payload.lastHour?.batteryChargeKwh);
-  metricFields.batteryDischargeLastHour.textContent = formatKwh(payload.lastHour?.batteryDischargeKwh);
 
   textFields.currentDateTime.textContent = formatCurrentDateTime();
   textFields.deviceTitle.textContent = payload.device.stationName;
   textFields.deviceMeta.textContent = `${payload.device.deviceType} • ${payload.device.productType} • SN ${payload.device.deviceSN}`;
-  textFields.liveMeta.textContent = `${t("liveUpdated")}: ${formatTimestamp(payload.live.updatedAt)} • ${t("responseGenerated")}: ${formatTimestamp(payload.generatedAt)}`;
+  textFields.liveMeta.textContent = formatLiveMeta(payload);
 
   renderBadges(payload);
   renderWarnings(payload.warnings);
-  renderDataQuality(payload);
   renderVisualKpis(payload);
   renderHomeState(payload);
-  renderOperatingSummary(payload);
-  renderCommandBrief(payload);
-  renderPhasePlan(payload);
-  renderSmartHub(payload);
-  renderNightOpsPlan(payload);
-  renderTodayBillImpact(payload);
-  renderEnergyScore(payload);
   renderTariffTimeline(payload.todaySavings);
   renderTrendSnapshot(payload);
   renderOperationalHeatmap(payload);
@@ -9062,11 +8246,9 @@ function renderMetrics(payload) {
   renderWeekdayProfile(payload);
   renderPeakReadiness(payload);
   renderBatteryReservePlan(payload);
-  renderFlexibleLoadPlan(payload);
   renderBatteryRunwayPlan(payload);
   renderGridImportForecast(payload);
   renderTomorrowPrep(payload);
-  renderActionBoard(payload);
   renderGaugeCards(payload);
   renderEnergyInsights(payload);
   renderEnergyCoach(payload);
@@ -9109,7 +8291,7 @@ async function loadDashboard() {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     statusText.textContent = `${t("unableToLoad")}: ${message}`;
-    renderWarnings(error?.dashboardWarnings ?? [message]);
+    renderWarnings(error?.dashboardWarnings ?? [createClientWarning(message)]);
   } finally {
     refreshButton.disabled = false;
   }
@@ -9142,7 +8324,7 @@ tableRangeSelect.addEventListener("change", () => {
   loadEnergyRange().catch((error) => {
     const message = error instanceof Error ? error.message : "Unknown error";
     statusText.textContent = `${t("unableToLoad")}: ${message}`;
-    renderWarnings([message]);
+    renderWarnings([createClientWarning(message)]);
   });
 });
 periodRangeSelect.addEventListener("change", () => {
@@ -9151,7 +8333,7 @@ periodRangeSelect.addEventListener("change", () => {
   loadEnergyRange().catch((error) => {
     const message = error instanceof Error ? error.message : "Unknown error";
     statusText.textContent = `${t("unableToLoad")}: ${message}`;
-    renderWarnings([message]);
+    renderWarnings([createClientWarning(message)]);
   });
 });
 languageSelect.addEventListener("change", () => {

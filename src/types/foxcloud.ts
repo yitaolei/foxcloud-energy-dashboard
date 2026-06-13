@@ -87,10 +87,16 @@ export interface DashboardDailyRow {
   batteryDischargeLabel: string;
 }
 
+export interface DashboardWarning {
+  message: string;
+  createdAt: string;
+  severity?: "warning" | "error" | "info";
+}
+
 export interface DashboardPayload {
   generatedAt: string;
   isStale: boolean;
-  warnings: string[];
+  warnings: DashboardWarning[];
   source: "live" | "cache" | "demo" | "modbus";
   requestedPeriod: {
     year: number;

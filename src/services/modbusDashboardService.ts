@@ -22,6 +22,7 @@ import { getModbusProfile, resolveModbusProfile } from "./modbus/profiles.js";
 import type {
   DashboardDailyRow,
   DashboardPayload,
+  DashboardWarning,
   EnergyRangePayload,
   FoxCloudHistoryDeviceResult,
   FoxCloudHistorySeries,
@@ -54,6 +55,16 @@ const ENERGY_HISTORY_VARIABLES = [
   "batDischargePower",
 ] as const;
 const SOLAR_ACTIVE_POWER_THRESHOLD_KW = 0.05;
+
+const createDashboardWarning = (
+  message: string,
+  severity: DashboardWarning["severity"] = "warning",
+  createdAt = new Date().toISOString(),
+): DashboardWarning => ({
+  message,
+  createdAt,
+  severity,
+});
 
 interface ModbusRTUClient {
   setTimeout(timeoutMs: number): void;
@@ -599,12 +610,20 @@ export async function getModbusDashboardData(year: number, month: number): Promi
     ? currentMonthRows(todayRow, year, month)
     : filterRowsUpToToday(readDailyEnergyRowsByMonth(env.modbus.deviceId, year, month));
 
+  const generatedAt = new Date().toISOString();
+
   return {
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     isStale: false,
     warnings: [
-      "Using local read-only Modbus data. Historical daily rows are available after this dashboard has sampled and cached them locally.",
-      ...getModbusProfileWarnings(),
+      createDashboardWarning(
+        "Using local read-only Modbus data. Historical daily rows are available after this dashboard has sampled and cached them locally.",
+        "info",
+        generatedAt,
+      ),
+      ...getModbusProfileWarnings().map((message) =>
+        createDashboardWarning(message, "warning", generatedAt),
+      ),
     ],
     source: "modbus",
     requestedPeriod: { year, month },
