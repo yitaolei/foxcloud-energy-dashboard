@@ -3823,8 +3823,7 @@ section[id] {
 }
 
 .metrics-grid,
-.summary-grid,
-.chart-grid {
+.summary-grid {
   display: grid;
   gap: 1rem;
 }
@@ -3839,10 +3838,6 @@ section[id] {
 
 .totals-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.chart-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .metric-card {
@@ -4583,7 +4578,6 @@ tbody tr:hover {
   .dashboard-report-grid,
   .location-grid,
   .tariff-grid,
-  .chart-grid,
   .weather-current,
   .insight-panel,
   .action-advice-grid,
@@ -5211,7 +5205,6 @@ tbody tr:hover {
   }
 
   .dashboard-overview,
-  .chart-grid,
   .metrics-grid {
     grid-template-columns: 1fr;
   }
