@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-13-deep-analysis-fold" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-13-action-section" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,7 +33,7 @@
             <button id="refreshButton" class="refresh-button" type="button" data-i18n="refresh">Refresh</button>
             <button id="rebuildCacheButton" class="secondary-button" type="button" data-i18n="rebuildCache">Rebuild cache</button>
             <button id="exportPdfButton" class="secondary-button" type="button" data-i18n="exportPdf">Export PDF</button>
-            <p class="deploy-stamp">NAS build: 2026-06-13 deep-analysis-fold</p>
+            <p class="deploy-stamp">NAS build: 2026-06-13 action-section</p>
             <p id="statusText" class="status-text">Loading dashboard data...</p>
           </div>
         </section>
@@ -251,65 +251,7 @@
             </div>
             <small id="homeSourceDetail">--</small>
           </div>
-          <div class="home-judgement">
-            <div class="home-judgement-head">
-              <span data-i18n="homeJudgementKicker">Auto judgement</span>
-              <small id="homeJudgementMeta">--</small>
-            </div>
-            <div class="home-judgement-grid">
-              <article id="homeJudgePeakCard" data-tone="neutral">
-                <span data-i18n="homeJudgePeak">Peak readiness</span>
-                <strong id="homeJudgePeakStatus">--</strong>
-                <small id="homeJudgePeakDetail">--</small>
-              </article>
-              <article id="homeJudgeNightCard" data-tone="neutral">
-                <span data-i18n="homeJudgeNight">Tonight battery</span>
-                <strong id="homeJudgeNightStatus">--</strong>
-                <small id="homeJudgeNightDetail">--</small>
-              </article>
-              <article id="homeJudgeTomorrowCard" data-tone="neutral">
-                <span data-i18n="homeJudgeTomorrow">Tomorrow plan</span>
-                <strong id="homeJudgeTomorrowStatus">--</strong>
-                <small id="homeJudgeTomorrowDetail">--</small>
-              </article>
-            </div>
-          </div>
         </section>
-
-        <div class="dashboard-support-strip">
-          <section class="panel tariff-timeline-panel" aria-live="polite">
-            <div class="panel-heading compact-heading">
-              <div>
-                <p class="panel-kicker" data-i18n="tariffWindow">Tariff window</p>
-                <h2 data-i18n="tariffTimeline">Electricity price timeline</h2>
-                <p id="tariffTimelineDetail" class="muted-copy">--</p>
-              </div>
-              <div class="tariff-timeline-now">
-                <span data-i18n="currentTariff">Current tariff</span>
-                <strong id="tariffTimelineStatus">--</strong>
-              </div>
-            </div>
-            <div class="tariff-timeline-track" aria-hidden="true">
-              <span id="tariffPeakSegmentA" class="tariff-peak-segment"></span>
-              <span id="tariffPeakSegmentB" class="tariff-peak-segment"></span>
-              <span id="tariffCurrentMarker" class="tariff-current-marker">
-                <b id="tariffCurrentMarkerLabel">--</b>
-              </span>
-            </div>
-            <div class="tariff-timeline-labels">
-              <span>00:00</span>
-              <span>06:00</span>
-              <span>12:00</span>
-              <span>18:00</span>
-              <span>24:00</span>
-            </div>
-            <div class="tariff-rate-grid">
-              <span><b data-i18n="peakRate">Peak rate</b> <strong id="tariffTimelinePeakRate">--</strong></span>
-              <span><b data-i18n="offPeakRate">Off-peak rate</b> <strong id="tariffTimelineOffPeakRate">--</strong></span>
-              <span><b data-i18n="feedInRate">Feed-in rate</b> <strong id="tariffTimelineFeedInRate">--</strong></span>
-            </div>
-          </section>
-        </div>
 
         <details class="panel deep-analysis-panel">
           <summary class="deep-analysis-summary">
@@ -488,180 +430,295 @@
           </div>
         </details>
 
-        <section class="panel peak-readiness-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="peakReadinessKicker">Peak readiness</p>
-              <h2 data-i18n="peakReadinessTitle">Evening peak readiness</h2>
-              <p id="peakReadinessDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="peakReadinessScore" class="peak-readiness-score">--</strong>
+        <section id="sectionActions" class="dashboard-action-section">
+          <div class="action-advice-grid">
+            <section class="panel energy-coach-panel" aria-live="polite">
+              <div class="panel-heading compact-heading">
+                <div>
+                  <p class="panel-kicker" data-i18n="energyCoachKicker">Energy coach</p>
+                  <h2 data-i18n="energyCoachTitle">Actionable home energy tips</h2>
+                </div>
+              </div>
+              <div class="energy-coach-grid">
+                <article id="coachVerdictCard" class="energy-coach-card" data-tone="good">
+                  <span data-i18n="coachVerdictLabel">Today verdict</span>
+                  <strong id="coachVerdictStatus">--</strong>
+                  <small id="coachVerdictDetail">--</small>
+                </article>
+                <article id="coachPeakCard" class="energy-coach-card" data-tone="good">
+                  <span data-i18n="coachPeakLabel">Peak plan</span>
+                  <strong id="coachPeakStatus">--</strong>
+                  <small id="coachPeakDetail">--</small>
+                </article>
+                <article id="coachWeatherCard" class="energy-coach-card" data-tone="good">
+                  <span data-i18n="coachWeatherLabel">Tomorrow solar</span>
+                  <strong id="coachWeatherStatus">--</strong>
+                  <small id="coachWeatherDetail">--</small>
+                </article>
+              </div>
+            </section>
           </div>
-          <div class="peak-readiness-layout">
-            <div id="peakReadinessRing" class="peak-readiness-ring" style="--peak-score: 0%">
-              <strong id="peakReadinessValue">--</strong>
-              <span id="peakReadinessStatus">--</span>
+
+          <section class="panel home-judgement action-judgement-panel" aria-live="polite">
+            <div class="home-judgement-head">
+              <span data-i18n="homeJudgementKicker">Auto judgement</span>
+              <small id="homeJudgementMeta">--</small>
             </div>
-            <div class="peak-readiness-grid">
-              <article>
-                <span data-i18n="batteryLevel">Battery level</span>
-                <strong id="peakReadinessBattery">--</strong>
+            <div class="home-judgement-grid">
+              <article id="homeJudgePeakCard" data-tone="neutral">
+                <span data-i18n="homeJudgePeak">Peak readiness</span>
+                <strong id="homeJudgePeakStatus">--</strong>
+                <small id="homeJudgePeakDetail">--</small>
               </article>
-              <article>
+              <article id="homeJudgeNightCard" data-tone="neutral">
+                <span data-i18n="homeJudgeNight">Tonight battery</span>
+                <strong id="homeJudgeNightStatus">--</strong>
+                <small id="homeJudgeNightDetail">--</small>
+              </article>
+              <article id="homeJudgeTomorrowCard" data-tone="neutral">
+                <span data-i18n="homeJudgeTomorrow">Tomorrow plan</span>
+                <strong id="homeJudgeTomorrowStatus">--</strong>
+                <small id="homeJudgeTomorrowDetail">--</small>
+              </article>
+            </div>
+          </section>
+
+          <section class="panel peak-readiness-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="peakReadinessKicker">Peak readiness</p>
+                <h2 data-i18n="peakReadinessTitle">Evening peak readiness</h2>
+                <p id="peakReadinessDetail" class="muted-copy">--</p>
+              </div>
+              <strong id="peakReadinessScore" class="peak-readiness-score">--</strong>
+            </div>
+            <div class="peak-readiness-layout">
+              <div id="peakReadinessRing" class="peak-readiness-ring" style="--peak-score: 0%">
+                <strong id="peakReadinessValue">--</strong>
+                <span id="peakReadinessStatus">--</span>
+              </div>
+              <div class="peak-readiness-grid">
+                <article>
+                  <span data-i18n="batteryLevel">Battery level</span>
+                  <strong id="peakReadinessBattery">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="currentTariff">Current tariff</span>
+                  <strong id="peakReadinessTariff">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="gridModeNow">Grid mode now</span>
+                  <strong id="peakReadinessGrid">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="todaySavings">Estimated savings today</span>
+                  <strong id="peakReadinessSavings">--</strong>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section id="sectionBattery" class="panel battery-reserve-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="batteryReserveKicker">Battery reserve</p>
+                <h2 data-i18n="batteryReserveTitle">Battery reserve plan</h2>
+                <p id="batteryReserveDetail" class="muted-copy">--</p>
+              </div>
+              <strong id="batteryReserveMode" class="battery-reserve-mode">--</strong>
+            </div>
+            <div class="battery-reserve-layout">
+              <div class="battery-reserve-stack" aria-hidden="true">
+                <span id="batteryReserveFill" class="battery-reserve-fill" style="height: 0%"></span>
+                <b id="batteryReserveSoc">--</b>
+              </div>
+              <div class="battery-reserve-copy">
+                <div class="battery-reserve-meter">
+                  <span data-i18n="batteryReserveAboveFloor">Reserve above 20%</span>
+                  <strong id="batteryReserveUsable">--</strong>
+                  <div class="battery-reserve-bar"><span id="batteryReserveBar" style="width: 0%"></span></div>
+                </div>
+                <div class="battery-reserve-grid">
+                  <article>
+                    <span data-i18n="batteryPowerNow">Battery power now</span>
+                    <strong id="batteryReservePower">--</strong>
+                  </article>
+                  <article>
+                    <span data-i18n="homeLoadCoveredNow">Home load covered now</span>
+                    <strong id="batteryReserveCoverage">--</strong>
+                  </article>
+                  <article>
+                    <span data-i18n="reserveAction">Recommended action</span>
+                    <strong id="batteryReserveAction">--</strong>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel battery-runway-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="batteryRunwayKicker">Battery runway</p>
+                <h2 data-i18n="batteryRunwayTitle">Battery cover forecast</h2>
+                <p id="batteryRunwayDetail" class="muted-copy">--</p>
+              </div>
+              <strong id="batteryRunwayStatus" class="battery-runway-status">--</strong>
+            </div>
+            <div class="battery-runway-layout">
+              <div class="battery-runway-main">
+                <span data-i18n="estimatedRunway">Estimated time to 20%</span>
+                <strong id="batteryRunwayTime">--</strong>
+                <div class="battery-runway-track"><span id="batteryRunwayBar" style="width: 0%"></span></div>
+                <small id="batteryRunwayMeta">--</small>
+              </div>
+              <div class="battery-runway-grid">
+                <article>
+                  <span data-i18n="recentBatteryDrain">Recent battery drain</span>
+                  <strong id="batteryRunwayDrain">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="batteryReserveFloor">Reserve floor</span>
+                  <strong id="batteryRunwayReserve">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="overnightRisk">Overnight risk</span>
+                  <strong id="batteryRunwayRisk">--</strong>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel grid-forecast-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="gridForecastKicker">Grid forecast</p>
+                <h2 data-i18n="gridForecastTitle">Grid import forecast</h2>
+                <p id="gridForecastDetail" class="muted-copy">--</p>
+              </div>
+              <strong id="gridForecastStatus" class="grid-forecast-status">--</strong>
+            </div>
+            <div class="grid-forecast-layout">
+              <div class="grid-forecast-main">
+                <span data-i18n="gridImportPressure">Import pressure</span>
+                <strong id="gridForecastPressure">--</strong>
+                <div class="grid-forecast-track"><span id="gridForecastBar" style="width: 0%"></span></div>
+                <small id="gridForecastMeta">--</small>
+              </div>
+              <div class="grid-forecast-grid">
+                <article>
+                  <span data-i18n="recentGridImport">Recent grid import</span>
+                  <strong id="gridForecastImport">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="solarTrend">Solar trend</span>
+                  <strong id="gridForecastSolar">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="gridForecastAction">Suggested action</span>
+                  <strong id="gridForecastAction">--</strong>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel tomorrow-prep-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="tomorrowPrepKicker">Tomorrow prep</p>
+                <h2 data-i18n="tomorrowPrepTitle">Tomorrow solar readiness</h2>
+                <p id="tomorrowPrepDetail" class="muted-copy">--</p>
+              </div>
+              <strong id="tomorrowPrepStatus" class="tomorrow-prep-status">--</strong>
+            </div>
+            <div class="tomorrow-prep-layout">
+              <div class="tomorrow-prep-main">
+                <span data-i18n="tomorrowPrepScore">Readiness score</span>
+                <strong id="tomorrowPrepScore">--</strong>
+                <div class="tomorrow-prep-track"><span id="tomorrowPrepBar" style="width: 0%"></span></div>
+                <small id="tomorrowPrepMeta">--</small>
+              </div>
+              <div class="tomorrow-prep-grid">
+                <article>
+                  <span data-i18n="tomorrowSolarOutlook">Tomorrow solar</span>
+                  <strong id="tomorrowPrepWeather">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="tonightBatteryReserve">Tonight reserve</span>
+                  <strong id="tomorrowPrepReserve">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="tomorrowLoadWindow">Best load window</span>
+                  <strong id="tomorrowPrepWindow">--</strong>
+                </article>
+                <article>
+                  <span data-i18n="tomorrowPrepAction">Action</span>
+                  <strong id="tomorrowPrepAction">--</strong>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel tariff-timeline-panel" aria-live="polite">
+            <div class="panel-heading compact-heading">
+              <div>
+                <p class="panel-kicker" data-i18n="tariffWindow">Tariff window</p>
+                <h2 data-i18n="tariffTimeline">Electricity price timeline</h2>
+                <p id="tariffTimelineDetail" class="muted-copy">--</p>
+              </div>
+              <div class="tariff-timeline-now">
                 <span data-i18n="currentTariff">Current tariff</span>
-                <strong id="peakReadinessTariff">--</strong>
-              </article>
-              <article>
-                <span data-i18n="gridModeNow">Grid mode now</span>
-                <strong id="peakReadinessGrid">--</strong>
-              </article>
-              <article>
-                <span data-i18n="todaySavings">Estimated savings today</span>
-                <strong id="peakReadinessSavings">--</strong>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section id="sectionBattery" class="panel battery-reserve-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="batteryReserveKicker">Battery reserve</p>
-              <h2 data-i18n="batteryReserveTitle">Battery reserve plan</h2>
-              <p id="batteryReserveDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="batteryReserveMode" class="battery-reserve-mode">--</strong>
-          </div>
-          <div class="battery-reserve-layout">
-            <div class="battery-reserve-stack" aria-hidden="true">
-              <span id="batteryReserveFill" class="battery-reserve-fill" style="height: 0%"></span>
-              <b id="batteryReserveSoc">--</b>
-            </div>
-            <div class="battery-reserve-copy">
-              <div class="battery-reserve-meter">
-                <span data-i18n="batteryReserveAboveFloor">Reserve above 20%</span>
-                <strong id="batteryReserveUsable">--</strong>
-                <div class="battery-reserve-bar"><span id="batteryReserveBar" style="width: 0%"></span></div>
-              </div>
-              <div class="battery-reserve-grid">
-                <article>
-                  <span data-i18n="batteryPowerNow">Battery power now</span>
-                  <strong id="batteryReservePower">--</strong>
-                </article>
-                <article>
-                  <span data-i18n="homeLoadCoveredNow">Home load covered now</span>
-                  <strong id="batteryReserveCoverage">--</strong>
-                </article>
-                <article>
-                  <span data-i18n="reserveAction">Recommended action</span>
-                  <strong id="batteryReserveAction">--</strong>
-                </article>
+                <strong id="tariffTimelineStatus">--</strong>
               </div>
             </div>
-          </div>
-        </section>
+            <div class="tariff-timeline-track" aria-hidden="true">
+              <span id="tariffPeakSegmentA" class="tariff-peak-segment"></span>
+              <span id="tariffPeakSegmentB" class="tariff-peak-segment"></span>
+              <span id="tariffCurrentMarker" class="tariff-current-marker">
+                <b id="tariffCurrentMarkerLabel">--</b>
+              </span>
+            </div>
+            <div class="tariff-timeline-labels">
+              <span>00:00</span>
+              <span>06:00</span>
+              <span>12:00</span>
+              <span>18:00</span>
+              <span>24:00</span>
+            </div>
+            <div class="tariff-rate-grid">
+              <span><b data-i18n="peakRate">Peak rate</b> <strong id="tariffTimelinePeakRate">--</strong></span>
+              <span><b data-i18n="offPeakRate">Off-peak rate</b> <strong id="tariffTimelineOffPeakRate">--</strong></span>
+              <span><b data-i18n="feedInRate">Feed-in rate</b> <strong id="tariffTimelineFeedInRate">--</strong></span>
+            </div>
+          </section>
 
-        <section class="panel battery-runway-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="batteryRunwayKicker">Battery runway</p>
-              <h2 data-i18n="batteryRunwayTitle">Battery cover forecast</h2>
-              <p id="batteryRunwayDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="batteryRunwayStatus" class="battery-runway-status">--</strong>
-          </div>
-          <div class="battery-runway-layout">
-            <div class="battery-runway-main">
-              <span data-i18n="estimatedRunway">Estimated time to 20%</span>
-              <strong id="batteryRunwayTime">--</strong>
-              <div class="battery-runway-track"><span id="batteryRunwayBar" style="width: 0%"></span></div>
-              <small id="batteryRunwayMeta">--</small>
-            </div>
-            <div class="battery-runway-grid">
-              <article>
-                <span data-i18n="recentBatteryDrain">Recent battery drain</span>
-                <strong id="batteryRunwayDrain">--</strong>
-              </article>
-              <article>
-                <span data-i18n="batteryReserveFloor">Reserve floor</span>
-                <strong id="batteryRunwayReserve">--</strong>
-              </article>
-              <article>
-                <span data-i18n="overnightRisk">Overnight risk</span>
-                <strong id="batteryRunwayRisk">--</strong>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel grid-forecast-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="gridForecastKicker">Grid forecast</p>
-              <h2 data-i18n="gridForecastTitle">Grid import forecast</h2>
-              <p id="gridForecastDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="gridForecastStatus" class="grid-forecast-status">--</strong>
-          </div>
-          <div class="grid-forecast-layout">
-            <div class="grid-forecast-main">
-              <span data-i18n="gridImportPressure">Import pressure</span>
-              <strong id="gridForecastPressure">--</strong>
-              <div class="grid-forecast-track"><span id="gridForecastBar" style="width: 0%"></span></div>
-              <small id="gridForecastMeta">--</small>
-            </div>
-            <div class="grid-forecast-grid">
-              <article>
-                <span data-i18n="recentGridImport">Recent grid import</span>
-                <strong id="gridForecastImport">--</strong>
-              </article>
-              <article>
-                <span data-i18n="solarTrend">Solar trend</span>
-                <strong id="gridForecastSolar">--</strong>
-              </article>
-              <article>
-                <span data-i18n="gridForecastAction">Suggested action</span>
-                <strong id="gridForecastAction">--</strong>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel tomorrow-prep-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="tomorrowPrepKicker">Tomorrow prep</p>
-              <h2 data-i18n="tomorrowPrepTitle">Tomorrow solar readiness</h2>
-              <p id="tomorrowPrepDetail" class="muted-copy">--</p>
-            </div>
-            <strong id="tomorrowPrepStatus" class="tomorrow-prep-status">--</strong>
-          </div>
-          <div class="tomorrow-prep-layout">
-            <div class="tomorrow-prep-main">
-              <span data-i18n="tomorrowPrepScore">Readiness score</span>
-              <strong id="tomorrowPrepScore">--</strong>
-              <div class="tomorrow-prep-track"><span id="tomorrowPrepBar" style="width: 0%"></span></div>
-              <small id="tomorrowPrepMeta">--</small>
-            </div>
-            <div class="tomorrow-prep-grid">
-              <article>
-                <span data-i18n="tomorrowSolarOutlook">Tomorrow solar</span>
-                <strong id="tomorrowPrepWeather">--</strong>
-              </article>
-              <article>
-                <span data-i18n="tonightBatteryReserve">Tonight reserve</span>
-                <strong id="tomorrowPrepReserve">--</strong>
-              </article>
-              <article>
-                <span data-i18n="tomorrowLoadWindow">Best load window</span>
-                <strong id="tomorrowPrepWindow">--</strong>
-              </article>
-              <article>
-                <span data-i18n="tomorrowPrepAction">Action</span>
-                <strong id="tomorrowPrepAction">--</strong>
-              </article>
-            </div>
-          </div>
+          <section class="insight-panel" aria-live="polite">
+            <article class="insight-card">
+              <span class="insight-label" data-i18n="tariffWindow">Tariff window</span>
+              <strong id="insightTariffStatus">--</strong>
+              <small id="insightTariffDetail">--</small>
+            </article>
+            <article class="insight-card">
+              <span class="insight-label" data-i18n="batteryReadiness">Battery readiness</span>
+              <strong id="insightBatteryReadiness">--</strong>
+              <small id="insightBatteryDetail">--</small>
+            </article>
+            <article class="insight-card">
+              <span class="insight-label" data-i18n="gridModeNow">Grid mode now</span>
+              <strong id="insightGridMode">--</strong>
+              <small id="insightGridDetail">--</small>
+            </article>
+            <article id="temperatureInsightCard" class="insight-card temperature-insight-card" data-tone="normal">
+              <span class="insight-label" data-i18n="temperatureWatch">Temperature watch</span>
+              <strong id="insightTemperatureStatus">--</strong>
+              <small id="insightTemperatureDetail">--</small>
+            </article>
+            <article class="insight-card insight-card-wide">
+              <span class="insight-label" data-i18n="smartHint">Smart hint</span>
+              <strong id="insightSmartHint">--</strong>
+              <small id="insightSmartHintDetail">--</small>
+            </article>
+          </section>
         </section>
 
         <section class="gauge-panel" aria-live="polite">
@@ -713,62 +770,6 @@
             <small id="gaugeGridToday">--</small>
           </article>
         </section>
-
-        <section class="insight-panel" aria-live="polite">
-          <article class="insight-card">
-            <span class="insight-label" data-i18n="tariffWindow">Tariff window</span>
-            <strong id="insightTariffStatus">--</strong>
-            <small id="insightTariffDetail">--</small>
-          </article>
-          <article class="insight-card">
-            <span class="insight-label" data-i18n="batteryReadiness">Battery readiness</span>
-            <strong id="insightBatteryReadiness">--</strong>
-            <small id="insightBatteryDetail">--</small>
-          </article>
-          <article class="insight-card">
-            <span class="insight-label" data-i18n="gridModeNow">Grid mode now</span>
-            <strong id="insightGridMode">--</strong>
-            <small id="insightGridDetail">--</small>
-          </article>
-          <article id="temperatureInsightCard" class="insight-card temperature-insight-card" data-tone="normal">
-            <span class="insight-label" data-i18n="temperatureWatch">Temperature watch</span>
-            <strong id="insightTemperatureStatus">--</strong>
-            <small id="insightTemperatureDetail">--</small>
-          </article>
-          <article class="insight-card insight-card-wide">
-            <span class="insight-label" data-i18n="smartHint">Smart hint</span>
-            <strong id="insightSmartHint">--</strong>
-            <small id="insightSmartHintDetail">--</small>
-          </article>
-        </section>
-
-        <div class="action-advice-grid">
-          <section id="sectionActions" class="panel energy-coach-panel" aria-live="polite">
-            <div class="panel-heading compact-heading">
-              <div>
-                <p class="panel-kicker" data-i18n="energyCoachKicker">Energy coach</p>
-                <h2 data-i18n="energyCoachTitle">Actionable home energy tips</h2>
-              </div>
-            </div>
-            <div class="energy-coach-grid">
-              <article id="coachVerdictCard" class="energy-coach-card" data-tone="good">
-                <span data-i18n="coachVerdictLabel">Today verdict</span>
-                <strong id="coachVerdictStatus">--</strong>
-                <small id="coachVerdictDetail">--</small>
-              </article>
-              <article id="coachPeakCard" class="energy-coach-card" data-tone="good">
-                <span data-i18n="coachPeakLabel">Peak plan</span>
-                <strong id="coachPeakStatus">--</strong>
-                <small id="coachPeakDetail">--</small>
-              </article>
-              <article id="coachWeatherCard" class="energy-coach-card" data-tone="good">
-                <span data-i18n="coachWeatherLabel">Tomorrow solar</span>
-                <strong id="coachWeatherStatus">--</strong>
-                <small id="coachWeatherDetail">--</small>
-              </article>
-            </div>
-          </section>
-        </div>
 
         <section class="balance-panel" aria-live="polite">
           <article class="balance-card">
@@ -1334,6 +1335,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-13-deep-analysis-fold"></script>
+    <script src="/app.js?v=2026-06-13-action-section"></script>
   </body>
 </html>
