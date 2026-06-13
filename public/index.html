@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-13-lean-first-screen" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-13-deep-analysis-fold" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,7 +33,7 @@
             <button id="refreshButton" class="refresh-button" type="button" data-i18n="refresh">Refresh</button>
             <button id="rebuildCacheButton" class="secondary-button" type="button" data-i18n="rebuildCache">Rebuild cache</button>
             <button id="exportPdfButton" class="secondary-button" type="button" data-i18n="exportPdf">Export PDF</button>
-            <p class="deploy-stamp">NAS build: 2026-06-13 lean-first-screen</p>
+            <p class="deploy-stamp">NAS build: 2026-06-13 deep-analysis-fold</p>
             <p id="statusText" class="status-text">Loading dashboard data...</p>
           </div>
         </section>
@@ -311,52 +311,60 @@
           </section>
         </div>
 
-        <section class="panel savings-overview-panel" aria-live="polite">
-          <div class="panel-heading compact-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="estimatedSavings">Estimated savings</p>
-              <h2 data-i18n="savingsOverview">Savings overview</h2>
-              <p class="muted-copy" data-i18n="savingsOverviewHelp">
-                Estimated benefit from solar and battery usage across common time ranges.
-              </p>
-            </div>
-          </div>
-          <div class="savings-overview-grid">
-            <article class="savings-overview-card">
-              <span data-i18n="today">Today</span>
-              <strong id="savingsOverviewToday">--</strong>
-              <small id="savingsOverviewTodayMeta">--</small>
-            </article>
-            <article class="savings-overview-card">
-              <span data-i18n="currentWeek">This week</span>
-              <strong id="savingsOverviewWeek">--</strong>
-              <small id="savingsOverviewWeekMeta">--</small>
-            </article>
-            <article class="savings-overview-card">
-              <span data-i18n="currentMonth">This month</span>
-              <strong id="savingsOverviewMonth">--</strong>
-              <small id="savingsOverviewMonthMeta">--</small>
-            </article>
-            <article class="savings-overview-card">
-              <span data-i18n="last3Months">Last 3 months</span>
-              <strong id="savingsOverviewLast3">--</strong>
-              <small id="savingsOverviewLast3Meta">--</small>
-            </article>
-            <article class="savings-overview-card">
-              <span data-i18n="last6Months">Last 6 months</span>
-              <strong id="savingsOverviewLast6">--</strong>
-              <small id="savingsOverviewLast6Meta">--</small>
-            </article>
-            <article class="savings-overview-card">
-              <span data-i18n="last12Months">Last 12 months</span>
-              <strong id="savingsOverviewLast12">--</strong>
-              <small id="savingsOverviewLast12Meta">--</small>
-            </article>
-          </div>
-        </section>
+        <details class="panel deep-analysis-panel">
+          <summary class="deep-analysis-summary">
+            <span>
+              <b data-i18n="deepAnalysisTitle">Deep analysis</b>
+              <small data-i18n="deepAnalysisSummary">Savings, trends, calendar, and longer-range patterns.</small>
+            </span>
+          </summary>
+          <div class="deep-analysis-content">
+            <section class="panel savings-overview-panel" aria-live="polite">
+              <div class="panel-heading compact-heading">
+                <div>
+                  <p class="panel-kicker" data-i18n="estimatedSavings">Estimated savings</p>
+                  <h2 data-i18n="savingsOverview">Savings overview</h2>
+                  <p class="muted-copy" data-i18n="savingsOverviewHelp">
+                    Estimated benefit from solar and battery usage across common time ranges.
+                  </p>
+                </div>
+              </div>
+              <div class="savings-overview-grid">
+                <article class="savings-overview-card">
+                  <span data-i18n="today">Today</span>
+                  <strong id="savingsOverviewToday">--</strong>
+                  <small id="savingsOverviewTodayMeta">--</small>
+                </article>
+                <article class="savings-overview-card">
+                  <span data-i18n="currentWeek">This week</span>
+                  <strong id="savingsOverviewWeek">--</strong>
+                  <small id="savingsOverviewWeekMeta">--</small>
+                </article>
+                <article class="savings-overview-card">
+                  <span data-i18n="currentMonth">This month</span>
+                  <strong id="savingsOverviewMonth">--</strong>
+                  <small id="savingsOverviewMonthMeta">--</small>
+                </article>
+                <article class="savings-overview-card">
+                  <span data-i18n="last3Months">Last 3 months</span>
+                  <strong id="savingsOverviewLast3">--</strong>
+                  <small id="savingsOverviewLast3Meta">--</small>
+                </article>
+                <article class="savings-overview-card">
+                  <span data-i18n="last6Months">Last 6 months</span>
+                  <strong id="savingsOverviewLast6">--</strong>
+                  <small id="savingsOverviewLast6Meta">--</small>
+                </article>
+                <article class="savings-overview-card">
+                  <span data-i18n="last12Months">Last 12 months</span>
+                  <strong id="savingsOverviewLast12">--</strong>
+                  <small id="savingsOverviewLast12Meta">--</small>
+                </article>
+              </div>
+            </section>
 
-        <div class="dashboard-report-grid operating-report-grid">
-          <section class="panel trend-panel" aria-live="polite">
+            <div class="dashboard-report-grid operating-report-grid">
+              <section class="panel trend-panel" aria-live="polite">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="todayVsRecent">Today vs recent days</p>
@@ -392,9 +400,9 @@
                 <div class="trend-bar"><span id="trendGridBar" style="width: 0%"></span></div>
               </article>
             </div>
-          </section>
+              </section>
 
-          <section class="panel energy-timeline-panel" aria-live="polite">
+              <section class="panel energy-timeline-panel" aria-live="polite">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="energyTimelineKicker">Energy timeline</p>
@@ -428,10 +436,10 @@
                 <strong id="energyTimelineDominant">--</strong>
               </article>
             </div>
-          </section>
-        </div>
+              </section>
+            </div>
 
-        <section class="panel operational-heatmap-panel" aria-live="polite">
+            <section class="panel operational-heatmap-panel" aria-live="polite">
           <div class="panel-heading compact-heading">
             <div>
               <p class="panel-kicker" data-i18n="operatingPattern">Operating pattern</p>
@@ -448,10 +456,10 @@
             <span><i class="legend-dot heat-battery"></i><b data-i18n="battery">Battery</b></span>
             <span><i class="legend-dot heat-grid"></i><b data-i18n="grid">Grid</b></span>
           </div>
-        </section>
+            </section>
 
-        <div class="dashboard-report-grid pattern-report-grid">
-          <section class="panel solar-calendar-panel" aria-live="polite">
+            <div class="dashboard-report-grid pattern-report-grid">
+              <section class="panel solar-calendar-panel" aria-live="polite">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="monthlyPattern">Monthly pattern</p>
@@ -462,9 +470,9 @@
               </div>
             </div>
             <div id="solarCalendarGrid" class="solar-calendar-grid"></div>
-          </section>
+              </section>
 
-          <section class="panel weekday-profile-panel" aria-live="polite">
+              <section class="panel weekday-profile-panel" aria-live="polite">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="weeklyRhythm">Weekly rhythm</p>
@@ -475,8 +483,10 @@
               </div>
             </div>
             <div id="weekdayProfileGrid" class="weekday-profile-grid"></div>
-          </section>
-        </div>
+              </section>
+            </div>
+          </div>
+        </details>
 
         <section class="panel peak-readiness-panel" aria-live="polite">
           <div class="panel-heading compact-heading">
@@ -942,7 +952,15 @@
               <small id="periodSavingsMeta" class="muted-copy">--</small>
             </article>
           </div>
-          <div class="savings-breakdown-card">
+          <details class="panel deep-analysis-panel period-analysis-panel">
+            <summary class="deep-analysis-summary">
+              <span>
+                <b data-i18n="moreAnalysisTitle">More analysis</b>
+                <small data-i18n="moreAnalysisSummary">Savings breakdown, bill impact, period highlights, battery behavior, and solar utilization.</small>
+              </span>
+            </summary>
+            <div class="deep-analysis-content">
+              <div class="savings-breakdown-card">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="savingsBreakdown">Savings breakdown</p>
@@ -960,8 +978,8 @@
               <span><i class="legend-dot"></i><b data-i18n="avoidedImportKwh">Avoided import kWh</b> <strong id="periodAvoidedImportKwh">--</strong></span>
               <span><i class="legend-dot"></i><b data-i18n="exportedKwh">Exported kWh</b> <strong id="periodExportedKwh">--</strong></span>
             </div>
-          </div>
-          <div class="savings-forecast-card">
+              </div>
+              <div class="savings-forecast-card">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="savingsForecast">Savings forecast</p>
@@ -983,8 +1001,8 @@
                 <strong id="periodAnnualForecast">--</strong>
               </article>
             </div>
-          </div>
-          <div class="bill-impact-card">
+              </div>
+              <div class="bill-impact-card">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="billImpact">Bill impact</p>
@@ -1010,8 +1028,8 @@
                 <strong id="periodBillBenefit">--</strong>
               </article>
             </div>
-          </div>
-          <div class="period-highlights-card">
+              </div>
+              <div class="period-highlights-card">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="periodHighlights">Period highlights</p>
@@ -1040,8 +1058,8 @@
                 <small id="periodBestSavingsMeta">--</small>
               </article>
             </div>
-          </div>
-          <div class="battery-performance-card">
+              </div>
+              <div class="battery-performance-card">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="batteryPerformance">Battery performance</p>
@@ -1070,8 +1088,8 @@
                 <small id="periodBatteryModeMeta">--</small>
               </article>
             </div>
-          </div>
-          <div class="solar-utilization-card">
+              </div>
+              <div class="solar-utilization-card">
             <div class="panel-heading compact-heading">
               <div>
                 <p class="panel-kicker" data-i18n="solarUtilization">Solar utilization</p>
@@ -1100,7 +1118,9 @@
                 <small data-i18n="solarUtilizationTotalMeta">Selected period production</small>
               </article>
             </div>
-          </div>
+              </div>
+            </div>
+          </details>
         </section>
 
         <section class="dashboard-overview">
@@ -1314,6 +1334,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-13-lean-first-screen"></script>
+    <script src="/app.js?v=2026-06-13-deep-analysis-fold"></script>
   </body>
 </html>
