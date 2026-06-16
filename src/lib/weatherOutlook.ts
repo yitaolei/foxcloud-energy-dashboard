@@ -53,13 +53,47 @@ export const getWeatherConditionKey = (weatherCode: number | null | undefined): 
   return "unknown";
 };
 
+export const getWeatherDisplayConditionKey = (
+  weatherCode: number | null | undefined,
+  cloudCoverPercent: number | null | undefined,
+  precipitationProbabilityPercent: number | null | undefined,
+  precipitationMm: number | null | undefined,
+): WeatherConditionKey => {
+  const condition = getWeatherConditionKey(weatherCode);
+  const cloudCover = Number(cloudCoverPercent);
+  const rainProbability = Number(precipitationProbabilityPercent ?? 0);
+  const precipitation = Number(precipitationMm ?? 0);
+  const isDry = rainProbability <= 10 && precipitation < 0.2;
+
+  if (!Number.isFinite(cloudCover) || !isDry) {
+    return condition;
+  }
+
+  if (["clear", "partly_cloudy", "cloudy"].includes(condition)) {
+    if (cloudCover <= 20) {
+      return "clear";
+    }
+
+    if (cloudCover <= 50) {
+      return "partly_cloudy";
+    }
+  }
+
+  return condition;
+};
+
 export const getSolarOutlook = (
   weatherCode: number | null | undefined,
   cloudCoverPercent: number | null | undefined,
   precipitationProbabilityPercent: number | null | undefined,
   precipitationMm: number | null | undefined,
 ): SolarOutlookKey => {
-  const condition = getWeatherConditionKey(weatherCode);
+  const condition = getWeatherDisplayConditionKey(
+    weatherCode,
+    cloudCoverPercent,
+    precipitationProbabilityPercent,
+    precipitationMm,
+  );
   const cloudCover = Number(cloudCoverPercent ?? 100);
   const rainProbability = Number(precipitationProbabilityPercent ?? 0);
   const precipitation = Number(precipitationMm ?? 0);

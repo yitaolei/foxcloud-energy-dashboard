@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   getSolarOutlook,
   getWeatherConditionKey,
+  getWeatherDisplayConditionKey,
 } from "../dist/lib/weatherOutlook.js";
 
 describe("weather outlook helpers", () => {
@@ -22,6 +23,16 @@ describe("weather outlook helpers", () => {
 
   it("rates partly cloudy low-rain days as good for solar", () => {
     assert.equal(getSolarOutlook(2, 35, 20, 0), "good");
+  });
+
+  it("uses cloud cover to refine dry cloudy weather for display", () => {
+    assert.equal(getWeatherDisplayConditionKey(3, 14, 0, 0), "clear");
+    assert.equal(getWeatherDisplayConditionKey(3, 35, 0, 0), "partly_cloudy");
+    assert.equal(getWeatherDisplayConditionKey(3, 75, 0, 0), "cloudy");
+  });
+
+  it("rates dry low-cloud overcast codes by the corrected display condition", () => {
+    assert.equal(getSolarOutlook(3, 14, 0, 0), "excellent");
   });
 
   it("rates wet or very cloudy days lower for solar", () => {

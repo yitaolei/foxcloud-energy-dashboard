@@ -1,5 +1,5 @@
 import { env } from "../config/env.js";
-import { getSolarOutlook, getWeatherConditionKey } from "../lib/weatherOutlook.js";
+import { getSolarOutlook, getWeatherDisplayConditionKey } from "../lib/weatherOutlook.js";
 import type { WeatherSettings } from "../lib/weatherSettings.js";
 import type { WeatherPayload } from "../types/foxcloud.js";
 
@@ -244,7 +244,12 @@ const normalizeOpenMeteoResponse = (
         temperatureCelsius: round(weather.current.temperature_2m, 1),
         apparentTemperatureCelsius: round(weather.current.apparent_temperature, 1),
         weatherCode,
-        conditionKey: getWeatherConditionKey(weatherCode),
+        conditionKey: getWeatherDisplayConditionKey(
+          weatherCode,
+          cloudCover,
+          precipitationProbability,
+          precipitation,
+        ),
         cloudCoverPercent: cloudCover,
         precipitationMm: precipitation,
         precipitationProbabilityPercent: precipitationProbability,
@@ -266,7 +271,12 @@ const normalizeOpenMeteoResponse = (
     return {
       date,
       weatherCode: dailyCode,
-      conditionKey: getWeatherConditionKey(dailyCode),
+      conditionKey: getWeatherDisplayConditionKey(
+        dailyCode,
+        round(weather.daily?.cloud_cover_mean?.[index], 0),
+        dailyRainProbability,
+        dailyPrecipitation,
+      ),
       temperatureMaxCelsius: round(weather.daily?.temperature_2m_max?.[index], 1),
       temperatureMinCelsius: round(weather.daily?.temperature_2m_min?.[index], 1),
       cloudCoverMeanPercent: round(weather.daily?.cloud_cover_mean?.[index], 0),
