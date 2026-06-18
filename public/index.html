@@ -215,6 +215,42 @@
           </div>
         </section>
 
+        <section class="panel solar-projection-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-kicker" data-i18n="solarProjectionKicker">Solar projection</p>
+              <h2 data-i18n="solarProjectionTitle">Today's solar generation estimate</h2>
+              <p id="solarProjectionSummary" class="muted-copy">--</p>
+            </div>
+          </div>
+          <div class="solar-projection-grid">
+            <article class="summary-card">
+              <span data-i18n="solarProjectionNow">Generated so far</span>
+              <strong id="solarProjectionActual">--</strong>
+            </article>
+            <article class="summary-card">
+              <span data-i18n="solarProjectionExpected">Estimated today</span>
+              <strong id="solarProjectionEstimate">--</strong>
+            </article>
+            <article class="summary-card">
+              <span data-i18n="solarProjectionRemaining">Likely remaining</span>
+              <strong id="solarProjectionRemaining">--</strong>
+            </article>
+            <article class="summary-card">
+              <span data-i18n="solarProjectionTonightBattery">Tonight battery</span>
+              <strong id="solarProjectionEveningBattery">--</strong>
+            </article>
+            <article class="summary-card">
+              <span data-i18n="solarProjectionConfidence">Confidence</span>
+              <strong id="solarProjectionConfidence">--</strong>
+            </article>
+          </div>
+          <p id="solarProjectionMeta" class="data-note">--</p>
+          <div class="chart-body solar-projection-chart-body">
+            <canvas id="solarProjectionChart"></canvas>
+          </div>
+        </section>
+
         <details class="panel deep-analysis-panel">
           <summary class="deep-analysis-summary">
             <span>
@@ -1231,38 +1267,6 @@
               </article>
             </div>
           </article>
-        </section>
-
-        <section class="panel solar-projection-panel">
-          <div class="panel-heading">
-            <div>
-              <p class="panel-kicker" data-i18n="solarProjectionKicker">Solar projection</p>
-              <h2 data-i18n="solarProjectionTitle">Today's solar generation estimate</h2>
-              <p id="solarProjectionSummary" class="muted-copy">--</p>
-            </div>
-          </div>
-          <div class="solar-projection-grid">
-            <article class="summary-card">
-              <span data-i18n="solarProjectionNow">Generated so far</span>
-              <strong id="solarProjectionActual">--</strong>
-            </article>
-            <article class="summary-card">
-              <span data-i18n="solarProjectionExpected">Estimated today</span>
-              <strong id="solarProjectionEstimate">--</strong>
-            </article>
-            <article class="summary-card">
-              <span data-i18n="solarProjectionRemaining">Likely remaining</span>
-              <strong id="solarProjectionRemaining">--</strong>
-            </article>
-            <article class="summary-card">
-              <span data-i18n="solarProjectionConfidence">Confidence</span>
-              <strong id="solarProjectionConfidence">--</strong>
-            </article>
-          </div>
-          <p id="solarProjectionMeta" class="data-note">--</p>
-          <div class="chart-body solar-projection-chart-body">
-            <canvas id="solarProjectionChart"></canvas>
-          </div>
         </section>
 
         <section class="panel history-panel">

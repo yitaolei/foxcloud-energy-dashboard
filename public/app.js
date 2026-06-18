@@ -35,6 +35,7 @@ const metricFields = {
   solarProjectionActual: document.getElementById("solarProjectionActual"),
   solarProjectionEstimate: document.getElementById("solarProjectionEstimate"),
   solarProjectionRemaining: document.getElementById("solarProjectionRemaining"),
+  solarProjectionEveningBattery: document.getElementById("solarProjectionEveningBattery"),
   solarProjectionConfidence: document.getElementById("solarProjectionConfidence"),
   periodSolarProduction: document.getElementById("periodSolarProduction"),
   periodHomeUsage: document.getElementById("periodHomeUsage"),
@@ -471,6 +472,7 @@ let lastTariff = null;
 let lastWeatherSettings = null;
 const REBUILD_LIMIT_DAYS = 31;
 const WARNING_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+const BATTERY_ESTIMATE_CAPACITY_KWH = 10.4;
 
 function getSelectValues(selectElement) {
   return new Set(Array.from(selectElement.options).map((option) => option.value));
@@ -1328,12 +1330,14 @@ const translations = {
     solarProjectionNow: "Generated so far",
     solarProjectionExpected: "Estimated today",
     solarProjectionRemaining: "Likely remaining",
+    solarProjectionTonightBattery: "Tonight battery",
     solarProjectionConfidence: "Confidence",
-    solarProjectionSummary: "Estimated finish {estimate}; {remaining} still likely if the afternoon curve holds.",
+    solarProjectionSummary: "Estimated finish {estimate}; {remaining} still likely. Tonight battery around {battery}.",
     solarProjectionMeta: "Live solar {solar}; battery {battery}; inverter {inverter}; today weather {weather}; cloud {cloud}; recent average {average}.",
     solarProjectionActualSeries: "Generated so far",
     solarProjectionEstimateSeries: "Projected finish path",
     solarProjectionTargetSeries: "Estimated total",
+    solarProjectionBatterySeries: "Battery reserve",
     solarProjectionConfidenceHigh: "High",
     solarProjectionConfidenceMedium: "Medium",
     solarProjectionConfidenceLow: "Low",
@@ -2182,12 +2186,14 @@ const translations = {
     solarProjectionNow: "目前已发",
     solarProjectionExpected: "今日预计",
     solarProjectionRemaining: "预计剩余",
+    solarProjectionTonightBattery: "今晚电池",
     solarProjectionConfidence: "可信度",
-    solarProjectionSummary: "预计今天收尾 {estimate}；如果下午曲线保持，后面大约还有 {remaining}。",
+    solarProjectionSummary: "预计今天收尾 {estimate}；后面大约还有 {remaining}；今晚电池约 {battery}。",
     solarProjectionMeta: "实时太阳能 {solar}；电池 {battery}；逆变器 {inverter}；今日天气 {weather}；云量 {cloud}；最近平均 {average}。",
     solarProjectionActualSeries: "已发电",
     solarProjectionEstimateSeries: "预测进度",
     solarProjectionTargetSeries: "预计总量",
+    solarProjectionBatterySeries: "电池储量",
     solarProjectionConfidenceHigh: "高",
     solarProjectionConfidenceMedium: "中",
     solarProjectionConfidenceLow: "低",
@@ -3036,12 +3042,14 @@ const translations = {
     solarProjectionNow: "ผลิตแล้ว",
     solarProjectionExpected: "คาดทั้งวัน",
     solarProjectionRemaining: "คาดที่เหลือ",
+    solarProjectionTonightBattery: "แบตคืนนี้",
     solarProjectionConfidence: "ความมั่นใจ",
-    solarProjectionSummary: "คาดจบที่ {estimate}; ถ้าช่วงบ่ายยังดี อาจเหลืออีก {remaining}",
+    solarProjectionSummary: "คาดจบที่ {estimate}; อาจเหลืออีก {remaining}; แบตคืนนี้ราว {battery}",
     solarProjectionMeta: "โซลาร์สด {solar}; แบตเตอรี่ {battery}; อินเวอร์เตอร์ {inverter}; อากาศวันนี้ {weather}; เมฆ {cloud}; ค่าเฉลี่ยล่าสุด {average}",
     solarProjectionActualSeries: "ผลิตแล้ว",
     solarProjectionEstimateSeries: "เส้นคาดการณ์",
     solarProjectionTargetSeries: "ยอดคาดทั้งวัน",
+    solarProjectionBatterySeries: "ระดับแบต",
     solarProjectionConfidenceHigh: "สูง",
     solarProjectionConfidenceMedium: "กลาง",
     solarProjectionConfidenceLow: "ต่ำ",
@@ -7933,6 +7941,115 @@ function buildSolarHourlyActual(payload, now, actualTodayKwh) {
   return buckets;
 }
 
+function getRecentAverageValue(values, fallback = 0) {
+  const validValues = values
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value) && value >= 0);
+
+  if (validValues.length === 0) {
+    return fallback;
+  }
+
+  return validValues.reduce((sum, value) => sum + value, 0) / validValues.length;
+}
+
+function buildBatteryHourlyActual(payload, now) {
+  const values = payload?.last24Hours?.batteryLevelPercent ?? [];
+  const count = values.length;
+  const buckets = Array.from({ length: 24 }, () => null);
+
+  if (count < 2) {
+    return buckets;
+  }
+
+  const endTime = new Date(now).getTime();
+  const startTime = endTime - 24 * 60 * 60 * 1000;
+  const stepMs = (endTime - startTime) / Math.max(count - 1, 1);
+  const todayKey = formatLocalDateKey(now);
+
+  for (let index = 0; index < count; index += 1) {
+    const sampleTime = new Date(startTime + stepMs * index);
+
+    if (formatLocalDateKey(sampleTime) !== todayKey) {
+      continue;
+    }
+
+    const soc = Number(values[index]);
+
+    if (Number.isFinite(soc)) {
+      buckets[sampleTime.getHours()] = Number(clampPercentValue(soc).toFixed(0));
+    }
+  }
+
+  let lastValue = null;
+
+  return buckets.map((value, hour) => {
+    if (value !== null) {
+      lastValue = value;
+    }
+
+    return hour <= now.getHours() ? lastValue : null;
+  });
+}
+
+function getSolarWeightShareForHour(weights, hour, currentHour) {
+  if (hour <= currentHour) {
+    return 0;
+  }
+
+  const remainingWeight = weights
+    .slice(currentHour + 1)
+    .reduce((sum, value) => sum + value, 0);
+
+  return remainingWeight > 0 ? weights[hour] / remainingWeight : 0;
+}
+
+function getLastKnownValue(values, fallback = null) {
+  for (let index = values.length - 1; index >= 0; index -= 1) {
+    if (values[index] !== null && values[index] !== undefined) {
+      return values[index];
+    }
+  }
+
+  return fallback;
+}
+
+function buildBatteryProjection(payload, now, weights, remainingSolarKwh) {
+  const actualBattery = buildBatteryHourlyActual(payload, now);
+  const currentSoc = Number(payload?.live?.batterySocPercent);
+
+  if (!Number.isFinite(currentSoc)) {
+    return {
+      series: actualBattery,
+      eveningSoc: null,
+    };
+  }
+
+  const currentHour = now.getHours();
+  const recentHomeKw = getRecentAverageValue(
+    (payload?.last24Hours?.homeUsageKw ?? []).slice(-90),
+    Number(payload?.live?.homeUsageKw ?? 0.8),
+  );
+  const estimatedChargeKwh = Math.max(0, remainingSolarKwh - recentHomeKw * 1.8) * 0.82;
+  const series = [...actualBattery];
+  let projectedSoc = clampPercentValue(currentSoc);
+  const eveningHour = 21;
+
+  for (let hour = currentHour + 1; hour < 24; hour += 1) {
+    const solarChargeKwh = estimatedChargeKwh * getSolarWeightShareForHour(weights, hour, currentHour);
+    const eveningUseKwh = hour >= 17 && hour <= eveningHour ? recentHomeKw * 0.82 : 0;
+    const deltaSoc = ((solarChargeKwh - eveningUseKwh) / BATTERY_ESTIMATE_CAPACITY_KWH) * 100;
+
+    projectedSoc = clampPercentValue(projectedSoc + deltaSoc);
+    series[hour] = Number(projectedSoc.toFixed(0));
+  }
+
+  return {
+    series,
+    eveningSoc: series[eveningHour] ?? getLastKnownValue(series, projectedSoc),
+  };
+}
+
 function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
   const now = new Date(payload?.live?.updatedAt ?? payload?.generatedAt ?? Date.now());
   const todayKwh = Number(payload?.today?.solarProductionKwh ?? 0);
@@ -7978,12 +8095,15 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
     projectedRunning += increment;
     return Number(projectedRunning.toFixed(2));
   });
+  const batteryProjection = buildBatteryProjection(payload, now, weights, remainingKwh);
 
   return {
     labels,
     actualCumulative,
     projectedCumulative,
     targetLine: labels.map(() => Number(estimateKwh.toFixed(2))),
+    batteryPercent: batteryProjection.series,
+    eveningBatteryPercent: batteryProjection.eveningSoc,
     estimateKwh,
     remainingKwh,
     todayKwh,
@@ -8006,11 +8126,15 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
   metricFields.solarProjectionActual.textContent = formatKwh(projection.todayKwh);
   metricFields.solarProjectionEstimate.textContent = formatKwh(projection.estimateKwh);
   metricFields.solarProjectionRemaining.textContent = formatKwh(projection.remainingKwh);
+  metricFields.solarProjectionEveningBattery.textContent = projection.eveningBatteryPercent === null
+    ? "--"
+    : formatPercent(projection.eveningBatteryPercent);
   metricFields.solarProjectionConfidence.textContent = t(`solarProjectionConfidence${projection.confidence[0].toUpperCase()}${projection.confidence.slice(1)}`);
   textFields.solarProjectionSummary.textContent = projection.todayKwh > 0
     ? interpolate(t("solarProjectionSummary"), {
       estimate: formatKwh(projection.estimateKwh),
       remaining: formatKwh(projection.remainingKwh),
+      battery: projection.eveningBatteryPercent === null ? "--" : formatPercent(projection.eveningBatteryPercent),
     })
     : t("solarProjectionNoData");
   textFields.solarProjectionMeta.textContent = interpolate(t("solarProjectionMeta"), {
@@ -8023,6 +8147,29 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
   });
 
   destroyChart(solarProjectionChart);
+  const projectionChartOptions = getChartOptions(t("dailyEnergyKwh"));
+  projectionChartOptions.plugins.tooltip.callbacks.label = (context) => {
+    const value = Number(context.parsed.y ?? 0);
+    const unit = context.dataset.yAxisID === "percent" ? "%" : "kWh";
+
+    return `${context.dataset.label}: ${unit === "%" ? value.toFixed(0) : value.toFixed(2)} ${unit}`;
+  };
+  projectionChartOptions.scales.percent = {
+    type: "linear",
+    position: "right",
+    min: 0,
+    max: 100,
+    grid: {
+      drawOnChartArea: false,
+    },
+    title: {
+      display: true,
+      text: t("batteryLevelPercent"),
+    },
+    ticks: {
+      maxTicksLimit: 6,
+    },
+  };
   solarProjectionChart = new Chart(chartElement.getContext("2d"), {
     type: "line",
     data: {
@@ -8034,6 +8181,7 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
           borderColor: "#f59e0b",
           backgroundColor: "rgba(245, 158, 11, 0.14)",
           fill: true,
+          yAxisID: "y",
           tension: 0.25,
           pointRadius: 0,
           borderWidth: 2,
@@ -8044,6 +8192,7 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
           borderColor: "#0f766e",
           backgroundColor: "rgba(15, 118, 110, 0.1)",
           borderDash: [6, 4],
+          yAxisID: "y",
           tension: 0.25,
           pointRadius: 0,
           borderWidth: 2,
@@ -8053,12 +8202,23 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
           data: projection.targetLine,
           borderColor: "rgba(15, 23, 42, 0.45)",
           borderDash: [2, 5],
+          yAxisID: "y",
           pointRadius: 0,
           borderWidth: 1.5,
         },
+        {
+          label: t("solarProjectionBatterySeries"),
+          data: projection.batteryPercent,
+          borderColor: "#7c3aed",
+          backgroundColor: "rgba(124, 58, 237, 0.08)",
+          yAxisID: "percent",
+          tension: 0.22,
+          pointRadius: 0,
+          borderWidth: 2,
+        },
       ],
     },
-    options: getChartOptions(t("dailyEnergyKwh")),
+    options: projectionChartOptions,
   });
 }
 
