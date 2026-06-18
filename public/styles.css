@@ -94,6 +94,11 @@ select {
   font-size: 0.9rem;
 }
 
+.toolbar .auto-refresh-text {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
 .deploy-stamp {
   align-self: center;
   border: 1px solid rgba(20, 114, 91, 0.2);

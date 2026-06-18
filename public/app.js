@@ -1,4 +1,5 @@
 const statusText = document.getElementById("statusText");
+const autoRefreshText = document.getElementById("autoRefreshText");
 const refreshButton = document.getElementById("refreshButton");
 const rebuildCacheButton = document.getElementById("rebuildCacheButton");
 const exportPdfButton = document.getElementById("exportPdfButton");
@@ -473,6 +474,10 @@ let lastWeatherSettings = null;
 const REBUILD_LIMIT_DAYS = 31;
 const WARNING_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 const BATTERY_ESTIMATE_CAPACITY_KWH = 10.4;
+const AUTO_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+let autoRefreshTimer = null;
+let nextAutoRefreshAt = null;
+let isDashboardLoading = false;
 
 function getSelectValues(selectElement) {
   return new Set(Array.from(selectElement.options).map((option) => option.value));
@@ -540,6 +545,7 @@ const translations = {
     loading: "Loading dashboard data...",
     loaded: "Dashboard loaded successfully.",
     loadedCached: "Dashboard loaded from cached data because the live API call failed.",
+    autoRefreshNext: "Next auto refresh: {time}",
     demoData: "Demo data",
     loadingRange: "Loading selected table range...",
     loadedRange: "Selected range loaded.",
@@ -1396,6 +1402,7 @@ const translations = {
     loading: "正在加载仪表板数据...",
     loaded: "仪表板数据加载成功。",
     loadedCached: "实时 API 请求失败，当前显示缓存数据。",
+    autoRefreshNext: "下次自动刷新：{time}",
     demoData: "演示数据",
     loadingRange: "正在加载所选表格范围...",
     loadedRange: "所选范围已加载。",
@@ -2252,6 +2259,7 @@ const translations = {
     loading: "กำลังโหลดข้อมูลแดชบอร์ด...",
     loaded: "โหลดข้อมูลแดชบอร์ดสำเร็จ",
     loadedCached: "คำขอ API แบบสดล้มเหลว กำลังแสดงข้อมูลแคช",
+    autoRefreshNext: "รีเฟรชอัตโนมัติครั้งถัดไป: {time}",
     demoData: "ข้อมูลตัวอย่าง",
     loadingRange: "กำลังโหลดช่วงตารางที่เลือก...",
     loadedRange: "โหลดช่วงที่เลือกแล้ว",
@@ -8746,6 +8754,11 @@ function renderMetrics(payload) {
 }
 
 async function loadDashboard() {
+  if (isDashboardLoading) {
+    return;
+  }
+
+  isDashboardLoading = true;
   refreshButton.disabled = true;
   statusText.textContent = t("loading");
 
@@ -8778,7 +8791,9 @@ async function loadDashboard() {
     statusText.textContent = `${t("unableToLoad")}: ${message}`;
     renderWarnings(error?.dashboardWarnings ?? [createClientWarning(message)]);
   } finally {
+    isDashboardLoading = false;
     refreshButton.disabled = false;
+    scheduleAutoRefresh();
   }
 }
 
@@ -8795,6 +8810,28 @@ function applyStoredPreferences() {
     tableRangeSelect.value,
   );
   periodRangeSelect.value = tableRangeSelect.value;
+}
+
+function updateAutoRefreshText() {
+  if (!autoRefreshText || !nextAutoRefreshAt) {
+    return;
+  }
+
+  autoRefreshText.textContent = interpolate(t("autoRefreshNext"), {
+    time: formatTimestampTime(nextAutoRefreshAt),
+  });
+}
+
+function scheduleAutoRefresh() {
+  if (autoRefreshTimer) {
+    window.clearTimeout(autoRefreshTimer);
+  }
+
+  nextAutoRefreshAt = new Date(Date.now() + AUTO_REFRESH_INTERVAL_MS);
+  updateAutoRefreshText();
+  autoRefreshTimer = window.setTimeout(() => {
+    void loadDashboard();
+  }, AUTO_REFRESH_INTERVAL_MS);
 }
 
 function resizeChartsAfterPanelOpen() {
@@ -8843,9 +8880,11 @@ languageSelect.addEventListener("change", () => {
     renderSavingsOverview(lastSavingsOverview);
     statusText.textContent = lastPayload.isStale ? t("loadedCached") : t("loaded");
   }
+  updateAutoRefreshText();
 });
 window.setInterval(() => {
   textFields.currentDateTime.textContent = formatCurrentDateTime();
+  updateAutoRefreshText();
 }, 60_000);
 document.querySelectorAll(".sort-button").forEach((button) => {
   button.addEventListener("click", () => {
