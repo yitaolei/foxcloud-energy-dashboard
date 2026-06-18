@@ -8052,6 +8052,7 @@ function buildBatteryProjection(payload, now, weights, remainingSolarKwh) {
 
 function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
   const now = new Date(payload?.live?.updatedAt ?? payload?.generatedAt ?? Date.now());
+  const currentHour = now.getHours();
   const todayKwh = Number(payload?.today?.solarProductionKwh ?? 0);
   const { weights } = getSolarDayWeights(now, weatherPayload?.location?.latitude ?? -33.86);
   const totalWeight = weights.reduce((sum, value) => sum + value, 0);
@@ -8080,14 +8081,14 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
   let actualRunning = 0;
   const actualCumulative = actualHourly.map((value, hour) => {
     actualRunning += value;
-    return hour <= now.getHours() ? Number(actualRunning.toFixed(2)) : null;
+    return hour <= currentHour ? Number(actualRunning.toFixed(2)) : null;
   });
   const remainingWeight = weights
-    .slice(now.getHours() + 1)
+    .slice(currentHour + 1)
     .reduce((sum, value) => sum + value, 0);
   let projectedRunning = todayKwh;
   const projectedCumulative = weights.map((weight, hour) => {
-    if (hour <= now.getHours()) {
+    if (hour <= currentHour) {
       return actualCumulative[hour];
     }
 
@@ -8104,6 +8105,7 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
     targetLine: labels.map(() => Number(estimateKwh.toFixed(2))),
     batteryPercent: batteryProjection.series,
     eveningBatteryPercent: batteryProjection.eveningSoc,
+    currentHour,
     estimateKwh,
     remainingKwh,
     todayKwh,
@@ -8215,6 +8217,9 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
           tension: 0.22,
           pointRadius: 0,
           borderWidth: 2,
+          segment: {
+            borderDash: (context) => (context.p0DataIndex >= projection.currentHour ? [6, 4] : []),
+          },
         },
       ],
     },
