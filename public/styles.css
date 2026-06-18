@@ -3852,6 +3852,30 @@ section[id] {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.solar-projection-panel {
+  border-left: 4px solid #f59e0b;
+}
+
+.solar-projection-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin: 0.95rem 0 0.75rem;
+}
+
+.solar-projection-grid .summary-card {
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.solar-projection-grid .summary-card strong {
+  color: #0f766e;
+}
+
+.solar-projection-chart-body {
+  height: 280px;
+  margin-top: 0.9rem;
+}
+
 .totals-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -4613,6 +4637,7 @@ tbody tr:hover {
   .grid-forecast-layout,
   .tomorrow-prep-layout,
   .visual-kpi-grid,
+  .solar-projection-grid,
   .savings-overview-grid,
   .visual-status-strip,
   .summary-grid,
