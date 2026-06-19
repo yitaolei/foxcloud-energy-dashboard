@@ -6937,6 +6937,41 @@ function renderBatterySocNow(value) {
   });
 }
 
+function renderSolarProjectionMeta(values, batterySocPercent) {
+  const template = t("solarProjectionMeta");
+  const batteryText = formatPercent(batterySocPercent);
+
+  if (!textFields.solarProjectionMeta) {
+    return;
+  }
+
+  if (!template.includes("{battery}")) {
+    textFields.solarProjectionMeta.textContent = interpolate(template, {
+      ...values,
+      battery: batteryText,
+    });
+    return;
+  }
+
+  const level = getBatterySocLevel(batterySocPercent);
+  const batteryElement = document.createElement("span");
+  batteryElement.className = [
+    "battery-inline-value",
+    level === "good" ? "battery-level-good" : "",
+    level === "medium" ? "battery-level-medium" : "",
+    level === "low" ? "battery-level-low" : "",
+    level === "unknown" ? "battery-level-neutral" : "",
+  ].filter(Boolean).join(" ");
+  batteryElement.textContent = batteryText;
+
+  const [beforeBattery, afterBattery] = template.split("{battery}");
+  textFields.solarProjectionMeta.replaceChildren(
+    document.createTextNode(interpolate(beforeBattery, values)),
+    batteryElement,
+    document.createTextNode(interpolate(afterBattery, values)),
+  );
+}
+
 function renderWeather(payload) {
   lastWeatherPayload = payload;
 
@@ -8188,14 +8223,13 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
       battery: projection.eveningBatteryPercent === null ? "--" : formatPercent(projection.eveningBatteryPercent),
     })
     : t("solarProjectionNoData");
-  textFields.solarProjectionMeta.textContent = interpolate(t("solarProjectionMeta"), {
+  renderSolarProjectionMeta({
     solar: formatKw(payload.live?.solarGeneratedKw),
-    battery: formatPercent(payload.live?.batterySocPercent),
     inverter: inverterStatus,
     weather: t(weatherToday?.solarOutlook ?? "unknown"),
     cloud: formatOptionalPercent(weatherToday?.cloudCoverMeanPercent ?? weatherToday?.cloudCoverPercent),
     average: projection.recentAverage === null ? "--" : formatKwh(projection.recentAverage),
-  });
+  }, payload.live?.batterySocPercent);
 
   destroyChart(solarProjectionChart);
   const projectionChartOptions = getChartOptions(t("dailyEnergyKwh"));

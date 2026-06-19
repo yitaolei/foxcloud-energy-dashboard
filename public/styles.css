@@ -4280,6 +4280,10 @@ section[id] {
   font-weight: 900;
 }
 
+.battery-inline-value {
+  font-weight: 900;
+}
+
 .battery-level-good {
   color: #0f9f6e;
 }
