@@ -566,6 +566,7 @@ const translations = {
     periodTotals: "Energy totals",
     periodTotalsHelp: "Choose a period to summarize daily energy data.",
     tableRange: "Table range",
+    tableAverageLabel: "Average ({count} days)",
     currentWeek: "This week",
     currentMonth: "This month",
     previousMonth: "Previous month",
@@ -1423,6 +1424,7 @@ const translations = {
     periodTotals: "能源总计",
     periodTotalsHelp: "选择一个周期来汇总每日能源数据。",
     tableRange: "表格范围",
+    tableAverageLabel: "平均（{count} 天）",
     currentWeek: "本周",
     currentMonth: "这个月",
     previousMonth: "上一个月",
@@ -2280,6 +2282,7 @@ const translations = {
     periodTotals: "ยอดรวมพลังงาน",
     periodTotalsHelp: "เลือกช่วงเวลาเพื่อสรุปข้อมูลพลังงานรายวัน",
     tableRange: "ช่วงของตาราง",
+    tableAverageLabel: "เฉลี่ย ({count} วัน)",
     currentWeek: "สัปดาห์นี้",
     currentMonth: "เดือนนี้",
     previousMonth: "เดือนก่อน",
@@ -7202,47 +7205,85 @@ function renderSortButtons() {
   });
 }
 
+const dailyTableAverageKeys = [
+  "pv_production",
+  "self_consumption",
+  "daily_feedin",
+  "home_usage",
+  "grid_consumption",
+  "daily_charged_energy_total",
+  "daily_discharged_energy_total",
+];
+
+function getAverageDailyRow(rows) {
+  const validRows = rows.filter((row) => row?.date);
+
+  if (validRows.length === 0) {
+    return null;
+  }
+
+  return dailyTableAverageKeys.reduce(
+    (averageRow, key) => {
+      const total = validRows.reduce((sum, row) => sum + Number(row[key] ?? 0), 0);
+      averageRow[key] = total / validRows.length;
+
+      return averageRow;
+    },
+    {
+      date: interpolate(t("tableAverageLabel"), { count: validRows.length }),
+    },
+  );
+}
+
+function createDailyTableRow(cells, rowClassName = "") {
+  const tableRow = document.createElement("tr");
+
+  if (rowClassName) {
+    tableRow.className = rowClassName;
+  }
+
+  cells.forEach((cell) => {
+    const tableCell = document.createElement("td");
+
+    if (cell.className) {
+      tableCell.className = cell.className;
+    }
+
+    tableCell.textContent = cell.value;
+    tableRow.append(tableCell);
+  });
+
+  return tableRow;
+}
+
 function renderTable(rows) {
   const maxValues = getMaxValues(rows);
   const sortedRows = sortRows(rows);
   const valueClass = (key, value) => (Number(value) === maxValues[key] && Number(value) > 0 ? "table-max" : "");
+  const averageRow = getAverageDailyRow(rows);
+  const averageTableRow = averageRow
+    ? createDailyTableRow([
+      { value: averageRow.date },
+      ...dailyTableAverageKeys.map((key) => ({
+        value: formatKwh(averageRow[key]),
+        className: "table-average-value",
+      })),
+    ], "table-average-row")
+    : null;
 
   const tableRows = sortedRows.map((row) => {
-    const tableRow = document.createElement("tr");
     const cells = [
       { value: row.date },
-      { key: "pv_production", value: formatKwh(row.pv_production), rawValue: row.pv_production },
-      { key: "self_consumption", value: formatKwh(row.self_consumption), rawValue: row.self_consumption },
-      { key: "daily_feedin", value: formatKwh(row.daily_feedin), rawValue: row.daily_feedin },
-      { key: "home_usage", value: formatKwh(row.home_usage), rawValue: row.home_usage },
-      { key: "grid_consumption", value: formatKwh(row.grid_consumption), rawValue: row.grid_consumption },
-      {
-        key: "daily_charged_energy_total",
-        value: formatKwh(row.daily_charged_energy_total),
-        rawValue: row.daily_charged_energy_total,
-      },
-      {
-        key: "daily_discharged_energy_total",
-        value: formatKwh(row.daily_discharged_energy_total),
-        rawValue: row.daily_discharged_energy_total,
-      },
+      ...dailyTableAverageKeys.map((key) => ({
+        value: formatKwh(row[key]),
+        className: valueClass(key, row[key]),
+      })),
     ];
 
-    cells.forEach((cell) => {
-      const tableCell = document.createElement("td");
-
-      if (cell.key) {
-        tableCell.className = valueClass(cell.key, cell.rawValue);
-      }
-
-      tableCell.textContent = cell.value;
-      tableRow.append(tableCell);
-    });
-
-    return tableRow;
+    return createDailyTableRow(cells);
   });
 
-  dailyTableBody.replaceChildren(...tableRows);
+  dailyTableBody.replaceChildren(...[averageTableRow, ...tableRows].filter(Boolean));
   renderSortButtons();
 }
 

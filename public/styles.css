@@ -4601,6 +4601,21 @@ tbody td {
   white-space: nowrap;
 }
 
+.table-average-row {
+  background: rgba(20, 114, 91, 0.08);
+  color: #0f766e;
+}
+
+.table-average-row td {
+  border-top: 1px solid rgba(20, 114, 91, 0.18);
+  border-bottom: 1px solid rgba(20, 114, 91, 0.18);
+  font-weight: 800;
+}
+
+.table-average-value {
+  color: #0f766e;
+}
+
 .table-max {
   color: #c1272d;
   font-weight: 900;
