@@ -8062,6 +8062,40 @@ function getRecentAverageValue(values, fallback = 0) {
   return validValues.reduce((sum, value) => sum + value, 0) / validValues.length;
 }
 
+function getPercentileValue(values, percentile, fallback = null) {
+  const validValues = values
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value) && value >= 0)
+    .sort((a, b) => a - b);
+
+  if (validValues.length === 0) {
+    return fallback;
+  }
+
+  const index = Math.min(
+    validValues.length - 1,
+    Math.max(0, Math.round((validValues.length - 1) * percentile)),
+  );
+
+  return validValues[index];
+}
+
+function getEveningBaselineHomeKw(payload) {
+  const samples = payload?.last24Hours?.homeUsageKw ?? [];
+  const liveHomeKw = Number(payload?.live?.homeUsageKw);
+  const fallback = Number.isFinite(liveHomeKw) && liveHomeKw > 0 ? liveHomeKw : 0.8;
+  const recentBaseline = getPercentileValue(samples.slice(-240), 0.35, fallback);
+  const dailyBaseline = getPercentileValue(samples.slice(-720), 0.25, recentBaseline);
+  const candidates = [recentBaseline, dailyBaseline, fallback]
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value) && value > 0);
+  const baseline = candidates.length > 0
+    ? candidates.reduce((sum, value) => sum + value, 0) / candidates.length
+    : fallback;
+
+  return Math.max(0.35, Math.min(1.35, baseline));
+}
+
 function buildBatteryHourlyActual(payload, now) {
   const values = payload?.last24Hours?.batteryLevelPercent ?? [];
   const count = values.length;
@@ -8135,18 +8169,15 @@ function buildBatteryProjection(payload, now, weights, remainingSolarKwh) {
   }
 
   const currentHour = now.getHours();
-  const recentHomeKw = getRecentAverageValue(
-    (payload?.last24Hours?.homeUsageKw ?? []).slice(-90),
-    Number(payload?.live?.homeUsageKw ?? 0.8),
-  );
-  const estimatedChargeKwh = Math.max(0, remainingSolarKwh - recentHomeKw * 1.8) * 0.82;
+  const eveningBaselineHomeKw = getEveningBaselineHomeKw(payload);
+  const estimatedChargeKwh = Math.max(0, remainingSolarKwh - eveningBaselineHomeKw * 1.8) * 0.82;
   const series = [...actualBattery];
   let projectedSoc = clampPercentValue(currentSoc);
   const eveningHour = 21;
 
   for (let hour = currentHour + 1; hour < 24; hour += 1) {
     const solarChargeKwh = estimatedChargeKwh * getSolarWeightShareForHour(weights, hour, currentHour);
-    const eveningUseKwh = hour >= 17 && hour <= eveningHour ? recentHomeKw * 0.82 : 0;
+    const eveningUseKwh = hour >= 17 && hour <= eveningHour ? eveningBaselineHomeKw * 0.9 : 0;
     const deltaSoc = ((solarChargeKwh - eveningUseKwh) / BATTERY_ESTIMATE_CAPACITY_KWH) * 100;
 
     projectedSoc = clampPercentValue(projectedSoc + deltaSoc);
