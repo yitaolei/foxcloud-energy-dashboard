@@ -121,6 +121,14 @@ const textFields = {
   solarPerformanceMeta: document.getElementById("solarPerformanceMeta"),
   solarProjectionSummary: document.getElementById("solarProjectionSummary"),
   solarProjectionMeta: document.getElementById("solarProjectionMeta"),
+  solarDispatchAction: document.getElementById("solarDispatchAction"),
+  solarDispatchDetail: document.getElementById("solarDispatchDetail"),
+  solarDispatchCorrection: document.getElementById("solarDispatchCorrection"),
+  solarDispatchCorrectionDetail: document.getElementById("solarDispatchCorrectionDetail"),
+  solarDispatchSolcastRemaining: document.getElementById("solarDispatchSolcastRemaining"),
+  solarDispatchSolcastDetail: document.getElementById("solarDispatchSolcastDetail"),
+  solarDispatchPredbat: document.getElementById("solarDispatchPredbat"),
+  solarDispatchPredbatDetail: document.getElementById("solarDispatchPredbatDetail"),
   kpiDailySolarMeta: document.getElementById("kpiDailySolarMeta"),
   kpiDailyConsumptionMeta: document.getElementById("kpiDailyConsumptionMeta"),
   kpiDailyBatteryMeta: document.getElementById("kpiDailyBatteryMeta"),
@@ -1352,6 +1360,28 @@ const translations = {
     solarProjectionConfidenceMedium: "Medium",
     solarProjectionConfidenceLow: "Low",
     solarProjectionNoData: "Waiting for enough solar samples to estimate today.",
+    solarDispatchTitle: "Dispatch plan",
+    solarDispatchCorrection: "Solcast correction",
+    solarDispatchSolcastRemaining: "Solcast remaining",
+    solarDispatchPredbat: "Predbat-ready",
+    solarDispatchUseSurplus: "Use surplus window",
+    solarDispatchHoldBattery: "Hold battery reserve",
+    solarDispatchChargeOffPeak: "Prepare off-peak charge",
+    solarDispatchWatch: "Watch forecast drift",
+    solarDispatchSteady: "Stay flexible",
+    solarDispatchUseSurplusDetail: "Corrected solar is strong. Move flexible loads into the next sunny window before peak tariff.",
+    solarDispatchHoldBatteryDetail: "Evening battery cover looks tight. Keep larger loads light and preserve reserve for peak hours.",
+    solarDispatchChargeOffPeakDetail: "Low solar and low reserve. Predbat should consider a small off-peak top-up before the next peak.",
+    solarDispatchWatchDetail: "Actual production is drifting from Solcast. Keep flexible loads movable until the next refresh confirms the shape.",
+    solarDispatchSteadyDetail: "Solar, battery, and tariff pressure look balanced. No urgent action needed.",
+    solarDispatchCorrectionDetail: "Actual so far {actual} vs Solcast expected {expected}.",
+    solarDispatchCorrectionUnavailable: "Waiting for enough daylight overlap.",
+    solarDispatchSolcastDetail: "Raw Solcast {raw}; corrected remaining {corrected}.",
+    solarDispatchSolcastUnavailable: "No Solcast remainder available.",
+    solarDispatchPredbatReady: "Ready input",
+    solarDispatchPredbatWaiting: "Waiting",
+    solarDispatchPredbatDetail: "Feed Predbat trusted solar {estimate}, reserve target {reserve}, tariff {tariff}.",
+    solarDispatchPredbatWaitingDetail: "Need Solcast plus live battery data before a useful battery plan.",
     rainChance: "Rain chance",
     cloudCover: "Cloud cover",
     weatherDisabled: "Weather forecast is not configured.",
@@ -2212,6 +2242,28 @@ const translations = {
     solarProjectionConfidenceMedium: "中",
     solarProjectionConfidenceLow: "低",
     solarProjectionNoData: "正在等待足够的太阳能采样来估算今天。",
+    solarDispatchTitle: "调度建议",
+    solarDispatchCorrection: "Solcast 纠偏",
+    solarDispatchSolcastRemaining: "Solcast 剩余",
+    solarDispatchPredbat: "Predbat 准备",
+    solarDispatchUseSurplus: "用掉太阳窗口",
+    solarDispatchHoldBattery: "保留电池余量",
+    solarDispatchChargeOffPeak: "准备低价补电",
+    solarDispatchWatch: "观察预测偏差",
+    solarDispatchSteady: "保持灵活",
+    solarDispatchUseSurplusDetail: "校正后的太阳能较强。把可移动负载放到接下来的太阳窗口，高峰前完成。",
+    solarDispatchHoldBatteryDetail: "今晚电池覆盖偏紧。大功率负载先轻一点，把电池留给高峰时段。",
+    solarDispatchChargeOffPeakDetail: "太阳能偏低且电池余量低。Predbat 应考虑在低价时段少量补电。",
+    solarDispatchWatchDetail: "实际发电正在偏离 Solcast。先保持可移动负载灵活，等下一轮刷新确认走势。",
+    solarDispatchSteadyDetail: "太阳能、电池和电价压力比较平衡，暂时不需要急动作。",
+    solarDispatchCorrectionDetail: "目前实际 {actual}，Solcast 到此刻应有 {expected}。",
+    solarDispatchCorrectionUnavailable: "等待足够的白天重叠数据。",
+    solarDispatchSolcastDetail: "原始 Solcast {raw}；纠偏后剩余 {corrected}。",
+    solarDispatchSolcastUnavailable: "暂时没有 Solcast 剩余预测。",
+    solarDispatchPredbatReady: "输入已就绪",
+    solarDispatchPredbatWaiting: "等待数据",
+    solarDispatchPredbatDetail: "给 Predbat 的输入：可信太阳能 {estimate}，保留目标 {reserve}，电价 {tariff}。",
+    solarDispatchPredbatWaitingDetail: "需要 Solcast 和实时电池数据，才适合生成电池计划。",
     rainChance: "下雨概率",
     cloudCover: "云量",
     weatherDisabled: "天气预报尚未配置。",
@@ -3072,6 +3124,28 @@ const translations = {
     solarProjectionConfidenceMedium: "กลาง",
     solarProjectionConfidenceLow: "ต่ำ",
     solarProjectionNoData: "กำลังรอข้อมูลโซลาร์พอสำหรับคาดการณ์วันนี้",
+    solarDispatchTitle: "แผนจัดการพลังงาน",
+    solarDispatchCorrection: "ปรับ Solcast",
+    solarDispatchSolcastRemaining: "Solcast ที่เหลือ",
+    solarDispatchPredbat: "พร้อมสำหรับ Predbat",
+    solarDispatchUseSurplus: "ใช้ช่วงโซลาร์เกิน",
+    solarDispatchHoldBattery: "เก็บแบตไว้",
+    solarDispatchChargeOffPeak: "เตรียมชาร์จนอกพีค",
+    solarDispatchWatch: "ดูความคลาดเคลื่อน",
+    solarDispatchSteady: "ยืดหยุ่นไว้",
+    solarDispatchUseSurplusDetail: "โซลาร์หลังปรับยังแรง ย้ายโหลดที่ยืดหยุ่นไปช่วงแดดก่อนพีค",
+    solarDispatchHoldBatteryDetail: "แบตคืนนี้ดูตึง ลดโหลดใหญ่และเก็บสำรองไว้ช่วงพีค",
+    solarDispatchChargeOffPeakDetail: "โซลาร์ต่ำและแบตต่ำ Predbat ควรพิจารณาชาร์จเล็กน้อยช่วงนอกพีค",
+    solarDispatchWatchDetail: "ผลผลิตจริงเริ่มต่างจาก Solcast ให้รอรอบรีเฟรชก่อนใช้โหลดใหญ่",
+    solarDispatchSteadyDetail: "โซลาร์ แบต และค่าไฟสมดุล ยังไม่ต้องทำอะไรเร่งด่วน",
+    solarDispatchCorrectionDetail: "ผลิตจริง {actual} เทียบ Solcast ควรได้ {expected}",
+    solarDispatchCorrectionUnavailable: "รอข้อมูลช่วงกลางวันให้พอ",
+    solarDispatchSolcastDetail: "Solcast ดิบ {raw}; เหลือหลังปรับ {corrected}",
+    solarDispatchSolcastUnavailable: "ยังไม่มีค่า Solcast ที่เหลือ",
+    solarDispatchPredbatReady: "ข้อมูลพร้อม",
+    solarDispatchPredbatWaiting: "รอข้อมูล",
+    solarDispatchPredbatDetail: "ส่งให้ Predbat: โซลาร์เชื่อถือ {estimate}, เป้าสำรอง {reserve}, ค่าไฟ {tariff}",
+    solarDispatchPredbatWaitingDetail: "ต้องมี Solcast และข้อมูลแบตสดก่อนวางแผนแบตเตอรี่",
     rainChance: "โอกาสฝน",
     cloudCover: "เมฆปกคลุม",
     weatherDisabled: "ยังไม่ได้ตั้งค่าพยากรณ์อากาศ",
@@ -3524,10 +3598,12 @@ function buildEnergyTimelineSegments(payload) {
     }
   }
 
-  return {
+  const projection = {
     pointCount: labels.length,
     segments,
   };
+
+  return projection;
 }
 
 function formatTimelineShare(count, total) {
@@ -8197,13 +8273,17 @@ function getEndOfLocalDay(date) {
 function getSolcastRemainingProjection(solarForecastPayload, now) {
   const points = solarForecastPayload?.enabled ? solarForecastPayload.points ?? [] : [];
   const hourlyKwh = Array.from({ length: 24 }, () => 0);
-  const startMs = now.getTime();
+  const dayStartMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const nowMs = now.getTime();
   const endMs = getEndOfLocalDay(now).getTime();
+  let elapsedKwh = 0;
 
-  if (points.length === 0 || endMs <= startMs) {
+  if (points.length === 0 || endMs <= dayStartMs) {
     return {
       hourlyKwh,
+      elapsedKwh: 0,
       remainingKwh: 0,
+      totalKwh: 0,
     };
   }
 
@@ -8217,7 +8297,7 @@ function getSolcastRemainingProjection(solarForecastPayload, now) {
     }
 
     const periodStartMs = periodEndMs - periodHours * 3_600_000;
-    let cursorMs = Math.max(periodStartMs, startMs);
+    let cursorMs = Math.max(periodStartMs, dayStartMs);
     const clippedEndMs = Math.min(periodEndMs, endMs);
 
     while (cursorMs < clippedEndMs) {
@@ -8230,15 +8310,94 @@ function getSolcastRemainingProjection(solarForecastPayload, now) {
       ).getTime();
       const segmentEndMs = Math.min(clippedEndMs, nextHourMs);
       const segmentHours = (segmentEndMs - cursorMs) / 3_600_000;
+      const segmentKwh = Math.max(0, pvPowerKw) * segmentHours;
 
-      hourlyKwh[cursorDate.getHours()] += Math.max(0, pvPowerKw) * segmentHours;
+      hourlyKwh[cursorDate.getHours()] += segmentKwh;
+
+      if (cursorMs < nowMs) {
+        const elapsedSegmentEndMs = Math.min(segmentEndMs, nowMs);
+        const elapsedSegmentHours = Math.max(0, (elapsedSegmentEndMs - cursorMs) / 3_600_000);
+        elapsedKwh += Math.max(0, pvPowerKw) * elapsedSegmentHours;
+      }
+
       cursorMs = segmentEndMs;
     }
   });
 
+  const totalKwh = hourlyKwh.reduce((sum, value) => sum + value, 0);
+
   return {
     hourlyKwh,
-    remainingKwh: hourlyKwh.reduce((sum, value) => sum + value, 0),
+    elapsedKwh,
+    remainingKwh: Math.max(0, totalKwh - elapsedKwh),
+    totalKwh,
+  };
+}
+
+function getSolarDispatchPlan(payload, projection) {
+  const tariff = getTariffStatus(payload?.todaySavings ?? {});
+  const soc = Number(payload?.live?.batterySocPercent);
+  const eveningSoc = Number(projection.eveningBatteryPercent);
+  const hasBattery = Number.isFinite(soc);
+  const hasEveningBattery = Number.isFinite(eveningSoc);
+  const correction = projection.correctionFactor;
+  const correctionDrift = Number.isFinite(correction) ? Math.abs(correction - 1) : 0;
+  const reserveTarget = hasEveningBattery
+    ? Math.max(30, Math.min(70, eveningSoc < 45 ? 60 : 45))
+    : 45;
+
+  if (
+    projection.source === "dual" &&
+    projection.correctedSolcastRemainingKwh >= 5 &&
+    (!hasBattery || soc >= 55) &&
+    !tariff.isPeak
+  ) {
+    return {
+      actionKey: "solarDispatchUseSurplus",
+      detailKey: "solarDispatchUseSurplusDetail",
+      reserveTarget,
+      tariff,
+    };
+  }
+
+  if ((hasEveningBattery && eveningSoc < 38) || (hasBattery && soc < 35 && tariff.isPeak)) {
+    return {
+      actionKey: "solarDispatchHoldBattery",
+      detailKey: "solarDispatchHoldBatteryDetail",
+      reserveTarget,
+      tariff,
+    };
+  }
+
+  if (
+    projection.source === "dual" &&
+    projection.correctedSolcastRemainingKwh < 2.5 &&
+    hasBattery &&
+    soc < 50 &&
+    !tariff.isPeak
+  ) {
+    return {
+      actionKey: "solarDispatchChargeOffPeak",
+      detailKey: "solarDispatchChargeOffPeakDetail",
+      reserveTarget: Math.max(reserveTarget, 55),
+      tariff,
+    };
+  }
+
+  if (projection.source === "dual" && correctionDrift >= 0.22) {
+    return {
+      actionKey: "solarDispatchWatch",
+      detailKey: "solarDispatchWatchDetail",
+      reserveTarget,
+      tariff,
+    };
+  }
+
+  return {
+    actionKey: "solarDispatchSteady",
+    detailKey: "solarDispatchSteadyDetail",
+    reserveTarget,
+    tariff,
   };
 }
 
@@ -8263,17 +8422,26 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
     Math.max(todayKwh + 0.2, (recentAverage ?? blendedEstimate) * 1.35),
   ));
   const solcastRemaining = getSolcastRemainingProjection(solarForecastPayload, now);
+  const solcastExpectedSoFarKwh = solcastRemaining.elapsedKwh;
+  const rawCorrectionFactor = solcastExpectedSoFarKwh >= 0.5
+    ? todayKwh / solcastExpectedSoFarKwh
+    : null;
+  const correctionFactor = rawCorrectionFactor === null
+    ? 1
+    : Math.max(0.65, Math.min(1.35, rawCorrectionFactor));
+  const correctedSolcastRemainingKwh = solcastRemaining.remainingKwh * correctionFactor;
   const solcastEstimateKwh = todayKwh + solcastRemaining.remainingKwh;
+  const trustedEstimateKwh = todayKwh + correctedSolcastRemainingKwh;
   const hasSolcastProjection = Boolean(
     solarForecastPayload?.enabled &&
     solarForecastPayload?.source === "solcast" &&
     solcastRemaining.remainingKwh > 0,
   );
   const estimateKwh = hasSolcastProjection
-    ? Math.max(todayKwh, (localEstimateKwh * 0.45) + (solcastEstimateKwh * 0.55))
+    ? Math.max(todayKwh, (localEstimateKwh * 0.35) + (trustedEstimateKwh * 0.65))
     : localEstimateKwh;
   const remainingKwh = Math.max(0, estimateKwh - todayKwh);
-  const confidence = payload?.last24Hours?.solarGeneratedKw?.length >= 180 && todayKwh >= 2
+  const confidence = payload?.last24Hours?.solarGeneratedKw?.length >= 180 && todayKwh >= 2 && (!hasSolcastProjection || solcastExpectedSoFarKwh >= 0.5)
     ? "high"
     : hasSolcastProjection || payload?.last24Hours?.solarGeneratedKw?.length >= 60
       ? "medium"
@@ -8307,7 +8475,7 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
   });
   const batteryProjection = buildBatteryProjection(payload, now, weights, remainingKwh);
 
-  return {
+  const projection = {
     labels,
     actualCumulative,
     projectedCumulative,
@@ -8323,7 +8491,62 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
     source: hasSolcastProjection ? "dual" : "local",
     localEstimateKwh,
     solcastEstimateKwh: hasSolcastProjection ? solcastEstimateKwh : null,
+    trustedEstimateKwh: hasSolcastProjection ? trustedEstimateKwh : null,
+    solcastExpectedSoFarKwh: hasSolcastProjection ? solcastExpectedSoFarKwh : null,
+    solcastRemainingKwh: hasSolcastProjection ? solcastRemaining.remainingKwh : null,
+    correctedSolcastRemainingKwh: hasSolcastProjection ? correctedSolcastRemainingKwh : 0,
+    correctionFactor: hasSolcastProjection ? correctionFactor : null,
+    dispatchPlan: null,
   };
+
+  projection.dispatchPlan = getSolarDispatchPlan(payload, projection);
+
+  return projection;
+}
+
+function renderSolarDispatchPlan(projection) {
+  if (!textFields.solarDispatchAction) {
+    return;
+  }
+
+  const plan = projection.dispatchPlan;
+  const hasSolcast = projection.source === "dual";
+  const correctionPercent = Number.isFinite(projection.correctionFactor)
+    ? projection.correctionFactor * 100
+    : null;
+
+  textFields.solarDispatchAction.textContent = plan ? t(plan.actionKey) : "--";
+  textFields.solarDispatchDetail.textContent = plan ? t(plan.detailKey) : "--";
+  textFields.solarDispatchCorrection.textContent = hasSolcast && correctionPercent !== null
+    ? formatPercent(correctionPercent)
+    : "--";
+  textFields.solarDispatchCorrectionDetail.textContent = hasSolcast && projection.solcastExpectedSoFarKwh >= 0.5
+    ? interpolate(t("solarDispatchCorrectionDetail"), {
+      actual: formatKwh(projection.todayKwh),
+      expected: formatKwh(projection.solcastExpectedSoFarKwh),
+    })
+    : t("solarDispatchCorrectionUnavailable");
+  textFields.solarDispatchSolcastRemaining.textContent = hasSolcast
+    ? formatKwh(projection.correctedSolcastRemainingKwh)
+    : "--";
+  textFields.solarDispatchSolcastDetail.textContent = hasSolcast
+    ? interpolate(t("solarDispatchSolcastDetail"), {
+      raw: formatKwh(projection.solcastRemainingKwh),
+      corrected: formatKwh(projection.correctedSolcastRemainingKwh),
+    })
+    : t("solarDispatchSolcastUnavailable");
+
+  if (plan && hasSolcast && projection.eveningBatteryPercent !== null) {
+    textFields.solarDispatchPredbat.textContent = t("solarDispatchPredbatReady");
+    textFields.solarDispatchPredbatDetail.textContent = interpolate(t("solarDispatchPredbatDetail"), {
+      estimate: formatKwh(projection.trustedEstimateKwh ?? projection.estimateKwh),
+      reserve: formatPercent(plan.reserveTarget),
+      tariff: plan.tariff.isPeak ? t("peakNow") : t("offPeakNow"),
+    });
+  } else {
+    textFields.solarDispatchPredbat.textContent = t("solarDispatchPredbatWaiting");
+    textFields.solarDispatchPredbatDetail.textContent = t("solarDispatchPredbatWaitingDetail");
+  }
 }
 
 function renderSolarProjection(payload, weatherPayload = lastWeatherPayload, solarForecastPayload = lastSolarForecastPayload) {
@@ -8359,6 +8582,7 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload, sol
     average: projection.recentAverage === null ? "--" : formatKwh(projection.recentAverage),
     source: projection.source === "dual" ? t("solarProjectionSourceDual") : t("solarProjectionSourceLocal"),
   }, payload.live?.batterySocPercent);
+  renderSolarDispatchPlan(projection);
 
   destroyChart(solarProjectionChart);
   const projectionChartOptions = getChartOptions(t("dailyEnergyKwh"));

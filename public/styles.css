@@ -3876,6 +3876,57 @@ section[id] {
   color: #0f766e;
 }
 
+.solar-dispatch-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.25fr) repeat(3, minmax(150px, 1fr));
+  gap: 0.85rem;
+  margin-top: 0.9rem;
+}
+
+.solar-dispatch-card {
+  display: grid;
+  align-content: start;
+  min-height: 118px;
+  border: 1px solid rgba(15, 118, 110, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.9rem;
+}
+
+.solar-dispatch-primary {
+  border-color: rgba(245, 158, 11, 0.28);
+  background: linear-gradient(135deg, rgba(255, 251, 235, 0.94), rgba(240, 253, 250, 0.84));
+}
+
+.solar-dispatch-card span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.solar-dispatch-card strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: #0f766e;
+  font-size: 1.1rem;
+  line-height: 1.15;
+}
+
+.solar-dispatch-primary strong {
+  color: #92400e;
+  font-size: 1.25rem;
+}
+
+.solar-dispatch-card small {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .solar-projection-chart-body {
   height: 280px;
   margin-top: 0.9rem;
@@ -4662,6 +4713,7 @@ tbody tr:hover {
   .tomorrow-prep-layout,
   .visual-kpi-grid,
   .solar-projection-grid,
+  .solar-dispatch-grid,
   .savings-overview-grid,
   .visual-status-strip,
   .summary-grid,

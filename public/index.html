@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoxCloud Energy Dashboard</title>
-    <link rel="stylesheet" href="/styles.css?v=2026-06-20-solcast-site-id" />
+    <link rel="stylesheet" href="/styles.css?v=2026-06-20-solar-dispatch" />
   </head>
   <body>
     <div class="page-shell">
@@ -33,7 +33,7 @@
             <button id="refreshButton" class="refresh-button" type="button" data-i18n="refresh">Refresh</button>
             <button id="rebuildCacheButton" class="secondary-button" type="button" data-i18n="rebuildCache">Rebuild cache</button>
             <button id="exportPdfButton" class="secondary-button" type="button" data-i18n="exportPdf">Export PDF</button>
-            <p class="deploy-stamp">NAS build: 2026-06-20 solcast-site-id</p>
+            <p class="deploy-stamp">NAS build: 2026-06-20 solar-dispatch</p>
             <p id="statusText" class="status-text">Loading dashboard data...</p>
             <p id="autoRefreshText" class="status-text auto-refresh-text">--</p>
           </div>
@@ -247,6 +247,28 @@
             </article>
           </div>
           <p id="solarProjectionMeta" class="data-note">--</p>
+          <div class="solar-dispatch-grid" aria-live="polite">
+            <article class="solar-dispatch-card solar-dispatch-primary">
+              <span data-i18n="solarDispatchTitle">Dispatch plan</span>
+              <strong id="solarDispatchAction">--</strong>
+              <small id="solarDispatchDetail">--</small>
+            </article>
+            <article class="solar-dispatch-card">
+              <span data-i18n="solarDispatchCorrection">Solcast correction</span>
+              <strong id="solarDispatchCorrection">--</strong>
+              <small id="solarDispatchCorrectionDetail">--</small>
+            </article>
+            <article class="solar-dispatch-card">
+              <span data-i18n="solarDispatchSolcastRemaining">Solcast remaining</span>
+              <strong id="solarDispatchSolcastRemaining">--</strong>
+              <small id="solarDispatchSolcastDetail">--</small>
+            </article>
+            <article class="solar-dispatch-card">
+              <span data-i18n="solarDispatchPredbat">Predbat-ready</span>
+              <strong id="solarDispatchPredbat">--</strong>
+              <small id="solarDispatchPredbatDetail">--</small>
+            </article>
+          </div>
           <div class="chart-body solar-projection-chart-body">
             <canvas id="solarProjectionChart"></canvas>
           </div>
@@ -1376,6 +1398,6 @@
     <script src="/vendor/chartjs/chart.umd.js"></script>
     <script src="/csvHelpers.js"></script>
     <script src="/rebuildHelpers.js"></script>
-    <script src="/app.js?v=2026-06-20-solcast-site-id"></script>
+    <script src="/app.js?v=2026-06-20-solar-dispatch"></script>
   </body>
 </html>
