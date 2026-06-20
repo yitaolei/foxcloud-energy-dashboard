@@ -232,6 +232,33 @@ change the coordinates used for the forecast.
 
 You can inspect the active saved weather settings at `/api/weather-settings` after logging in.
 
+## Optional Solcast solar forecast
+
+The "Today's solar generation estimate" panel can optionally blend the local model with Solcast
+Rooftop PV forecasts. The Solcast API key is used only by the backend; it is never exposed to the
+browser.
+
+Without Solcast, the panel continues to use the local estimate based on live inverter data, recent
+history, and Open-Meteo cloud/solar outlook. With Solcast configured, the panel uses a dual-source
+estimate: Solcast shapes the remaining daylight forecast, and the local inverter progress keeps the
+forecast anchored to what the system has actually produced today.
+
+```bash
+SOLCAST_ENABLED=true
+SOLCAST_API_KEY=replace-with-your-solcast-api-key
+SOLCAST_CAPACITY_KW=replace-with-your-system-capacity-kw
+
+# Optional rooftop tuning:
+SOLCAST_AZIMUTH_DEGREES=
+SOLCAST_TILT_DEGREES=
+SOLCAST_LOSS_FACTOR=0.90
+SOLCAST_PERIOD=PT30M
+SOLCAST_HOURS=24
+```
+
+The forecast location comes from the saved weather settings, so configure weather postcode or
+latitude/longitude first.
+
 ## Estimated savings
 
 The dashboard estimates how much grid import was avoided by solar and battery energy. You can edit

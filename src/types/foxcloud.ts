@@ -260,3 +260,19 @@ export interface WeatherPayload {
   }>;
   warning: string | null;
 }
+
+export interface SolarForecastPoint {
+  periodEnd: string;
+  period: string;
+  periodHours: number;
+  pvPowerKw: number;
+}
+
+export interface SolarForecastPayload {
+  enabled: boolean;
+  source: "solcast" | "disabled";
+  generatedAt: string;
+  location: WeatherPayload["location"];
+  points: SolarForecastPoint[];
+  warning: string | null;
+}

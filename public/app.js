@@ -469,6 +469,7 @@ let lastPayload = null;
 let lastRangePayload = null;
 let lastSavingsOverview = null;
 let lastWeatherPayload = null;
+let lastSolarForecastPayload = null;
 let lastTariff = null;
 let lastWeatherSettings = null;
 const REBUILD_LIMIT_DAYS = 31;
@@ -1340,7 +1341,9 @@ const translations = {
     solarProjectionTonightBattery: "Tonight battery",
     solarProjectionConfidence: "Confidence",
     solarProjectionSummary: "Estimated finish {estimate}; {remaining} still likely. Tonight battery around {battery}.",
-    solarProjectionMeta: "Live solar {solar}; battery {battery}; inverter {inverter}; today weather {weather}; cloud {cloud}; recent average {average}.",
+    solarProjectionMeta: "Live solar {solar}; battery {battery}; inverter {inverter}; today weather {weather}; cloud {cloud}; recent average {average}; source {source}.",
+    solarProjectionSourceLocal: "local model",
+    solarProjectionSourceDual: "Solcast + local correction",
     solarProjectionActualSeries: "Generated so far",
     solarProjectionEstimateSeries: "Projected finish path",
     solarProjectionTargetSeries: "Estimated total",
@@ -2198,7 +2201,9 @@ const translations = {
     solarProjectionTonightBattery: "今晚电池",
     solarProjectionConfidence: "可信度",
     solarProjectionSummary: "预计今天收尾 {estimate}；后面大约还有 {remaining}；今晚电池约 {battery}。",
-    solarProjectionMeta: "实时太阳能 {solar}；电池 {battery}；逆变器 {inverter}；今日天气 {weather}；云量 {cloud}；最近平均 {average}。",
+    solarProjectionMeta: "实时太阳能 {solar}；电池 {battery}；逆变器 {inverter}；今日天气 {weather}；云量 {cloud}；最近平均 {average}；来源 {source}。",
+    solarProjectionSourceLocal: "本地模型",
+    solarProjectionSourceDual: "Solcast + 本地校正",
     solarProjectionActualSeries: "已发电",
     solarProjectionEstimateSeries: "预测进度",
     solarProjectionTargetSeries: "预计总量",
@@ -3056,7 +3061,9 @@ const translations = {
     solarProjectionTonightBattery: "แบตคืนนี้",
     solarProjectionConfidence: "ความมั่นใจ",
     solarProjectionSummary: "คาดจบที่ {estimate}; อาจเหลืออีก {remaining}; แบตคืนนี้ราว {battery}",
-    solarProjectionMeta: "โซลาร์สด {solar}; แบตเตอรี่ {battery}; อินเวอร์เตอร์ {inverter}; อากาศวันนี้ {weather}; เมฆ {cloud}; ค่าเฉลี่ยล่าสุด {average}",
+    solarProjectionMeta: "โซลาร์สด {solar}; แบตเตอรี่ {battery}; อินเวอร์เตอร์ {inverter}; อากาศวันนี้ {weather}; เมฆ {cloud}; ค่าเฉลี่ยล่าสุด {average}; แหล่งที่มา {source}",
+    solarProjectionSourceLocal: "โมเดลในเครื่อง",
+    solarProjectionSourceDual: "Solcast + ปรับด้วยข้อมูลจริง",
     solarProjectionActualSeries: "ผลิตแล้ว",
     solarProjectionEstimateSeries: "เส้นคาดการณ์",
     solarProjectionTargetSeries: "ยอดคาดทั้งวัน",
@@ -6852,6 +6859,7 @@ async function saveWeatherSettings() {
 
     renderWeatherSettings(payload.settings);
     await loadWeather();
+    await loadSolarForecast();
     textFields.weatherSettingsStatusText.textContent = t("weatherSettingsSaved");
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -7018,7 +7026,7 @@ function renderWeather(payload) {
 
   textFields.weatherDaily.replaceChildren(...forecastCards);
   renderSolarPerformance(lastPayload, payload);
-  renderSolarProjection(lastPayload, payload);
+  renderSolarProjection(lastPayload, payload, lastSolarForecastPayload);
   renderEnergyCoach(lastPayload, payload);
   renderTomorrowPrep(lastPayload, payload);
   renderHomeState(lastPayload, payload);
@@ -7037,6 +7045,23 @@ async function loadWeather() {
   } catch (error) {
     lastWeatherPayload = null;
     weatherPanel.classList.add("hidden");
+  }
+}
+
+async function loadSolarForecast() {
+  try {
+    const response = await fetch("/api/solar-forecast");
+    const payload = await response.json();
+
+    if (!response.ok || payload.error) {
+      throw new Error(payload.error || "Solar forecast request failed.");
+    }
+
+    lastSolarForecastPayload = payload;
+    renderSolarProjection(lastPayload, lastWeatherPayload, payload);
+  } catch {
+    lastSolarForecastPayload = null;
+    renderSolarProjection(lastPayload, lastWeatherPayload, null);
   }
 }
 
@@ -8134,7 +8159,59 @@ function buildBatteryProjection(payload, now, weights, remainingSolarKwh) {
   };
 }
 
-function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
+function getEndOfLocalDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+}
+
+function getSolcastRemainingProjection(solarForecastPayload, now) {
+  const points = solarForecastPayload?.enabled ? solarForecastPayload.points ?? [] : [];
+  const hourlyKwh = Array.from({ length: 24 }, () => 0);
+  const startMs = now.getTime();
+  const endMs = getEndOfLocalDay(now).getTime();
+
+  if (points.length === 0 || endMs <= startMs) {
+    return {
+      hourlyKwh,
+      remainingKwh: 0,
+    };
+  }
+
+  points.forEach((point) => {
+    const periodEndMs = new Date(point.periodEnd).getTime();
+    const periodHours = Number(point.periodHours);
+    const pvPowerKw = Number(point.pvPowerKw);
+
+    if (!Number.isFinite(periodEndMs) || !Number.isFinite(periodHours) || !Number.isFinite(pvPowerKw)) {
+      return;
+    }
+
+    const periodStartMs = periodEndMs - periodHours * 3_600_000;
+    let cursorMs = Math.max(periodStartMs, startMs);
+    const clippedEndMs = Math.min(periodEndMs, endMs);
+
+    while (cursorMs < clippedEndMs) {
+      const cursorDate = new Date(cursorMs);
+      const nextHourMs = new Date(
+        cursorDate.getFullYear(),
+        cursorDate.getMonth(),
+        cursorDate.getDate(),
+        cursorDate.getHours() + 1,
+      ).getTime();
+      const segmentEndMs = Math.min(clippedEndMs, nextHourMs);
+      const segmentHours = (segmentEndMs - cursorMs) / 3_600_000;
+
+      hourlyKwh[cursorDate.getHours()] += Math.max(0, pvPowerKw) * segmentHours;
+      cursorMs = segmentEndMs;
+    }
+  });
+
+  return {
+    hourlyKwh,
+    remainingKwh: hourlyKwh.reduce((sum, value) => sum + value, 0),
+  };
+}
+
+function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarForecastPayload = lastSolarForecastPayload) {
   const now = new Date(payload?.live?.updatedAt ?? payload?.generatedAt ?? Date.now());
   const currentHour = now.getHours();
   const todayKwh = Number(payload?.today?.solarProductionKwh ?? 0);
@@ -8150,14 +8227,24 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
   const currentSolarKw = Number(payload?.live?.solarGeneratedKw ?? 0);
   const liveBoost = currentSolarKw >= 3 ? 1.06 : currentSolarKw >= 1 ? 1 : 0.94;
   const blendedEstimate = ((progressEstimate * 0.7) + (weatherEstimate * 0.3)) * liveBoost;
-  const estimateKwh = Math.max(todayKwh, Math.min(
+  const localEstimateKwh = Math.max(todayKwh, Math.min(
     Math.max(todayKwh + 0.2, blendedEstimate),
     Math.max(todayKwh + 0.2, (recentAverage ?? blendedEstimate) * 1.35),
   ));
+  const solcastRemaining = getSolcastRemainingProjection(solarForecastPayload, now);
+  const solcastEstimateKwh = todayKwh + solcastRemaining.remainingKwh;
+  const hasSolcastProjection = Boolean(
+    solarForecastPayload?.enabled &&
+    solarForecastPayload?.source === "solcast" &&
+    solcastRemaining.remainingKwh > 0,
+  );
+  const estimateKwh = hasSolcastProjection
+    ? Math.max(todayKwh, (localEstimateKwh * 0.45) + (solcastEstimateKwh * 0.55))
+    : localEstimateKwh;
   const remainingKwh = Math.max(0, estimateKwh - todayKwh);
   const confidence = payload?.last24Hours?.solarGeneratedKw?.length >= 180 && todayKwh >= 2
     ? "high"
-    : payload?.last24Hours?.solarGeneratedKw?.length >= 60
+    : hasSolcastProjection || payload?.last24Hours?.solarGeneratedKw?.length >= 60
       ? "medium"
       : "low";
   const actualHourly = buildSolarHourlyActual(payload, now, todayKwh);
@@ -8170,13 +8257,20 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
   const remainingWeight = weights
     .slice(currentHour + 1)
     .reduce((sum, value) => sum + value, 0);
+  const solcastShapeTotal = solcastRemaining.hourlyKwh
+    .slice(currentHour + 1)
+    .reduce((sum, value) => sum + value, 0);
   let projectedRunning = todayKwh;
   const projectedCumulative = weights.map((weight, hour) => {
     if (hour <= currentHour) {
       return actualCumulative[hour];
     }
 
-    const increment = remainingWeight > 0 ? (remainingKwh * weight) / remainingWeight : 0;
+    const increment = hasSolcastProjection && solcastShapeTotal > 0
+      ? (remainingKwh * solcastRemaining.hourlyKwh[hour]) / solcastShapeTotal
+      : remainingWeight > 0
+        ? (remainingKwh * weight) / remainingWeight
+        : 0;
     projectedRunning += increment;
     return Number(projectedRunning.toFixed(2));
   });
@@ -8195,17 +8289,20 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload) {
     todayKwh,
     recentAverage,
     confidence,
+    source: hasSolcastProjection ? "dual" : "local",
+    localEstimateKwh,
+    solcastEstimateKwh: hasSolcastProjection ? solcastEstimateKwh : null,
   };
 }
 
-function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
+function renderSolarProjection(payload, weatherPayload = lastWeatherPayload, solarForecastPayload = lastSolarForecastPayload) {
   const chartElement = document.getElementById("solarProjectionChart");
 
   if (!payload || !chartElement) {
     return;
   }
 
-  const projection = getSolarProjection(payload, weatherPayload);
+  const projection = getSolarProjection(payload, weatherPayload, solarForecastPayload);
   const weatherToday = weatherPayload?.daily?.[0] ?? weatherPayload?.current ?? null;
   const inverterStatus = payload.device?.status === "online" ? t("online") : t(payload.device?.status ?? "unknown");
 
@@ -8229,6 +8326,7 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload) {
     weather: t(weatherToday?.solarOutlook ?? "unknown"),
     cloud: formatOptionalPercent(weatherToday?.cloudCoverMeanPercent ?? weatherToday?.cloudCoverPercent),
     average: projection.recentAverage === null ? "--" : formatKwh(projection.recentAverage),
+    source: projection.source === "dual" ? t("solarProjectionSourceDual") : t("solarProjectionSourceLocal"),
   }, payload.live?.batterySocPercent);
 
   destroyChart(solarProjectionChart);
@@ -8854,6 +8952,7 @@ async function loadDashboard() {
     await loadTariffSettings();
     await loadWeatherSettings();
     await loadWeather();
+    await loadSolarForecast();
     await loadEnergyRange(true);
     void loadSavingsOverview(payload).catch((error) => {
       console.warn("Unable to load savings overview", error);

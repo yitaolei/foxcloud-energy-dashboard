@@ -107,14 +107,27 @@ const parseClockTime = (value: string | undefined, fallback: string, envName: st
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 };
 
-const parseBaseUrl = (value: string | undefined): string => {
-  const baseUrl = value?.trim() || "https://www.foxesscloud.com";
+const parseUrl = (value: string | undefined, fallback: string, envName: string): string => {
+  const baseUrl = value?.trim() || fallback;
 
   try {
     return new URL(baseUrl).toString().replace(/\/$/, "");
   } catch {
-    throw new Error("FOXCLOUD_BASE_URL must be a valid URL.");
+    throw new Error(`${envName} must be a valid URL.`);
   }
+};
+
+const parseBaseUrl = (value: string | undefined): string =>
+  parseUrl(value, "https://www.foxesscloud.com", "FOXCLOUD_BASE_URL");
+
+const parseOptionalIsoPeriod = (value: string | undefined, fallback: string, envName: string): string => {
+  const normalized = (value ?? fallback).trim().toUpperCase();
+
+  if (!/^PT(?=.*(?:H|M))(?:[1-9]\d*H)?(?:[1-9]\d*M)?$/.test(normalized)) {
+    throw new Error(`${envName} must be an ISO 8601 time period such as PT30M or PT1H.`);
+  }
+
+  return normalized;
 };
 
 interface DashboardCredential {
@@ -254,6 +267,27 @@ export const env = {
       process.env.WEATHER_TIMEOUT_MS,
       10_000,
       "WEATHER_TIMEOUT_MS",
+    ),
+  },
+  solcast: {
+    enabled: parseBoolean(process.env.SOLCAST_ENABLED),
+    apiKey: process.env.SOLCAST_API_KEY?.trim() || "",
+    baseUrl: parseUrl(process.env.SOLCAST_BASE_URL, "https://api.solcast.com.au", "SOLCAST_BASE_URL"),
+    capacityKw: parseOptionalNumber(process.env.SOLCAST_CAPACITY_KW, "SOLCAST_CAPACITY_KW", 0.1, 100),
+    azimuthDegrees: parseOptionalNumber(process.env.SOLCAST_AZIMUTH_DEGREES, "SOLCAST_AZIMUTH_DEGREES", -180, 180),
+    tiltDegrees: parseOptionalNumber(process.env.SOLCAST_TILT_DEGREES, "SOLCAST_TILT_DEGREES", 0, 90),
+    lossFactor: parseOptionalNumber(process.env.SOLCAST_LOSS_FACTOR, "SOLCAST_LOSS_FACTOR", 0, 1) ?? 0.9,
+    period: parseOptionalIsoPeriod(process.env.SOLCAST_PERIOD, "PT30M", "SOLCAST_PERIOD"),
+    hours: parsePositiveInteger(process.env.SOLCAST_HOURS, 24, "SOLCAST_HOURS"),
+    cacheTtlMs: parsePositiveInteger(
+      process.env.SOLCAST_CACHE_TTL_MS,
+      30 * 60 * 1000,
+      "SOLCAST_CACHE_TTL_MS",
+    ),
+    timeoutMs: parsePositiveInteger(
+      process.env.SOLCAST_TIMEOUT_MS,
+      10_000,
+      "SOLCAST_TIMEOUT_MS",
     ),
   },
   electricity: {

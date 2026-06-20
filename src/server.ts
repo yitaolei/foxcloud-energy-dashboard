@@ -15,6 +15,7 @@ import {
 } from "./services/dashboardService.js";
 import { listModbusProfileIds, resolveModbusProfile } from "./services/modbus/profiles.js";
 import { startModbusSampler } from "./services/modbusSampler.js";
+import { clearSolarForecastCache, getSolarForecast } from "./services/solarForecastService.js";
 import { getSqliteBackupStatus, startSqliteBackupScheduler } from "./services/sqliteBackup.js";
 import {
   getElectricityTariff,
@@ -209,6 +210,16 @@ app.get("/api/weather", async (_req, res, next) => {
   }
 });
 
+app.get("/api/solar-forecast", async (_req, res, next) => {
+  try {
+    const payload = await getSolarForecast();
+
+    res.json(payload);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get("/api/weather-settings", (_req, res) => {
   res.json({
     settings: getWeatherSettings(),
@@ -219,6 +230,7 @@ app.put("/api/weather-settings", (req, res, next) => {
   try {
     const settings = saveWeatherSettings(req.body ?? {});
     clearWeatherCache();
+    clearSolarForecastCache();
 
     res.json({ settings });
   } catch (error) {
