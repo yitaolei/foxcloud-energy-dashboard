@@ -273,6 +273,7 @@ export const env = {
     enabled: parseBoolean(process.env.SOLCAST_ENABLED),
     apiKey: process.env.SOLCAST_API_KEY?.trim() || "",
     baseUrl: parseUrl(process.env.SOLCAST_BASE_URL, "https://api.solcast.com.au", "SOLCAST_BASE_URL"),
+    rooftopSiteId: process.env.SOLCAST_ROOFTOP_SITE_ID?.trim() || "",
     capacityKw: parseOptionalNumber(process.env.SOLCAST_CAPACITY_KW, "SOLCAST_CAPACITY_KW", 0.1, 100),
     azimuthDegrees: parseOptionalNumber(process.env.SOLCAST_AZIMUTH_DEGREES, "SOLCAST_AZIMUTH_DEGREES", -180, 180),
     tiltDegrees: parseOptionalNumber(process.env.SOLCAST_TILT_DEGREES, "SOLCAST_TILT_DEGREES", 0, 90),
@@ -281,7 +282,7 @@ export const env = {
     hours: parsePositiveInteger(process.env.SOLCAST_HOURS, 24, "SOLCAST_HOURS"),
     cacheTtlMs: parsePositiveInteger(
       process.env.SOLCAST_CACHE_TTL_MS,
-      30 * 60 * 1000,
+      3 * 60 * 60 * 1000,
       "SOLCAST_CACHE_TTL_MS",
     ),
     timeoutMs: parsePositiveInteger(

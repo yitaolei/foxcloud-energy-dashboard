@@ -44,6 +44,21 @@ describe("Solcast helpers", () => {
     assert.equal(points[1].periodHours, 0.5);
   });
 
+  it("normalizes legacy rooftop-site forecast points", () => {
+    const points = normalizeSolcastForecasts({
+      forecasts: [
+        {
+          period_end: "2026-06-20T00:30:00.0000000Z",
+          period: "PT30M",
+          pv_estimate: 3.2,
+        },
+      ],
+    });
+
+    assert.equal(points.length, 1);
+    assert.equal(points[0].pvPowerKw, 3.2);
+  });
+
   it("integrates only the overlapping part of Solcast forecast periods", () => {
     const points = normalizeSolcastForecasts({
       forecasts: [

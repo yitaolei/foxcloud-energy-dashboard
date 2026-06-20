@@ -5,6 +5,7 @@ import type { SolarForecastPayload } from "../types/foxcloud.js";
 import { getWeatherForecast } from "./weatherService.js";
 
 let cachedSolarForecast: { expiresAt: number; key: string; payload: SolarForecastPayload } | null = null;
+const SOLCAST_FAILURE_CACHE_TTL_MS = 30 * 60 * 1000;
 
 const disabledPayload = async (warning: string): Promise<SolarForecastPayload> => {
   const weather = await getWeatherForecast().catch(() => null);
@@ -22,6 +23,7 @@ const disabledPayload = async (warning: string): Promise<SolarForecastPayload> =
 const getSolcastCacheKey = (location: NonNullable<SolarForecastPayload["location"]>): string => JSON.stringify({
   latitude: location.latitude,
   longitude: location.longitude,
+  rooftopSiteId: env.solcast.rooftopSiteId,
   capacityKw: env.solcast.capacityKw,
   azimuthDegrees: env.solcast.azimuthDegrees,
   tiltDegrees: env.solcast.tiltDegrees,
@@ -30,7 +32,20 @@ const getSolcastCacheKey = (location: NonNullable<SolarForecastPayload["location
   hours: env.solcast.hours,
 });
 
+const buildSolcastRooftopSiteUrl = (): string => {
+  const params = new URLSearchParams({
+    format: "json",
+    api_key: env.solcast.apiKey,
+  });
+
+  return `${env.solcast.baseUrl}/rooftop_sites/${encodeURIComponent(env.solcast.rooftopSiteId)}/forecasts?${params.toString()}`;
+};
+
 const buildSolcastUrl = (location: NonNullable<SolarForecastPayload["location"]>): string => {
+  if (env.solcast.rooftopSiteId) {
+    return buildSolcastRooftopSiteUrl();
+  }
+
   const params = new URLSearchParams({
     latitude: String(location.latitude),
     longitude: String(location.longitude),
@@ -62,7 +77,7 @@ export async function getSolarForecast(): Promise<SolarForecastPayload> {
     return disabledPayload("Solcast is enabled but SOLCAST_API_KEY is missing.");
   }
 
-  if (env.solcast.capacityKw === null) {
+  if (!env.solcast.rooftopSiteId && env.solcast.capacityKw === null) {
     return disabledPayload("Solcast is enabled but SOLCAST_CAPACITY_KW is missing.");
   }
 
@@ -107,6 +122,42 @@ export async function getSolarForecast(): Promise<SolarForecastPayload> {
 
     cachedSolarForecast = {
       expiresAt: Date.now() + env.solcast.cacheTtlMs,
+      key: cacheKey,
+      payload,
+    };
+
+    return payload;
+  } catch (error) {
+    const warning = error instanceof Error
+      ? error.message
+      : "Solcast request failed.";
+
+    if (cachedSolarForecast && cachedSolarForecast.key === cacheKey) {
+      const stalePayload = {
+        ...cachedSolarForecast.payload,
+        warning: `${warning} Showing the last successful Solcast forecast.`,
+      };
+
+      cachedSolarForecast = {
+        expiresAt: Date.now() + SOLCAST_FAILURE_CACHE_TTL_MS,
+        key: cacheKey,
+        payload: stalePayload,
+      };
+
+      return stalePayload;
+    }
+
+    const payload = {
+      enabled: false,
+      source: "disabled",
+      generatedAt: new Date().toISOString(),
+      location,
+      points: [],
+      warning,
+    } satisfies SolarForecastPayload;
+
+    cachedSolarForecast = {
+      expiresAt: Date.now() + SOLCAST_FAILURE_CACHE_TTL_MS,
       key: cacheKey,
       payload,
     };

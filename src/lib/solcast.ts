@@ -4,6 +4,7 @@ export interface SolcastRooftopForecastResponse {
   forecasts?: Array<{
     period?: string;
     period_end?: string;
+    pv_estimate?: number;
     pv_power_rooftop?: number;
   }>;
 }
@@ -35,7 +36,7 @@ export const normalizeSolcastForecasts = (
     .map((point): SolarForecastPoint | null => {
       const periodHours = parseSolcastPeriodHours(point.period);
       const periodEnd = point.period_end ?? "";
-      const pvPowerKw = Number(point.pv_power_rooftop);
+      const pvPowerKw = Number(point.pv_power_rooftop ?? point.pv_estimate);
 
       if (
         periodHours === null ||

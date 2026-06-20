@@ -246,6 +246,13 @@ forecast anchored to what the system has actually produced today.
 ```bash
 SOLCAST_ENABLED=true
 SOLCAST_API_KEY=replace-with-your-solcast-api-key
+
+# If your Solcast URL looks like:
+# https://api.solcast.com.au/rooftop_sites/xxxx-xxxx-xxxx-xxxx/forecasts?format=json
+# then the xxxx value is the rooftop site id, not the API key.
+SOLCAST_ROOFTOP_SITE_ID=replace-with-your-rooftop-site-id
+
+# Required only when you do not use SOLCAST_ROOFTOP_SITE_ID:
 SOLCAST_CAPACITY_KW=replace-with-your-system-capacity-kw
 
 # Optional rooftop tuning:
@@ -254,6 +261,7 @@ SOLCAST_TILT_DEGREES=
 SOLCAST_LOSS_FACTOR=0.90
 SOLCAST_PERIOD=PT30M
 SOLCAST_HOURS=24
+SOLCAST_CACHE_TTL_MS=10800000
 ```
 
 The forecast location comes from the saved weather settings, so configure weather postcode or
