@@ -15,6 +15,7 @@ const weatherPanel = document.getElementById("weatherPanel");
 const dailyTableBody = document.getElementById("dailyTableBody");
 const storageKeys = {
   language: "foxcloud-dashboard-language",
+  solcastBias: "foxcloud-dashboard-solcast-bias",
   smartDecisionLog: "foxcloud-dashboard-smart-decision-log",
   tableRange: "foxcloud-dashboard-table-range",
 };
@@ -1374,7 +1375,8 @@ const translations = {
     solarDispatchChargeOffPeakDetail: "Low solar and low reserve. Predbat should consider a small off-peak top-up before the next peak.",
     solarDispatchWatchDetail: "Actual production is drifting from Solcast. Keep flexible loads movable until the next refresh confirms the shape.",
     solarDispatchSteadyDetail: "Solar, battery, and tariff pressure look balanced. No urgent action needed.",
-    solarDispatchCorrectionDetail: "Actual so far {actual} vs Solcast expected {expected}.",
+    solarDispatchCorrectionDetail: "Actual so far {actual} vs Solcast expected {expected}; learned roof bias {bias}.",
+    solarDispatchCorrectionBiasOnly: "Using learned roof bias {bias} from recent completed days.",
     solarDispatchCorrectionUnavailable: "Waiting for enough daylight overlap.",
     solarDispatchSolcastDetail: "Raw Solcast {raw}; corrected remaining {corrected}.",
     solarDispatchSolcastUnavailable: "No Solcast remainder available.",
@@ -2256,7 +2258,8 @@ const translations = {
     solarDispatchChargeOffPeakDetail: "太阳能偏低且电池余量低。Predbat 应考虑在低价时段少量补电。",
     solarDispatchWatchDetail: "实际发电正在偏离 Solcast。先保持可移动负载灵活，等下一轮刷新确认走势。",
     solarDispatchSteadyDetail: "太阳能、电池和电价压力比较平衡，暂时不需要急动作。",
-    solarDispatchCorrectionDetail: "目前实际 {actual}，Solcast 到此刻应有 {expected}。",
+    solarDispatchCorrectionDetail: "目前实际 {actual}，Solcast 到此刻应有 {expected}；学习到的屋顶偏差 {bias}。",
+    solarDispatchCorrectionBiasOnly: "使用最近完成日期学到的屋顶偏差 {bias}。",
     solarDispatchCorrectionUnavailable: "等待足够的白天重叠数据。",
     solarDispatchSolcastDetail: "原始 Solcast {raw}；纠偏后剩余 {corrected}。",
     solarDispatchSolcastUnavailable: "暂时没有 Solcast 剩余预测。",
@@ -3138,7 +3141,8 @@ const translations = {
     solarDispatchChargeOffPeakDetail: "โซลาร์ต่ำและแบตต่ำ Predbat ควรพิจารณาชาร์จเล็กน้อยช่วงนอกพีค",
     solarDispatchWatchDetail: "ผลผลิตจริงเริ่มต่างจาก Solcast ให้รอรอบรีเฟรชก่อนใช้โหลดใหญ่",
     solarDispatchSteadyDetail: "โซลาร์ แบต และค่าไฟสมดุล ยังไม่ต้องทำอะไรเร่งด่วน",
-    solarDispatchCorrectionDetail: "ผลิตจริง {actual} เทียบ Solcast ควรได้ {expected}",
+    solarDispatchCorrectionDetail: "ผลิตจริง {actual} เทียบ Solcast ควรได้ {expected}; ค่า bias หลังเรียนรู้ {bias}",
+    solarDispatchCorrectionBiasOnly: "ใช้ค่า roof bias {bias} จากวันที่จบไปแล้วล่าสุด",
     solarDispatchCorrectionUnavailable: "รอข้อมูลช่วงกลางวันให้พอ",
     solarDispatchSolcastDetail: "Solcast ดิบ {raw}; เหลือหลังปรับ {corrected}",
     solarDispatchSolcastUnavailable: "ยังไม่มีค่า Solcast ที่เหลือ",
@@ -8270,6 +8274,143 @@ function getEndOfLocalDay(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 }
 
+function normalizeSolcastBiasStore(value) {
+  return {
+    forecasts: typeof value?.forecasts === "object" && value.forecasts !== null ? value.forecasts : {},
+    samples: Array.isArray(value?.samples) ? value.samples : [],
+  };
+}
+
+function getSolcastBiasStore() {
+  return normalizeSolcastBiasStore(getStoredJson(storageKeys.solcastBias, {}));
+}
+
+function getActualSolarByDate(payload, dateKey) {
+  const todayKey = formatLocalDateKey();
+
+  if (dateKey === todayKey) {
+    const todayValue = Number(payload?.today?.solarProductionKwh);
+
+    return Number.isFinite(todayValue) ? todayValue : null;
+  }
+
+  const row = (payload?.dailyTable ?? []).find((item) => item.date === dateKey);
+  const value = Number(row?.pv_production ?? row?.generation);
+
+  return Number.isFinite(value) ? value : null;
+}
+
+function pruneSolcastBiasStore(store, todayKey) {
+  const forecasts = Object.fromEntries(
+    Object.entries(store.forecasts)
+      .filter(([date]) => date >= todayKey || date >= getOffsetDateKey(todayKey, -14)),
+  );
+  const samples = store.samples
+    .filter((sample) => sample?.date && sample.date >= getOffsetDateKey(todayKey, -14))
+    .slice(-8);
+
+  return { forecasts, samples };
+}
+
+function updateCompletedSolcastBiasSamples(payload, now) {
+  const todayKey = formatLocalDateKey(now);
+  const store = pruneSolcastBiasStore(getSolcastBiasStore(), todayKey);
+  const samplesByDate = new Map(store.samples.map((sample) => [sample.date, sample]));
+  let changed = false;
+
+  Object.entries(store.forecasts).forEach(([date, forecast]) => {
+    if (date >= todayKey) {
+      return;
+    }
+
+    const forecastKwh = Number(forecast?.forecastKwh);
+    const actualKwh = getActualSolarByDate(payload, date);
+
+    if (!Number.isFinite(forecastKwh) || forecastKwh < 1 || !Number.isFinite(actualKwh) || actualKwh < 1) {
+      return;
+    }
+
+    const sample = {
+      date,
+      actualKwh: Number(actualKwh.toFixed(2)),
+      forecastKwh: Number(forecastKwh.toFixed(2)),
+      ratio: Number(Math.max(0.4, Math.min(1.3, actualKwh / forecastKwh)).toFixed(3)),
+    };
+    const existing = samplesByDate.get(date);
+
+    if (!existing || existing.forecastKwh !== sample.forecastKwh || existing.actualKwh !== sample.actualKwh) {
+      samplesByDate.set(date, sample);
+      changed = true;
+    }
+  });
+
+  if (!changed) {
+    return store;
+  }
+
+  const updatedStore = {
+    ...store,
+    samples: Array.from(samplesByDate.values())
+      .sort((left, right) => left.date.localeCompare(right.date))
+      .slice(-8),
+  };
+
+  setStoredJson(storageKeys.solcastBias, updatedStore);
+  return updatedStore;
+}
+
+function getOffsetDateKey(dateKey, offsetDays) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  date.setDate(date.getDate() + offsetDays);
+  return formatLocalDateKey(date);
+}
+
+function updateSolcastBiasCalibration(payload, projection, now) {
+  if (!projection || projection.source !== "dual" || !Number.isFinite(projection.solcastEstimateKwh)) {
+    return;
+  }
+
+  const todayKey = formatLocalDateKey(now);
+  const store = updateCompletedSolcastBiasSamples(payload, now);
+  const existingForecast = store.forecasts[todayKey];
+
+  if (existingForecast?.forecastKwh || projection.solcastRemainingKwh < 2) {
+    setStoredJson(storageKeys.solcastBias, store);
+    return;
+  }
+
+  store.forecasts[todayKey] = {
+    forecastKwh: Number(projection.solcastEstimateKwh.toFixed(2)),
+    trustedKwh: Number(projection.trustedEstimateKwh.toFixed(2)),
+    sampledAt: now.toISOString(),
+  };
+
+  setStoredJson(storageKeys.solcastBias, store);
+}
+
+function getSolcastBiasFactor() {
+  const store = getSolcastBiasStore();
+  const samples = store.samples
+    .map((sample) => Number(sample?.ratio))
+    .filter((ratio) => Number.isFinite(ratio) && ratio > 0)
+    .slice(-5);
+
+  if (samples.length === 0) {
+    return {
+      factor: 1,
+      sampleCount: 0,
+    };
+  }
+
+  const weightedTotal = samples.reduce((sum, ratio, index) => sum + ratio * (index + 1), 0);
+  const weightTotal = samples.reduce((sum, _ratio, index) => sum + index + 1, 0);
+
+  return {
+    factor: Math.max(0.5, Math.min(1.15, weightedTotal / weightTotal)),
+    sampleCount: samples.length,
+  };
+}
+
 function getSolcastRemainingProjection(solarForecastPayload, now) {
   const points = solarForecastPayload?.enabled ? solarForecastPayload.points ?? [] : [];
   const hourlyKwh = Array.from({ length: 24 }, () => 0);
@@ -8403,6 +8544,7 @@ function getSolarDispatchPlan(payload, projection) {
 
 function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarForecastPayload = lastSolarForecastPayload) {
   const now = new Date(payload?.live?.updatedAt ?? payload?.generatedAt ?? Date.now());
+  updateCompletedSolcastBiasSamples(payload, now);
   const currentHour = now.getHours();
   const todayKwh = Number(payload?.today?.solarProductionKwh ?? 0);
   const { weights } = getSolarDayWeights(now, weatherPayload?.location?.latitude ?? -33.86);
@@ -8423,12 +8565,17 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
   ));
   const solcastRemaining = getSolcastRemainingProjection(solarForecastPayload, now);
   const solcastExpectedSoFarKwh = solcastRemaining.elapsedKwh;
-  const rawCorrectionFactor = solcastExpectedSoFarKwh >= 0.5
+  const solcastBias = getSolcastBiasFactor();
+  const hasIntradaySolcastOverlap = solcastExpectedSoFarKwh >= 0.5 && (
+    todayKwh < 2 || solcastExpectedSoFarKwh >= todayKwh * 0.25
+  );
+  const rawCorrectionFactor = hasIntradaySolcastOverlap
     ? todayKwh / solcastExpectedSoFarKwh
     : null;
-  const correctionFactor = rawCorrectionFactor === null
+  const intradayCorrectionFactor = rawCorrectionFactor === null
     ? 1
     : Math.max(0.65, Math.min(1.35, rawCorrectionFactor));
+  const correctionFactor = Math.max(0.45, Math.min(1.2, intradayCorrectionFactor * solcastBias.factor));
   const correctedSolcastRemainingKwh = solcastRemaining.remainingKwh * correctionFactor;
   const solcastEstimateKwh = todayKwh + solcastRemaining.remainingKwh;
   const trustedEstimateKwh = todayKwh + correctedSolcastRemainingKwh;
@@ -8441,7 +8588,7 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
     ? Math.max(todayKwh, (localEstimateKwh * 0.35) + (trustedEstimateKwh * 0.65))
     : localEstimateKwh;
   const remainingKwh = Math.max(0, estimateKwh - todayKwh);
-  const confidence = payload?.last24Hours?.solarGeneratedKw?.length >= 180 && todayKwh >= 2 && (!hasSolcastProjection || solcastExpectedSoFarKwh >= 0.5)
+  const confidence = payload?.last24Hours?.solarGeneratedKw?.length >= 180 && todayKwh >= 2 && (!hasSolcastProjection || hasIntradaySolcastOverlap || solcastBias.sampleCount > 0)
     ? "high"
     : hasSolcastProjection || payload?.last24Hours?.solarGeneratedKw?.length >= 60
       ? "medium"
@@ -8496,6 +8643,10 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
     solcastRemainingKwh: hasSolcastProjection ? solcastRemaining.remainingKwh : null,
     correctedSolcastRemainingKwh: hasSolcastProjection ? correctedSolcastRemainingKwh : 0,
     correctionFactor: hasSolcastProjection ? correctionFactor : null,
+    intradayCorrectionFactor: hasSolcastProjection ? intradayCorrectionFactor : null,
+    hasIntradaySolcastOverlap: hasSolcastProjection ? hasIntradaySolcastOverlap : false,
+    biasFactor: hasSolcastProjection ? solcastBias.factor : 1,
+    biasSampleCount: solcastBias.sampleCount,
     dispatchPlan: null,
   };
 
@@ -8520,12 +8671,19 @@ function renderSolarDispatchPlan(projection) {
   textFields.solarDispatchCorrection.textContent = hasSolcast && correctionPercent !== null
     ? formatPercent(correctionPercent)
     : "--";
-  textFields.solarDispatchCorrectionDetail.textContent = hasSolcast && projection.solcastExpectedSoFarKwh >= 0.5
-    ? interpolate(t("solarDispatchCorrectionDetail"), {
+  if (hasSolcast && projection.hasIntradaySolcastOverlap) {
+    textFields.solarDispatchCorrectionDetail.textContent = interpolate(t("solarDispatchCorrectionDetail"), {
       actual: formatKwh(projection.todayKwh),
       expected: formatKwh(projection.solcastExpectedSoFarKwh),
-    })
-    : t("solarDispatchCorrectionUnavailable");
+      bias: formatPercent((projection.biasFactor ?? 1) * 100),
+    });
+  } else if (hasSolcast && projection.biasSampleCount > 0) {
+    textFields.solarDispatchCorrectionDetail.textContent = interpolate(t("solarDispatchCorrectionBiasOnly"), {
+      bias: formatPercent((projection.biasFactor ?? 1) * 100),
+    });
+  } else {
+    textFields.solarDispatchCorrectionDetail.textContent = t("solarDispatchCorrectionUnavailable");
+  }
   textFields.solarDispatchSolcastRemaining.textContent = hasSolcast
     ? formatKwh(projection.correctedSolcastRemainingKwh)
     : "--";
@@ -8559,6 +8717,12 @@ function renderSolarProjection(payload, weatherPayload = lastWeatherPayload, sol
   const projection = getSolarProjection(payload, weatherPayload, solarForecastPayload);
   const weatherToday = weatherPayload?.daily?.[0] ?? weatherPayload?.current ?? null;
   const inverterStatus = payload.device?.status === "online" ? t("online") : t(payload.device?.status ?? "unknown");
+
+  updateSolcastBiasCalibration(
+    payload,
+    projection,
+    new Date(payload?.live?.updatedAt ?? payload?.generatedAt ?? Date.now()),
+  );
 
   metricFields.solarProjectionActual.textContent = formatKwh(projection.todayKwh);
   metricFields.solarProjectionEstimate.textContent = formatKwh(projection.estimateKwh);
