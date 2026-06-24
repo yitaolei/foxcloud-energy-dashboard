@@ -1377,6 +1377,7 @@ const translations = {
     solarDispatchSteadyDetail: "Solar, battery, and tariff pressure look balanced. No urgent action needed.",
     solarDispatchCorrectionDetail: "Actual so far {actual} vs Solcast expected {expected}; learned roof bias {bias}.",
     solarDispatchCorrectionBiasOnly: "Using learned roof bias {bias} from recent completed days.",
+    solarDispatchCorrectionCeilingDetail: "Capped by recent real production ceiling {ceiling}; learned roof bias {bias}.",
     solarDispatchCorrectionUnavailable: "Waiting for enough daylight overlap.",
     solarDispatchSolcastDetail: "Raw Solcast {raw}; corrected remaining {corrected}.",
     solarDispatchSolcastUnavailable: "No Solcast remainder available.",
@@ -2260,6 +2261,7 @@ const translations = {
     solarDispatchSteadyDetail: "太阳能、电池和电价压力比较平衡，暂时不需要急动作。",
     solarDispatchCorrectionDetail: "目前实际 {actual}，Solcast 到此刻应有 {expected}；学习到的屋顶偏差 {bias}。",
     solarDispatchCorrectionBiasOnly: "使用最近完成日期学到的屋顶偏差 {bias}。",
+    solarDispatchCorrectionCeilingDetail: "按最近真实发电上限 {ceiling} 保守约束；学习到的屋顶偏差 {bias}。",
     solarDispatchCorrectionUnavailable: "等待足够的白天重叠数据。",
     solarDispatchSolcastDetail: "原始 Solcast {raw}；纠偏后剩余 {corrected}。",
     solarDispatchSolcastUnavailable: "暂时没有 Solcast 剩余预测。",
@@ -3143,6 +3145,7 @@ const translations = {
     solarDispatchSteadyDetail: "โซลาร์ แบต และค่าไฟสมดุล ยังไม่ต้องทำอะไรเร่งด่วน",
     solarDispatchCorrectionDetail: "ผลิตจริง {actual} เทียบ Solcast ควรได้ {expected}; ค่า bias หลังเรียนรู้ {bias}",
     solarDispatchCorrectionBiasOnly: "ใช้ค่า roof bias {bias} จากวันที่จบไปแล้วล่าสุด",
+    solarDispatchCorrectionCeilingDetail: "จำกัดด้วยเพดานจากการผลิตจริงล่าสุด {ceiling}; roof bias {bias}",
     solarDispatchCorrectionUnavailable: "รอข้อมูลช่วงกลางวันให้พอ",
     solarDispatchSolcastDetail: "Solcast ดิบ {raw}; เหลือหลังปรับ {corrected}",
     solarDispatchSolcastUnavailable: "ยังไม่มีค่า Solcast ที่เหลือ",
@@ -8014,16 +8017,35 @@ function getChartOptions(yTitle) {
 }
 
 function getRecentSolarProjectionAverage(payload) {
-  const todayKey = formatLocalDateKey();
-  const rows = (payload?.dailyTable ?? [])
-    .filter((row) => row.date < todayKey && Number(row.pv_production) > 1)
-    .slice(-7);
+  return getRecentSolarProjectionStats(payload).average;
+}
 
-  if (rows.length === 0) {
-    return null;
+function getRecentSolarProjectionStats(payload) {
+  const todayKey = formatLocalDateKey();
+  const values = (payload?.dailyTable ?? [])
+    .filter((row) => row.date < todayKey && Number(row.pv_production) > 1)
+    .slice(-10)
+    .map((row) => Number(row.pv_production))
+    .filter((value) => Number.isFinite(value) && value > 1);
+
+  if (values.length === 0) {
+    return {
+      average: null,
+      max: null,
+      ceiling: null,
+    };
   }
 
-  return rows.reduce((sum, row) => sum + Number(row.pv_production ?? 0), 0) / rows.length;
+  const recentSevenValues = values.slice(-7);
+  const average = recentSevenValues.reduce((sum, value) => sum + value, 0) / recentSevenValues.length;
+  const max = Math.max(...recentSevenValues);
+  const ceiling = Math.max(average, Math.min(max * 1.08, average * 1.35));
+
+  return {
+    average,
+    max,
+    ceiling,
+  };
 }
 
 function getSolarDayWeights(now = new Date(), latitude = -33.86) {
@@ -8406,7 +8428,7 @@ function getSolcastBiasFactor() {
   const weightTotal = samples.reduce((sum, _ratio, index) => sum + index + 1, 0);
 
   return {
-    factor: Math.max(0.5, Math.min(1.15, weightedTotal / weightTotal)),
+    factor: Math.max(0.5, Math.min(1, weightedTotal / weightTotal)),
     sampleCount: samples.length,
   };
 }
@@ -8552,7 +8574,9 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
   const elapsedWeight = getElapsedSolarWeight(weights, now);
   const progressFraction = totalWeight > 0 ? Math.min(0.98, Math.max(0.02, elapsedWeight / totalWeight)) : 0.5;
   const progressEstimate = todayKwh / progressFraction;
-  const recentAverage = getRecentSolarProjectionAverage(payload);
+  const recentStats = getRecentSolarProjectionStats(payload);
+  const recentAverage = recentStats.average;
+  const recentCeilingKwh = recentStats.ceiling;
   const weatherEstimate = recentAverage === null
     ? progressEstimate
     : recentAverage * getWeatherProjectionFactor(weatherPayload);
@@ -8574,9 +8598,19 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
     : null;
   const intradayCorrectionFactor = rawCorrectionFactor === null
     ? 1
-    : Math.max(0.65, Math.min(1.35, rawCorrectionFactor));
-  const correctionFactor = Math.max(0.45, Math.min(1.2, intradayCorrectionFactor * solcastBias.factor));
-  const correctedSolcastRemainingKwh = solcastRemaining.remainingKwh * correctionFactor;
+    : Math.max(0.55, Math.min(1, rawCorrectionFactor));
+  const correctionFactor = Math.max(0.35, Math.min(1, intradayCorrectionFactor * solcastBias.factor));
+  const uncappedCorrectedSolcastRemainingKwh = solcastRemaining.remainingKwh * correctionFactor;
+  const recentRemainingCeilingKwh = recentCeilingKwh === null
+    ? Infinity
+    : Math.max(0, recentCeilingKwh - todayKwh);
+  const correctedSolcastRemainingKwh = Math.min(
+    uncappedCorrectedSolcastRemainingKwh,
+    recentRemainingCeilingKwh,
+  );
+  const effectiveCorrectionFactor = solcastRemaining.remainingKwh > 0
+    ? correctedSolcastRemainingKwh / solcastRemaining.remainingKwh
+    : correctionFactor;
   const solcastEstimateKwh = todayKwh + solcastRemaining.remainingKwh;
   const trustedEstimateKwh = todayKwh + correctedSolcastRemainingKwh;
   const hasSolcastProjection = Boolean(
@@ -8584,9 +8618,12 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
     solarForecastPayload?.source === "solcast" &&
     solcastRemaining.remainingKwh > 0,
   );
-  const estimateKwh = hasSolcastProjection
+  const estimateBeforeCeilingKwh = hasSolcastProjection
     ? Math.max(todayKwh, (localEstimateKwh * 0.35) + (trustedEstimateKwh * 0.65))
     : localEstimateKwh;
+  const estimateKwh = recentCeilingKwh === null
+    ? estimateBeforeCeilingKwh
+    : Math.max(todayKwh, Math.min(estimateBeforeCeilingKwh, recentCeilingKwh));
   const remainingKwh = Math.max(0, estimateKwh - todayKwh);
   const confidence = payload?.last24Hours?.solarGeneratedKw?.length >= 180 && todayKwh >= 2 && (!hasSolcastProjection || hasIntradaySolcastOverlap || solcastBias.sampleCount > 0)
     ? "high"
@@ -8642,11 +8679,16 @@ function getSolarProjection(payload, weatherPayload = lastWeatherPayload, solarF
     solcastExpectedSoFarKwh: hasSolcastProjection ? solcastExpectedSoFarKwh : null,
     solcastRemainingKwh: hasSolcastProjection ? solcastRemaining.remainingKwh : null,
     correctedSolcastRemainingKwh: hasSolcastProjection ? correctedSolcastRemainingKwh : 0,
-    correctionFactor: hasSolcastProjection ? correctionFactor : null,
+    correctionFactor: hasSolcastProjection ? effectiveCorrectionFactor : null,
     intradayCorrectionFactor: hasSolcastProjection ? intradayCorrectionFactor : null,
     hasIntradaySolcastOverlap: hasSolcastProjection ? hasIntradaySolcastOverlap : false,
     biasFactor: hasSolcastProjection ? solcastBias.factor : 1,
     biasSampleCount: solcastBias.sampleCount,
+    recentCeilingKwh,
+    recentCeilingApplied: hasSolcastProjection && recentCeilingKwh !== null && (
+      correctedSolcastRemainingKwh < uncappedCorrectedSolcastRemainingKwh ||
+      estimateKwh < estimateBeforeCeilingKwh
+    ),
     dispatchPlan: null,
   };
 
@@ -8671,7 +8713,12 @@ function renderSolarDispatchPlan(projection) {
   textFields.solarDispatchCorrection.textContent = hasSolcast && correctionPercent !== null
     ? formatPercent(correctionPercent)
     : "--";
-  if (hasSolcast && projection.hasIntradaySolcastOverlap) {
+  if (hasSolcast && projection.recentCeilingApplied && Number.isFinite(projection.recentCeilingKwh)) {
+    textFields.solarDispatchCorrectionDetail.textContent = interpolate(t("solarDispatchCorrectionCeilingDetail"), {
+      ceiling: formatKwh(projection.recentCeilingKwh),
+      bias: formatPercent((projection.biasFactor ?? 1) * 100),
+    });
+  } else if (hasSolcast && projection.hasIntradaySolcastOverlap) {
     textFields.solarDispatchCorrectionDetail.textContent = interpolate(t("solarDispatchCorrectionDetail"), {
       actual: formatKwh(projection.todayKwh),
       expected: formatKwh(projection.solcastExpectedSoFarKwh),
