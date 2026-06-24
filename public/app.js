@@ -8259,6 +8259,65 @@ function getLastKnownValue(values, fallback = null) {
   return fallback;
 }
 
+function getRecentEveningBatteryDrainPercent(payload, now) {
+  const values = payload?.last24Hours?.batteryLevelPercent ?? [];
+  const count = values.length;
+
+  if (count < 2) {
+    return null;
+  }
+
+  const endTime = new Date(now).getTime();
+  const startTime = endTime - 24 * 60 * 60 * 1000;
+  const stepMs = (endTime - startTime) / Math.max(count - 1, 1);
+  const bucketsByDate = new Map();
+
+  for (let index = 0; index < count; index += 1) {
+    const sampleTime = new Date(startTime + stepMs * index);
+    const hour = sampleTime.getHours();
+
+    if (hour !== 16 && hour !== 21) {
+      continue;
+    }
+
+    const soc = Number(values[index]);
+
+    if (!Number.isFinite(soc)) {
+      continue;
+    }
+
+    const dateKey = formatLocalDateKey(sampleTime);
+    const buckets = bucketsByDate.get(dateKey) ?? { start: [], end: [] };
+
+    if (hour === 16) {
+      buckets.start.push(soc);
+    } else {
+      buckets.end.push(soc);
+    }
+
+    bucketsByDate.set(dateKey, buckets);
+  }
+
+  const drains = Array.from(bucketsByDate.values())
+    .map((buckets) => {
+      const startSoc = averageFinite(buckets.start);
+      const endSoc = averageFinite(buckets.end);
+
+      if (!Number.isFinite(startSoc) || !Number.isFinite(endSoc)) {
+        return null;
+      }
+
+      return Math.max(0, startSoc - endSoc);
+    })
+    .filter((value) => Number.isFinite(value));
+
+  if (drains.length === 0) {
+    return null;
+  }
+
+  return Math.max(0, Math.min(45, getPercentileValue(drains, 0.75, drains[drains.length - 1])));
+}
+
 function buildBatteryProjection(payload, now, weights, remainingSolarKwh) {
   const actualBattery = buildBatteryHourlyActual(payload, now);
   const currentSoc = Number(payload?.live?.batterySocPercent);
@@ -8273,14 +8332,21 @@ function buildBatteryProjection(payload, now, weights, remainingSolarKwh) {
   const currentHour = now.getHours();
   const eveningBaselineHomeKw = getEveningBaselineHomeKw(payload);
   const estimatedChargeKwh = Math.max(0, remainingSolarKwh - eveningBaselineHomeKw * 1.8) * 0.82;
+  const observedEveningDrainPercent = getRecentEveningBatteryDrainPercent(payload, now);
+  const fallbackEveningDrainPercent = Math.min(28, (eveningBaselineHomeKw * 2.2 / BATTERY_ESTIMATE_CAPACITY_KWH) * 100);
+  const eveningDrainPercent = observedEveningDrainPercent ?? fallbackEveningDrainPercent;
   const series = [...actualBattery];
   let projectedSoc = clampPercentValue(currentSoc);
   const eveningHour = 21;
 
   for (let hour = currentHour + 1; hour < 24; hour += 1) {
-    const solarChargeKwh = estimatedChargeKwh * getSolarWeightShareForHour(weights, hour, currentHour);
-    const eveningUseKwh = hour >= 17 && hour <= eveningHour ? eveningBaselineHomeKw * 0.9 : 0;
-    const deltaSoc = ((solarChargeKwh - eveningUseKwh) / BATTERY_ESTIMATE_CAPACITY_KWH) * 100;
+    const solarChargeKwh = projectedSoc < 99
+      ? estimatedChargeKwh * getSolarWeightShareForHour(weights, hour, currentHour)
+      : 0;
+    const solarChargePercent = (solarChargeKwh / BATTERY_ESTIMATE_CAPACITY_KWH) * 100;
+    const eveningDrainShare = hour >= 17 && hour <= eveningHour ? 1 / 5 : 0;
+    const eveningUsePercent = eveningDrainPercent * eveningDrainShare;
+    const deltaSoc = solarChargePercent - eveningUsePercent;
 
     projectedSoc = clampPercentValue(projectedSoc + deltaSoc);
     series[hour] = Number(projectedSoc.toFixed(0));
