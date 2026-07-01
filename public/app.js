@@ -6873,14 +6873,27 @@ function getWeatherIcon(conditionKey) {
   return icons[conditionKey] ?? icons.unknown;
 }
 
+const weatherIconConditionClasses = [
+  "weather-icon-clear",
+  "weather-icon-partly-cloudy",
+  "weather-icon-cloudy",
+  "weather-icon-fog",
+  "weather-icon-drizzle",
+  "weather-icon-rain",
+  "weather-icon-snow",
+  "weather-icon-storm",
+  "weather-icon-unknown",
+];
+
 function renderWeatherIcon(element, conditionKey) {
-  const normalizedKey = conditionKey ?? "unknown";
+  const normalizedKey = (conditionKey ?? "unknown").replaceAll("_", "-");
   const isClear = normalizedKey === "clear";
 
-  element.classList.toggle("weather-icon-clear", isClear);
-  element.textContent = isClear ? "" : getWeatherIcon(normalizedKey);
-  element.title = t(normalizedKey);
-  element.setAttribute("aria-label", t(normalizedKey));
+  element.classList.remove(...weatherIconConditionClasses);
+  element.classList.add(`weather-icon-${normalizedKey}`);
+  element.textContent = isClear ? "" : getWeatherIcon(conditionKey);
+  element.title = t(conditionKey ?? "unknown");
+  element.setAttribute("aria-label", t(conditionKey ?? "unknown"));
 }
 
 function formatWeatherDate(dateKey) {

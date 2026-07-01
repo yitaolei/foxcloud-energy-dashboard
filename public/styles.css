@@ -3767,6 +3767,45 @@ section[id] {
   mask: radial-gradient(circle, transparent 0 39%, #000 41% 58%, transparent 60%);
 }
 
+.weather-icon.weather-icon-partly-cloudy,
+.weather-day-icon.weather-icon-partly-cloudy {
+  color: #f59e0b;
+  filter: saturate(1.08);
+}
+
+.weather-icon.weather-icon-cloudy,
+.weather-day-icon.weather-icon-cloudy {
+  color: #64748b;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.weather-icon.weather-icon-fog,
+.weather-day-icon.weather-icon-fog {
+  color: #94a3b8;
+}
+
+.weather-icon.weather-icon-drizzle,
+.weather-day-icon.weather-icon-drizzle,
+.weather-icon.weather-icon-rain,
+.weather-day-icon.weather-icon-rain {
+  color: #2563eb;
+}
+
+.weather-icon.weather-icon-snow,
+.weather-day-icon.weather-icon-snow {
+  color: #38bdf8;
+}
+
+.weather-icon.weather-icon-storm,
+.weather-day-icon.weather-icon-storm {
+  color: #7c3aed;
+}
+
+.weather-icon.weather-icon-unknown,
+.weather-day-icon.weather-icon-unknown {
+  color: #64748b;
+}
+
 .weather-now strong {
   display: block;
   font-size: 1.45rem;
