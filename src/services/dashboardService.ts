@@ -34,6 +34,7 @@ import {
 } from "./modbusDashboardService.js";
 import {
   getLatestDailyEnergyUpdate,
+  readDailyEnergyRowsByDateRange,
   readDailyEnergyRowsByMonth,
   saveDailyEnergyRows,
 } from "./sqliteStore.js";
@@ -94,6 +95,7 @@ const createDashboardWarning = (
 const CURRENT_MONTH_CACHE_TTL_MS = 10 * 60 * 1000;
 const MAX_REBUILD_DAYS = 31;
 const SOLAR_ACTIVE_POWER_THRESHOLD_KW = 0.05;
+const RECENT_DAILY_LOOKBACK_DAYS = 45;
 
 const client = new FoxCloudClient({
   apiKey: env.foxCloud.apiKey,
@@ -210,6 +212,26 @@ const mergeRowsByDate = (
   const extraRows = preferredRows.filter((row) => !baseDates.has(row.date));
 
   return [...merged, ...extraRows].sort((first, second) => first.date.localeCompare(second.date));
+};
+
+const getOffsetDateKey = (dateKey: string, offsetDays: number): string => {
+  const date = parseDateKey(dateKey);
+  date.setDate(date.getDate() + offsetDays);
+  return getLocalDateKey(date);
+};
+
+const getRecentDailyRows = (
+  deviceSn: string,
+  anchorDateKey: string,
+  preferredRows: DashboardDailyRow[],
+): DashboardDailyRow[] => {
+  const startDate = getOffsetDateKey(anchorDateKey, -RECENT_DAILY_LOOKBACK_DAYS);
+  const cachedRows = filterRowsUpToToday(readDailyEnergyRowsByDateRange(deviceSn, startDate, anchorDateKey));
+  const preferredRecentRows = preferredRows.filter(
+    (row) => row.date >= startDate && row.date <= anchorDateKey,
+  );
+
+  return mergeRowsByDate(cachedRows, preferredRecentRows);
 };
 
 const parseYearMonthFromText = (value: string | null | undefined): { year: number; month: number } | null => {
@@ -805,6 +827,7 @@ function toPayload(
   historyResults: FoxCloudHistoryDeviceResult[],
   requestedYear: number,
   requestedMonth: number,
+  recentDailyRows = dailyRows,
 ): DashboardPayload {
   const todayRow = pickTodayRow(dailyRows, requestedYear, requestedMonth);
 
@@ -874,6 +897,7 @@ function toPayload(
     },
     last24Hours: buildLast24Hours(historyResults),
     dailyTable: dailyRows,
+    recentDailyTable: recentDailyRows,
   };
 }
 
@@ -1039,6 +1063,7 @@ const buildDemoPayload = (year: number, month: number): DashboardPayload => {
     },
     last24Hours,
     dailyTable: dailyRows,
+    recentDailyTable: dailyRows,
   };
 };
 
@@ -1113,6 +1138,7 @@ export async function getDashboardData(year: number, month: number): Promise<Das
     const cachedHistoricalRows = readDailyEnergyRowsByMonth(device.deviceSN, year, month)
       .filter((row) => row.date < todayKey);
     const dailyRows = mergeRowsByDate(freshRows, cachedHistoricalRows);
+    const recentRows = getRecentDailyRows(device.deviceSN, todayKey, dailyRows);
     const rowsToSave = isCurrentMonth(year, month)
       ? freshRows.filter((row) => row.date === todayKey)
       : freshRows.filter((row) => row.date <= todayKey && cachedHistoricalRows.length === 0);
@@ -1125,6 +1151,7 @@ export async function getDashboardData(year: number, month: number): Promise<Das
       historyResults,
       year,
       month,
+      recentRows,
     );
 
     await saveDashboardPayload(payload);

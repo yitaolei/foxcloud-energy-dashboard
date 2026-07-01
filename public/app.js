@@ -3310,6 +3310,14 @@ function getRecentSolarAverage(rows) {
   return getRecentAverage(rows, "pv_production");
 }
 
+function getRecentDailyRows(payload) {
+  const rows = payload?.recentDailyTable?.length
+    ? payload.recentDailyTable
+    : payload?.dailyTable;
+
+  return rows ?? [];
+}
+
 function getRecentAverage(rows, key) {
   const todayKey = formatLocalDateKey();
   const historicalValues = getLatestDailyRows(rows)
@@ -3328,7 +3336,7 @@ function getRecentAverage(rows, key) {
 
 function getSolarPerformance(payload, weatherPayload) {
   const todaySolar = Number(payload?.today?.solarProductionKwh ?? 0);
-  const recentAverage = getRecentSolarAverage(payload?.dailyTable ?? []);
+  const recentAverage = getRecentSolarAverage(getRecentDailyRows(payload));
   const outlook = weatherPayload?.current?.solarOutlook ?? "unknown";
   const hour = new Date().getHours();
 
@@ -3432,7 +3440,7 @@ function renderTrendMetric({ todayElement, metaElement, barElement, todayValue, 
 }
 
 function renderTrendSnapshot(payload) {
-  const rows = payload?.dailyTable ?? [];
+  const rows = getRecentDailyRows(payload);
   const today = payload?.today ?? {};
 
   renderTrendMetric({
@@ -6865,6 +6873,16 @@ function getWeatherIcon(conditionKey) {
   return icons[conditionKey] ?? icons.unknown;
 }
 
+function renderWeatherIcon(element, conditionKey) {
+  const normalizedKey = conditionKey ?? "unknown";
+  const isClear = normalizedKey === "clear";
+
+  element.classList.toggle("weather-icon-clear", isClear);
+  element.textContent = isClear ? "" : getWeatherIcon(normalizedKey);
+  element.title = t(normalizedKey);
+  element.setAttribute("aria-label", t(normalizedKey));
+}
+
 function formatWeatherDate(dateKey) {
   const parsed = new Date(`${dateKey}T00:00:00`);
 
@@ -7079,7 +7097,7 @@ function renderWeather(payload) {
 
   weatherPanel.classList.remove("hidden");
   textFields.weatherLocation.textContent = locationName || t("weather");
-  textFields.weatherIcon.textContent = getWeatherIcon(current.conditionKey);
+  renderWeatherIcon(textFields.weatherIcon, current.conditionKey);
   textFields.weatherTemperature.textContent = formatTemperature(current.temperatureCelsius);
   textFields.weatherCondition.textContent = t(current.conditionKey);
   textFields.weatherSolarOutlook.textContent = t(current.solarOutlook);
@@ -7098,7 +7116,7 @@ function renderWeather(payload) {
     card.className = "weather-day";
     icon.className = "weather-day-icon";
     date.textContent = formatWeatherDate(day.date);
-    icon.textContent = getWeatherIcon(day.conditionKey);
+    renderWeatherIcon(icon, day.conditionKey);
     condition.textContent = t(day.conditionKey);
     temperature.textContent = `${formatTemperature(day.temperatureMinCelsius)} / ${formatTemperature(day.temperatureMaxCelsius)}`;
     rain.textContent = `${t("rainChance")}: ${formatOptionalPercent(day.precipitationProbabilityMaxPercent)} · ${formatOptionalMillimetres(day.precipitationSumMm)}`;
@@ -9126,7 +9144,7 @@ function renderEnergyFlow(payload) {
 
 function renderVisualKpis(payload) {
   const today = payload.today ?? {};
-  const rows = getLatestDailyRows(payload.dailyTable);
+  const rows = getLatestDailyRows(getRecentDailyRows(payload));
   const latestRow = rows.at(-1) ?? {};
   const previousRow = rows.length > 1 ? rows.at(-2) : null;
   const homeUsage = Number(today.homeUsageKwh ?? latestRow.home_usage ?? 0);

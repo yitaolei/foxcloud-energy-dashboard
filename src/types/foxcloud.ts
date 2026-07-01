@@ -162,6 +162,7 @@ export interface DashboardPayload {
     batteryDischargeKw: Array<number | null>;
   };
   dailyTable: DashboardDailyRow[];
+  recentDailyTable?: DashboardDailyRow[];
 }
 
 export interface EnergyTotals {

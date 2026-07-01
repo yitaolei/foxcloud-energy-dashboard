@@ -55,6 +55,7 @@ const ENERGY_HISTORY_VARIABLES = [
   "batDischargePower",
 ] as const;
 const SOLAR_ACTIVE_POWER_THRESHOLD_KW = 0.05;
+const RECENT_DAILY_LOOKBACK_DAYS = 45;
 
 const createDashboardWarning = (
   message: string,
@@ -513,6 +514,23 @@ const mergeRowsByDate = (rows: DashboardDailyRow[], preferredRows: DashboardDail
   return [...merged.values()].sort((first, second) => first.date.localeCompare(second.date));
 };
 
+const getOffsetDateKey = (dateKey: string, offsetDays: number): string => {
+  const date = new Date(`${dateKey}T00:00:00`);
+  date.setDate(date.getDate() + offsetDays);
+  return getLocalDateKey(date);
+};
+
+const recentDailyRows = (
+  deviceSn: string,
+  anchorDateKey: string,
+  preferredRows: DashboardDailyRow[],
+): DashboardDailyRow[] => {
+  const startDate = getOffsetDateKey(anchorDateKey, -RECENT_DAILY_LOOKBACK_DAYS);
+  const cachedRows = filterRowsUpToToday(readDailyEnergyRowsByDateRange(deviceSn, startDate, anchorDateKey));
+
+  return mergeRowsByDate(cachedRows, preferredRows.filter((row) => row.date >= startDate && row.date <= anchorDateKey));
+};
+
 const integrateSamples = (
   samples: LiveSample[],
   key: keyof Omit<LiveSample, "sampled_at">,
@@ -609,6 +627,7 @@ export async function getModbusDashboardData(year: number, month: number): Promi
   const dailyRows = requestedMonthIsCurrent
     ? currentMonthRows(todayRow, year, month)
     : filterRowsUpToToday(readDailyEnergyRowsByMonth(env.modbus.deviceId, year, month));
+  const recentRows = recentDailyRows(env.modbus.deviceId, todayRow.date, [...dailyRows, todayRow]);
 
   const generatedAt = new Date().toISOString();
 
@@ -651,6 +670,7 @@ export async function getModbusDashboardData(year: number, month: number): Promi
     },
     last24Hours: buildLast24Hours(env.modbus.deviceId),
     dailyTable: dailyRows,
+    recentDailyTable: recentRows,
   };
 }
 
