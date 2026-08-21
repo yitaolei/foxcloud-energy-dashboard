@@ -576,6 +576,7 @@ const translations = {
     periodTotals: "Energy totals",
     periodTotalsHelp: "Choose a period to summarize daily energy data.",
     tableRange: "Table range",
+    tableTotalLabel: "Month total ({count} days)",
     tableAverageLabel: "Average ({count} days)",
     currentWeek: "This week",
     currentMonth: "This month",
@@ -1460,6 +1461,7 @@ const translations = {
     periodTotals: "能源总计",
     periodTotalsHelp: "选择一个周期来汇总每日能源数据。",
     tableRange: "表格范围",
+    tableTotalLabel: "本月总数（{count} 天）",
     tableAverageLabel: "平均（{count} 天）",
     currentWeek: "本周",
     currentMonth: "这个月",
@@ -2344,6 +2346,7 @@ const translations = {
     periodTotals: "ยอดรวมพลังงาน",
     periodTotalsHelp: "เลือกช่วงเวลาเพื่อสรุปข้อมูลพลังงานรายวัน",
     tableRange: "ช่วงของตาราง",
+    tableTotalLabel: "รวมเดือนนี้ ({count} วัน)",
     tableAverageLabel: "เฉลี่ย ({count} วัน)",
     currentWeek: "สัปดาห์นี้",
     currentMonth: "เดือนนี้",
@@ -7409,6 +7412,25 @@ function getAverageDailyRow(rows) {
   );
 }
 
+function getTotalDailyRow(rows) {
+  const validRows = rows.filter((row) => row?.date);
+
+  if (validRows.length === 0) {
+    return null;
+  }
+
+  return dailyTableAverageKeys.reduce(
+    (totalRow, key) => {
+      totalRow[key] = validRows.reduce((sum, row) => sum + Number(row[key] ?? 0), 0);
+
+      return totalRow;
+    },
+    {
+      date: interpolate(t("tableTotalLabel"), { count: validRows.length }),
+    },
+  );
+}
+
 function createDailyTableRow(cells, rowClassName = "") {
   const tableRow = document.createElement("tr");
 
@@ -7434,6 +7456,16 @@ function renderTable(rows) {
   const maxValues = getMaxValues(rows);
   const sortedRows = sortRows(rows);
   const valueClass = (key, value) => (Number(value) === maxValues[key] && Number(value) > 0 ? "table-max" : "");
+  const totalRow = getTotalDailyRow(rows);
+  const totalTableRow = totalRow
+    ? createDailyTableRow([
+      { value: totalRow.date },
+      ...dailyTableAverageKeys.map((key) => ({
+        value: formatKwh(totalRow[key]),
+        className: "table-total-value",
+      })),
+    ], "table-total-row")
+    : null;
   const averageRow = getAverageDailyRow(rows);
   const averageTableRow = averageRow
     ? createDailyTableRow([
@@ -7457,7 +7489,7 @@ function renderTable(rows) {
     return createDailyTableRow(cells);
   });
 
-  dailyTableBody.replaceChildren(...[averageTableRow, ...tableRows].filter(Boolean));
+  dailyTableBody.replaceChildren(...[totalTableRow, averageTableRow, ...tableRows].filter(Boolean));
   renderSortButtons();
 }
 

@@ -4730,6 +4730,21 @@ tbody td {
   white-space: nowrap;
 }
 
+.table-total-row {
+  background: rgba(255, 184, 77, 0.16);
+  color: #8a4a00;
+}
+
+.table-total-row td {
+  border-top: 1px solid rgba(255, 184, 77, 0.34);
+  border-bottom: 1px solid rgba(255, 184, 77, 0.34);
+  font-weight: 900;
+}
+
+.table-total-value {
+  color: #8a4a00;
+}
+
 .table-average-row {
   background: rgba(20, 114, 91, 0.08);
   color: #0f766e;
