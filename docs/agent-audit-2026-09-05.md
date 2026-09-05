@@ -37,9 +37,9 @@ No OpenAI API integration or model setting exists in this app. This audit tunes 
 - Both new/revised skills: official Skill Creator validator passed.
 - Local Markdown links, CI structure/command references, and `git diff --check`: passed.
 - NAS `/api/livez`: returned `ok: true`. This is a liveness observation, not a new deployed-version claim. Runtime/assets were unchanged, so no NAS sync or restart was performed.
-- Hosted CI requires the corresponding push/run; local success alone does not establish GitHub runner success.
+- Hosted Node 22 CI passed on commit `79f707f`: [GitHub Actions run](https://github.com/yitaolei/foxcloud-energy-dashboard/actions/runs/33954930935).
 
-GitHub rejected the initial combined push because the existing OAuth credential lacks `workflow` scope. The new CI definition is retained in a separate local commit; guidance, skills, and validation commands can be synchronized without expanding account permissions. No hosted CI success is claimed.
+The initial command-line push lacked `workflow` scope. On 2026-09-05, the owner's existing Safari GitHub session successfully committed the exact CI file. The local branch was reconciled with that remote commit; no credential scopes were expanded.
 
 ## Behavior review
 
