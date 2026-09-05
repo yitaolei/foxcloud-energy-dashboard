@@ -1,58 +1,23 @@
-# FoxCloud Dashboard Codex Guide
+# FoxCloud repository guidance
 
-## Project Shape
+Express/TypeScript backend; plain HTML/CSS/JavaScript and Chart.js frontend. Preserve the existing architecture and capabilities unless the request changes them.
 
-This repo is a plain TypeScript backend with a plain HTML/CSS/JS frontend.
+## Project map
 
-- Backend: `src/`
-- Frontend: `public/index.html`, `public/app.js`, `public/styles.css`
-- Tests: `test/*.test.mjs`
-- NAS deploy script: `scripts/deploy-nas.sh`
-- Live NAS target: `http://192.168.0.19:3080`
+- `src/`: providers, calculations, storage, and API; `public/`: dashboard UI.
+- `test/*.test.mjs`: tests; `scripts/deploy-nas.sh`: NAS sync/rebuild helper.
+- [Workflow](docs/workflow.md): commands and release procedure. Load `.agents/skills/foxcloud-maintenance/SKILL.md` for domain-specific dashboard changes.
 
-Avoid framework rewrites. Prefer small, testable changes that follow existing patterns.
+## Working agreement
 
-## Checks
+Use npm and the lockfile. Complete authorized work with routine decisions made from context; ask when missing information materially changes correctness, scope, or authorization. Preserve unrelated edits.
 
-Before reporting code changes as done, run the relevant checks:
+Keep credentials server-side and out of logs. Inspect only relevant non-secret configuration. Protect environment files, `data/`, and `backups/`; diagnose ownership and references before destructive Docker/storage operations.
 
-```sh
-npm run check
-npm run build
-npm test
-```
+## Verification and release
 
-For frontend changes, also verify the live page and browser console after NAS deployment unless the user explicitly asks for local-only work.
+`npm run verify` checks, builds, and tests once. Use the workflow's narrower checks for focused or guidance-only changes; avoid repeating successful checks without new evidence.
 
-## NAS Deployment
+UI/backend changes require NAS sync, rebuild, and live acceptance at `http://192.168.0.19:3080` unless the user opts out. Synology commands run through SSH to `DS923SOPAC.local`, not the Mac shell. Instruction-only maintenance does not require a dashboard restart.
 
-The user's real acceptance target is the Synology dashboard, not only the local repo.
-
-Default deployment:
-
-```sh
-npm run deploy:nas
-```
-
-If `/Volumes/Newhome/docker/foxcloud-dashboard` is unavailable, use SSH sync to:
-
-```text
-DS923SOPAC.local:/volume1/Newhome/docker/foxcloud-dashboard/
-```
-
-Then rebuild on Synology. Keep Synology commands inside an SSH session; do not run `/volume1` or Synology Docker commands in the Mac Mini shell.
-
-## Plugin Usage
-
-- GitHub: commit, push, PR, issue, and CI work.
-- Browser: verify local/live dashboard pages and console behavior.
-- Chrome: use only when the user's existing browser session matters.
-- Computer Use: fallback for Mac app UI operations.
-- Documents/Spreadsheets/Presentations: only when creating or editing those artifact types.
-- Sites and public hosting plugins are not part of the normal FoxCloud NAS workflow.
-
-## Secrets And Runtime Config
-
-Do not print `.env` secrets. It is OK to inspect non-secret keys such as `MODBUS_HOST` when diagnosing runtime connectivity.
-
-The inverter Modbus IP can change. If live data fails with Modbus timeout, check the NAS `.env` `MODBUS_HOST` and restart the container after updating it.
+After applicable verification, commit and push corresponding changes unless the user opts out. Report local, NAS, and GitHub status separately, with genuine blockers, concisely in the user's language.

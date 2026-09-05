@@ -52,9 +52,10 @@ http://localhost:3000
 Before submitting a change:
 
 ```bash
-npm run check
-npm run build
+npm run verify
 ```
+
+This checks, builds, and tests once. See [the workflow](docs/workflow.md) for focused checks and the owner's NAS release procedure.
 
 ## Project Goals
 
@@ -63,4 +64,3 @@ npm run build
 - Prefer simple, maintainable code over complex frameworks.
 - Make LAN use easy before asking users to deploy to NAS or the Internet.
 - Avoid unnecessary FoxCloud API calls by using local cache where possible.
-

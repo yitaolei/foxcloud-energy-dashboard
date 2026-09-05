@@ -15,7 +15,9 @@
     "check": "node ./node_modules/typescript/lib/tsc.js --noEmit -p tsconfig.json && node --check public/app.js",
     "deploy:nas": "sh scripts/deploy-nas.sh",
     "metadata": "node scripts/update-build-metadata.mjs",
-    "test": "npm run build && node --test test/*.test.mjs"
+    "test": "npm run build && npm run test:unit",
+    "test:unit": "node --test test/*.test.mjs",
+    "verify": "npm run check && npm test"
   },
   "dependencies": {
     "better-sqlite3": "^12.9.0",

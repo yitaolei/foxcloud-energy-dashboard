@@ -1,5 +1,7 @@
 # FoxCloud Dashboard Maintenance
 
+> Historical record of the May 2026 maintenance stream, not the current task list or a live verification baseline. Use [workflow.md](workflow.md) for current checks and release requirements. The snapshots, incident notes, and completed items below are retained as historical evidence.
+
 This is a maintenance stream for the existing project: **Build FoxCloud Dashboard**.
 
 The goal is to update, improve, debug, and maintain the current FoxCloud Dashboard without rebuilding it from scratch.
@@ -50,9 +52,9 @@ Open-source handoff:
 - Avoid broad security header/CSP changes until they are tested on both LAN HTTP and
   HTTPS reverse-proxy deployments.
 
-## Current Verification Baseline
+## Historical Verification Baseline
 
-Run these before and after maintenance changes:
+Commands recorded during the original stream (not the current recommended sequence):
 
 ```bash
 npm run check

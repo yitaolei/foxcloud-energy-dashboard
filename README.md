@@ -480,10 +480,10 @@ For deployment:
 
 1. set the same environment variables in your hosting provider
 2. run `npm install`
-3. run `npm run check`
-4. run `npm test`
-5. run `npm run build`
-6. start with `npm start`
+3. run `npm run verify` (checks, builds, and tests once)
+4. start with `npm start`
+
+See [the development and release workflow](docs/workflow.md) for focused checks and NAS acceptance.
 
 For Docker builds, set optional `APP_VERSION` and `GIT_SHA` environment variables before
 building if you want `/api/health` to show the exact deployed revision.

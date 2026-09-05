@@ -257,11 +257,11 @@ ELECTRICITY_FEED_IN_RATE=0
 ## 常用命令
 
 ```bash
-npm run check
-npm test
-npm run build
+npm run verify
 npm start
 ```
+
+`verify` 会检查、构建并测试一次。已有最新构建时可用 `npm run test:unit` 单独运行测试。完整说明见[开发与发布流程](docs/workflow.md)。
 
 ## 已知维护原则
 
