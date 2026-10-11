@@ -58,6 +58,27 @@ database.exec(`
   CREATE INDEX IF NOT EXISTS idx_live_samples_device_time
     ON live_samples (device_sn, sampled_at);
 
+  CREATE TABLE IF NOT EXISTS grid_quality_samples (
+    device_sn TEXT NOT NULL,
+    sampled_at TEXT NOT NULL,
+    grid_voltage_r_v REAL,
+    grid_voltage_s_v REAL,
+    grid_voltage_t_v REAL,
+    grid_frequency_hz REAL,
+    inverter_current_r_a REAL,
+    inverter_current_s_a REAL,
+    inverter_current_t_a REAL,
+    inverter_power_r_kw REAL,
+    inverter_power_s_kw REAL,
+    inverter_power_t_kw REAL,
+    grid_meter_power_r_kw REAL,
+    grid_meter_power_s_kw REAL,
+    grid_meter_power_t_kw REAL,
+    grid_meter_power_total_kw REAL,
+    source TEXT NOT NULL DEFAULT 'modbus',
+    PRIMARY KEY (device_sn, sampled_at)
+  );
+
   CREATE TABLE IF NOT EXISTS app_settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
@@ -391,4 +412,119 @@ export function writeAppSetting(key: string, value: string): void {
 
 export async function backupDatabase(destinationPath: string): Promise<void> {
   await database.backup(destinationPath);
+}
+
+export interface GridQualityValues {
+  gridVoltageRV: number | null;
+  gridVoltageSV: number | null;
+  gridVoltageTV: number | null;
+  gridFrequencyHz: number | null;
+  inverterCurrentRA: number | null;
+  inverterCurrentSA: number | null;
+  inverterCurrentTA: number | null;
+  inverterPowerRKw: number | null;
+  inverterPowerSKw: number | null;
+  inverterPowerTKw: number | null;
+  gridMeterPowerRKw: number | null;
+  gridMeterPowerSKw: number | null;
+  gridMeterPowerTKw: number | null;
+  gridMeterPowerTotalKw: number | null;
+}
+
+export interface GridQualitySample {
+  device_sn: string;
+  sampled_at: string;
+  grid_voltage_r_v: number | null;
+  grid_voltage_s_v: number | null;
+  grid_voltage_t_v: number | null;
+  grid_frequency_hz: number | null;
+  inverter_current_r_a: number | null;
+  inverter_current_s_a: number | null;
+  inverter_current_t_a: number | null;
+  inverter_power_r_kw: number | null;
+  inverter_power_s_kw: number | null;
+  inverter_power_t_kw: number | null;
+  grid_meter_power_r_kw: number | null;
+  grid_meter_power_s_kw: number | null;
+  grid_meter_power_t_kw: number | null;
+  grid_meter_power_total_kw: number | null;
+  source: string;
+}
+
+const upsertGridQualitySample = database.prepare(`
+  INSERT INTO grid_quality_samples (
+    device_sn, sampled_at,
+    grid_voltage_r_v,
+    grid_voltage_s_v,
+    grid_voltage_t_v,
+    grid_frequency_hz,
+    inverter_current_r_a,
+    inverter_current_s_a,
+    inverter_current_t_a,
+    inverter_power_r_kw,
+    inverter_power_s_kw,
+    inverter_power_t_kw,
+    grid_meter_power_r_kw,
+    grid_meter_power_s_kw,
+    grid_meter_power_t_kw,
+    grid_meter_power_total_kw,
+    source
+  ) VALUES (
+    @deviceSn, @sampledAt,
+    @gridVoltageRV,
+    @gridVoltageSV,
+    @gridVoltageTV,
+    @gridFrequencyHz,
+    @inverterCurrentRA,
+    @inverterCurrentSA,
+    @inverterCurrentTA,
+    @inverterPowerRKw,
+    @inverterPowerSKw,
+    @inverterPowerTKw,
+    @gridMeterPowerRKw,
+    @gridMeterPowerSKw,
+    @gridMeterPowerTKw,
+    @gridMeterPowerTotalKw,
+    @source
+  )
+  ON CONFLICT(device_sn, sampled_at) DO UPDATE SET
+    grid_voltage_r_v = excluded.grid_voltage_r_v,
+    grid_voltage_s_v = excluded.grid_voltage_s_v,
+    grid_voltage_t_v = excluded.grid_voltage_t_v,
+    grid_frequency_hz = excluded.grid_frequency_hz,
+    inverter_current_r_a = excluded.inverter_current_r_a,
+    inverter_current_s_a = excluded.inverter_current_s_a,
+    inverter_current_t_a = excluded.inverter_current_t_a,
+    inverter_power_r_kw = excluded.inverter_power_r_kw,
+    inverter_power_s_kw = excluded.inverter_power_s_kw,
+    inverter_power_t_kw = excluded.inverter_power_t_kw,
+    grid_meter_power_r_kw = excluded.grid_meter_power_r_kw,
+    grid_meter_power_s_kw = excluded.grid_meter_power_s_kw,
+    grid_meter_power_t_kw = excluded.grid_meter_power_t_kw,
+    grid_meter_power_total_kw = excluded.grid_meter_power_total_kw,
+    source = excluded.source
+`);
+
+export function saveGridQualitySample(
+  deviceSn: string,
+  sample: GridQualityValues & { sampledAt: string },
+  source = "modbus",
+): void {
+  upsertGridQualitySample.run({ ...sample, deviceSn, source });
+}
+
+export function readRecentGridQualitySamples(
+  deviceSn: string,
+  limit = 100,
+): GridQualitySample[] {
+  if (!Number.isSafeInteger(limit) || limit < 1) {
+    throw new Error("Grid quality sample limit must be a positive integer.");
+  }
+
+  return database.prepare(`
+    SELECT * FROM grid_quality_samples
+    WHERE device_sn = ?
+    ORDER BY sampled_at DESC
+    LIMIT ?
+  `).all(deviceSn, limit) as GridQualitySample[];
 }

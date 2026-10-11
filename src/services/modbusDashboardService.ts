@@ -14,6 +14,8 @@ import { integratePowerSamples } from "../lib/energyMath.js";
 import { buildEnergyTotals } from "../lib/energyTotals.js";
 import { FoxCloudClient } from "../lib/foxcloudClient.js";
 import {
+  readSignedRegisters,
+  readUnsignedRegisters,
   readScaledSignedRegisters,
   readScaledUnsignedRegisters,
 } from "../lib/modbusRegisters.js";
@@ -29,7 +31,9 @@ import type {
   SavingsOverviewPayload,
 } from "../types/foxcloud.js";
 import {
+  type GridQualityValues,
   type LiveSample,
+  saveGridQualitySample,
   readDailyEnergyRowsByDateRange,
   readDailyEnergyRowsByMonth,
   readLiveSamplesSince,
@@ -111,6 +115,14 @@ class ModbusReader {
     });
   }
 
+  getDiagnosticValue(addresses: readonly number[], scale = 1, signed = true): number | null {
+    const value = signed
+      ? readSignedRegisters(this.registers, addresses)
+      : readUnsignedRegisters(this.registers, addresses);
+    // Preserve diagnostic precision and missing readings instead of display rounding.
+    return value === null ? null : value * scale;
+  }
+
   getInt(addresses: readonly number[], scale = 1): number {
     return readScaledSignedRegisters(this.registers, addresses, scale);
   }
@@ -122,6 +134,7 @@ class ModbusReader {
 
 interface ModbusSnapshot {
   sampledAt: string;
+  gridQuality: GridQualityValues;
   live: DashboardPayload["live"];
   today: DashboardPayload["today"];
 }
@@ -455,6 +468,50 @@ const readModbusSnapshot = async (): Promise<ModbusSnapshot> => {
 
     return {
       sampledAt: now,
+      gridQuality: {
+        gridVoltageRV: reader.getDiagnosticValue(
+          profile.gridQuality.gridVoltageRV.addresses, profile.gridQuality.gridVoltageRV.scale, false,
+        ),
+        gridVoltageSV: reader.getDiagnosticValue(
+          profile.gridQuality.gridVoltageSV.addresses, profile.gridQuality.gridVoltageSV.scale, false,
+        ),
+        gridVoltageTV: reader.getDiagnosticValue(
+          profile.gridQuality.gridVoltageTV.addresses, profile.gridQuality.gridVoltageTV.scale, false,
+        ),
+        gridFrequencyHz: reader.getDiagnosticValue(
+          profile.gridQuality.gridFrequencyHz.addresses, profile.gridQuality.gridFrequencyHz.scale, false,
+        ),
+        inverterCurrentRA: reader.getDiagnosticValue(
+          profile.gridQuality.inverterCurrentRA.addresses, profile.gridQuality.inverterCurrentRA.scale,
+        ),
+        inverterCurrentSA: reader.getDiagnosticValue(
+          profile.gridQuality.inverterCurrentSA.addresses, profile.gridQuality.inverterCurrentSA.scale,
+        ),
+        inverterCurrentTA: reader.getDiagnosticValue(
+          profile.gridQuality.inverterCurrentTA.addresses, profile.gridQuality.inverterCurrentTA.scale,
+        ),
+        inverterPowerRKw: reader.getDiagnosticValue(
+          profile.gridQuality.inverterPowerRKw.addresses, profile.gridQuality.inverterPowerRKw.scale,
+        ),
+        inverterPowerSKw: reader.getDiagnosticValue(
+          profile.gridQuality.inverterPowerSKw.addresses, profile.gridQuality.inverterPowerSKw.scale,
+        ),
+        inverterPowerTKw: reader.getDiagnosticValue(
+          profile.gridQuality.inverterPowerTKw.addresses, profile.gridQuality.inverterPowerTKw.scale,
+        ),
+        gridMeterPowerRKw: reader.getDiagnosticValue(
+          profile.gridQuality.gridMeterPowerRKw.addresses, profile.gridQuality.gridMeterPowerRKw.scale,
+        ),
+        gridMeterPowerSKw: reader.getDiagnosticValue(
+          profile.gridQuality.gridMeterPowerSKw.addresses, profile.gridQuality.gridMeterPowerSKw.scale,
+        ),
+        gridMeterPowerTKw: reader.getDiagnosticValue(
+          profile.gridQuality.gridMeterPowerTKw.addresses, profile.gridQuality.gridMeterPowerTKw.scale,
+        ),
+        gridMeterPowerTotalKw: reader.getDiagnosticValue(
+          profile.gridQuality.gridMeterPowerTotalKw.addresses, profile.gridQuality.gridMeterPowerTotalKw.scale,
+        ),
+      },
       live: {
         solarGeneratedKw: pvPowerKw,
         gridImportKw: round(Math.abs(Math.min(gridCtKw, 0))),
@@ -612,6 +669,11 @@ export async function sampleAndStoreModbusData(): Promise<ModbusSnapshot> {
     inverterTemperatureCelsius: snapshot.live.inverterTemperatureCelsius,
   });
 
+  saveGridQualitySample(env.modbus.deviceId, {
+    sampledAt: snapshot.sampledAt,
+    ...snapshot.gridQuality,
+  });
+
   return snapshot;
 }
 
@@ -620,7 +682,9 @@ export async function getModbusDashboardData(year: number, month: number): Promi
     throw new Error("The requested year or month is invalid.");
   }
 
-  const snapshot = await sampleAndStoreModbusData();
+  // The background sampler owns persistence. Dashboard reads must not amplify
+  // NAS SQLite writes when browsers poll or users refresh the page.
+  const snapshot = await readModbusSnapshot();
   const todayRow = buildTodayRow(snapshot);
   const requestedMonthIsCurrent =
     todayRow.date.startsWith(`${year}-${String(month).padStart(2, "0")}`);

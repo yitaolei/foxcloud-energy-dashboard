@@ -40,6 +40,7 @@ describe("Modbus register profiles", () => {
       { startAddress: 38814, count: 26 },
       { startAddress: 39063, count: 80 },
       { startAddress: 39219, count: 20 },
+      { startAddress: 39248, count: 6 },
       { startAddress: 39279, count: 8 },
       { startAddress: 39601, count: 32 },
     ]);

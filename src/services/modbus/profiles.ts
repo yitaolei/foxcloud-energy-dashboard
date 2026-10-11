@@ -21,6 +21,22 @@ export interface ModbusRegisterProfile {
     batteryMinTemperature: ModbusRegisterValue;
     inverterTemperature: ModbusRegisterValue;
   };
+  gridQuality: {
+    gridVoltageRV: ModbusRegisterValue;
+    gridVoltageSV: ModbusRegisterValue;
+    gridVoltageTV: ModbusRegisterValue;
+    gridFrequencyHz: ModbusRegisterValue;
+    inverterCurrentRA: ModbusRegisterValue;
+    inverterCurrentSA: ModbusRegisterValue;
+    inverterCurrentTA: ModbusRegisterValue;
+    inverterPowerRKw: ModbusRegisterValue;
+    inverterPowerSKw: ModbusRegisterValue;
+    inverterPowerTKw: ModbusRegisterValue;
+    gridMeterPowerRKw: ModbusRegisterValue;
+    gridMeterPowerSKw: ModbusRegisterValue;
+    gridMeterPowerTKw: ModbusRegisterValue;
+    gridMeterPowerTotalKw: ModbusRegisterValue;
+  };
   daily: {
     solarEnergyToday: ModbusRegisterValue;
     totalYieldToday: ModbusRegisterValue;
@@ -40,6 +56,7 @@ export const foxEssH3SmartProfile: ModbusRegisterProfile = {
     { startAddress: 38814, count: 26 },
     { startAddress: 39063, count: 80 },
     { startAddress: 39219, count: 20 },
+    { startAddress: 39248, count: 6 },
     { startAddress: 39279, count: 8 },
     { startAddress: 39601, count: 32 },
   ],
@@ -58,6 +75,22 @@ export const foxEssH3SmartProfile: ModbusRegisterProfile = {
     batteryMaxTemperature: { addresses: [37617], scale: 0.1 },
     batteryMinTemperature: { addresses: [37618], scale: 0.1 },
     inverterTemperature: { addresses: [39141], scale: 0.1 },
+  },
+  gridQuality: {
+    gridVoltageRV: { addresses: [39123], scale: 0.1 },
+    gridVoltageSV: { addresses: [39124], scale: 0.1 },
+    gridVoltageTV: { addresses: [39125], scale: 0.1 },
+    gridFrequencyHz: { addresses: [39139], scale: 0.01 },
+    inverterCurrentRA: { addresses: [39127, 39126], scale: 0.001 },
+    inverterCurrentSA: { addresses: [39129, 39128], scale: 0.001 },
+    inverterCurrentTA: { addresses: [39131, 39130], scale: 0.001 },
+    inverterPowerRKw: { addresses: [39249, 39248], scale: 0.001 },
+    inverterPowerSKw: { addresses: [39251, 39250], scale: 0.001 },
+    inverterPowerTKw: { addresses: [39253, 39252], scale: 0.001 },
+    gridMeterPowerRKw: { addresses: [38817, 38816], scale: 0.0001 },
+    gridMeterPowerSKw: { addresses: [38819, 38818], scale: 0.0001 },
+    gridMeterPowerTKw: { addresses: [38821, 38820], scale: 0.0001 },
+    gridMeterPowerTotalKw: { addresses: [38815, 38814], scale: 0.0001 },
   },
   daily: {
     solarEnergyToday: { addresses: [39604, 39603], scale: 0.01 },
